@@ -1,0 +1,103 @@
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\Common\App.config
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\Kpi Application.exe.config
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\Kpi Application.exe.manifest
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\Kpi Application.application
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\Kpi Application.exe
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\Kpi Application.pdb
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.BonusSkins.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Charts.v24.2.Core.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Data.Desktop.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Data.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Drawing.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Mvvm.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Printing.v24.2.Core.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Utils.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraBars.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraCharts.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraCharts.v24.2.UI.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraCharts.v24.2.Wizard.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraEditors.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraGrid.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraLayout.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraPrinting.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\EPPlus.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\EPPlus.Interfaces.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\EPPlus.System.Drawing.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\Microsoft.IO.RecyclableMemoryStream.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\System.Buffers.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\System.ComponentModel.Annotations.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\System.Drawing.Common.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\System.Memory.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\System.Numerics.Vectors.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\System.Security.Cryptography.Xml.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Pdf.v24.2.Core.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Pdf.v24.2.Drawing.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.DataVisualization.v24.2.Core.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraVerticalGrid.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Utils.v24.2.UI.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraTreeList.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraNavBar.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Sparkline.v24.2.Core.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.RichEdit.v24.2.Core.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraRichEdit.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.DataAccess.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Office.v24.2.Core.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Images.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Xpo.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.CodeParser.v24.2.dll
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Charts.v24.2.Core.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Data.Desktop.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Data.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Drawing.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Mvvm.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Printing.v24.2.Core.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Utils.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraBars.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraCharts.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraCharts.v24.2.UI.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraCharts.v24.2.Wizard.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraEditors.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraGrid.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraLayout.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraPrinting.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\EPPlus.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\Microsoft.IO.RecyclableMemoryStream.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\System.Buffers.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\System.Drawing.Common.pdb
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\System.Drawing.Common.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\System.Memory.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\System.Numerics.Vectors.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\System.Security.Cryptography.Xml.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Pdf.v24.2.Core.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Pdf.v24.2.Drawing.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraVerticalGrid.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Utils.v24.2.UI.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraTreeList.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraNavBar.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Sparkline.v24.2.Core.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.RichEdit.v24.2.Core.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.XtraRichEdit.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.DataAccess.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Office.v24.2.Core.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\bin\Debug\DevExpress.Xpo.v24.2.xml
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\KpiApplication.csproj.AssemblyReference.cache
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\KpiApplication.Controls.ucPPHData.resources
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\KpiApplication.Controls.ucViewData.resources
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\KpiApplication.Controls.ucViewPPHData.resources
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\KpiApplication.Controls.ucWeeklyPlan.resources
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\KpiApplication.Controls.ucWorkingTime.resources
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\KpiApplication.Forms.CustomWaitForm.resources
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\KpiApplication.MainView.resources
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\KpiApplication.Forms.frmChangePassword.resources
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\KpiApplication.Login.resources
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\KpiApplication.Forms.SheetSelectionForm.resources
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\KpiApplication.Properties.Resources.resources
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\KpiApplication.csproj.GenerateResource.cache
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\KpiApplication.csproj.CoreCompileInputs.cache
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\Kpi Application.exe.manifest
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\Kpi Application.application
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\KpiAppli.A4444AD1.Up2Date
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\Kpi Application.exe
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Debug\Kpi Application.pdb

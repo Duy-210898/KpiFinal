@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+	<startup>
+		<supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.7.2" />
+	</startup>
+
+	<connectionStrings>
+		<add name="strCon" connectionString="Data Source=10.30.0.116;Initial Catalog=KPI-DATA; User Id=sa; Password=12345;" providerName="System.Data.SqlClient" />
+	</connectionStrings>
+
+	<appSettings>
+		<add key="LastSkinName" value="WXI" />
+	</appSettings>
+</configuration>
+
+
