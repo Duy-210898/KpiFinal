@@ -18,7 +18,8 @@ namespace KpiApplication.Utils
         {
             "Quantity", "Target", "TotalWorker", "WorkingTime",
             "IEPPH", "OutputRate", "PPHRate", "TotalWorkingHours", "ActualPPH",
-            "TargetOutputPC", "AdjustOperatorNo", "IEPPHValue", "THTValue"
+            "TargetOutputPC", "AdjustOperatorNo", "IEPPHValue", "THTValue", "TargetIE", "OperatorAdjust", "ReferenceOperator",
+            "FinalOperator", "TCTValue"
         };
 
         public static void ApplyDefaultFormatting(GridView gridView, List<string> editableColumns = null)

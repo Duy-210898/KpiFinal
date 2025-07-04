@@ -33,8 +33,8 @@
             this.dgvIEPPH = new DevExpress.XtraGrid.Views.Grid.GridView();
             this.barManager1 = new DevExpress.XtraBars.BarManager(this.components);
             this.bar2 = new DevExpress.XtraBars.Bar();
-            this.btnImport = new DevExpress.XtraBars.BarButtonItem();
             this.btnExport = new DevExpress.XtraBars.BarButtonItem();
+            this.btnRefresh = new DevExpress.XtraBars.BarButtonItem();
             this.barDockControlTop = new DevExpress.XtraBars.BarDockControl();
             this.barDockControlBottom = new DevExpress.XtraBars.BarDockControl();
             this.barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
@@ -61,9 +61,14 @@
             this.dgvIEPPH.Name = "dgvIEPPH";
             this.dgvIEPPH.OptionsBehavior.EditingMode = DevExpress.XtraGrid.Views.Grid.GridEditingMode.EditForm;
             this.dgvIEPPH.OptionsClipboard.AllowCopy = DevExpress.Utils.DefaultBoolean.True;
+            this.dgvIEPPH.OptionsEditForm.BindingMode = DevExpress.XtraGrid.Views.Grid.EditFormBindingMode.Cached;
             this.dgvIEPPH.OptionsEditForm.ShowOnDoubleClick = DevExpress.Utils.DefaultBoolean.True;
             this.dgvIEPPH.OptionsEditForm.ShowOnF2Key = DevExpress.Utils.DefaultBoolean.True;
+            this.dgvIEPPH.OptionsFind.FindDelay = 500;
+            this.dgvIEPPH.OptionsFind.FindMode = DevExpress.XtraEditors.FindMode.FindClick;
             this.dgvIEPPH.OptionsView.ShowGroupPanel = false;
+            this.dgvIEPPH.RowDeleted += new DevExpress.Data.RowDeletedEventHandler(this.dgvIEPPH_RowDeleted);
+            this.dgvIEPPH.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvIEPPH_KeyDown);
             // 
             // barManager1
             // 
@@ -75,10 +80,10 @@
             this.barManager1.DockControls.Add(this.barDockControlRight);
             this.barManager1.Form = this;
             this.barManager1.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
-            this.btnImport,
-            this.btnExport});
+            this.btnExport,
+            this.btnRefresh});
             this.barManager1.MainMenu = this.bar2;
-            this.barManager1.MaxItemId = 2;
+            this.barManager1.MaxItemId = 3;
             // 
             // bar2
             // 
@@ -87,22 +92,11 @@
             this.bar2.DockRow = 0;
             this.bar2.DockStyle = DevExpress.XtraBars.BarDockStyle.Top;
             this.bar2.LinksPersistInfo.AddRange(new DevExpress.XtraBars.LinkPersistInfo[] {
-            new DevExpress.XtraBars.LinkPersistInfo(this.btnImport),
-            new DevExpress.XtraBars.LinkPersistInfo(this.btnExport)});
+            new DevExpress.XtraBars.LinkPersistInfo(this.btnExport),
+            new DevExpress.XtraBars.LinkPersistInfo(this.btnRefresh)});
             this.bar2.OptionsBar.MultiLine = true;
             this.bar2.OptionsBar.UseWholeRow = true;
             this.bar2.Text = "Main menu";
-            // 
-            // btnImport
-            // 
-            this.btnImport.Caption = "Import";
-            this.btnImport.Id = 0;
-            this.btnImport.ImageOptions.Image = global::KpiApplication.Properties.Resources.addfile_16x16;
-            this.btnImport.ImageOptions.LargeImage = global::KpiApplication.Properties.Resources.addfile_32x32;
-            this.btnImport.Name = "btnImport";
-            this.btnImport.PaintStyle = DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph;
-            this.btnImport.Size = new System.Drawing.Size(100, 25);
-            this.btnImport.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnImport_ItemClick);
             // 
             // btnExport
             // 
@@ -114,6 +108,16 @@
             this.btnExport.PaintStyle = DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph;
             this.btnExport.Size = new System.Drawing.Size(100, 25);
             this.btnExport.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnExport_ItemClick);
+            // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Caption = "Refresh";
+            this.btnRefresh.Id = 2;
+            this.btnRefresh.ImageOptions.Image = global::KpiApplication.Properties.Resources.refresh_16x16;
+            this.btnRefresh.ImageOptions.LargeImage = global::KpiApplication.Properties.Resources.refresh_32x32;
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.PaintStyle = DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph;
+            this.btnRefresh.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnRefresh_ItemClick);
             // 
             // barDockControlTop
             // 
@@ -158,6 +162,7 @@
             this.Controls.Add(this.barDockControlTop);
             this.Name = "ucViewPPHData";
             this.Size = new System.Drawing.Size(928, 737);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ucViewPPHData_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.gridControl1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvIEPPH)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.barManager1)).EndInit();
@@ -169,14 +174,14 @@
         #endregion
 
         private DevExpress.XtraGrid.GridControl gridControl1;
-        private DevExpress.XtraGrid.Views.Grid.GridView dgvIEPPH;
         private DevExpress.XtraBars.BarManager barManager1;
         private DevExpress.XtraBars.Bar bar2;
-        private DevExpress.XtraBars.BarButtonItem btnImport;
         private DevExpress.XtraBars.BarButtonItem btnExport;
         private DevExpress.XtraBars.BarDockControl barDockControlTop;
         private DevExpress.XtraBars.BarDockControl barDockControlBottom;
         private DevExpress.XtraBars.BarDockControl barDockControlLeft;
         private DevExpress.XtraBars.BarDockControl barDockControlRight;
+        private DevExpress.XtraBars.BarButtonItem btnRefresh;
+        private DevExpress.XtraGrid.Views.Grid.GridView dgvIEPPH;
     }
 }

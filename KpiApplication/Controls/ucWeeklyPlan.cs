@@ -4,11 +4,13 @@ using KpiApplication.DataAccess;
 using KpiApplication.Excel;
 using KpiApplication.Models;
 using KpiApplication.Utils;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -19,7 +21,7 @@ namespace KpiApplication.Controls
     public partial class ucWeeklyPlan : DevExpress.XtraEditors.XtraUserControl
     {
         private readonly WeeklyPlan_DAL weeklyPlan_DAL = new WeeklyPlan_DAL();
-        private BindingList<WeeklyPlanData> weeklyPlanDataList;
+        private BindingList<WeeklyPlanData_Model> weeklyPlanDataList;
 
         public ucWeeklyPlan()
         {
@@ -27,12 +29,12 @@ namespace KpiApplication.Controls
             this.Load += ucWeeklyPlan_Load;
         }
 
-        private BindingList<WeeklyPlanData> FetchData()
+        private BindingList<WeeklyPlanData_Model> FetchData()
         {
             return weeklyPlan_DAL.GetWeeklyPlanData();
         }
 
-        private void LoadDataToGrid(BindingList<WeeklyPlanData> data)
+        private void LoadDataToGrid(BindingList<WeeklyPlanData_Model> data)
         {
             weeklyPlanDataList = data;
             gridControl1.DataSource = weeklyPlanDataList;
@@ -83,59 +85,103 @@ namespace KpiApplication.Controls
             int totalInserted = 0;
             int totalDuplicated = 0;
 
-            var existingKeys = new HashSet<(string ArticleName, string ModelName, int Week, int Month, int Year)>(
-                weeklyPlan_DAL.GetAllKeys());
-
-            var existingArticles = weeklyPlan_DAL.GetAllArticles();
-            var existingArticleNames = existingArticles
+            var existingKeys = new HashSet<(string, string, int, int, int)>(weeklyPlan_DAL.GetAllKeys());
+            var existingArticleNames = weeklyPlan_DAL.GetAllArticles()
                 .Select(a => a.ArticleName ?? string.Empty)
                 .ToHashSet();
 
             foreach (string filePath in filePaths)
             {
-                var importedData = await Task.Run(() => ExcelImporter.ImportWeeklyPlanFromExcel(filePath));
+                string fileName = Path.GetFileName(filePath);
 
+                List<string> sheetNames;
+                try
+                {
+                    using (var package = new ExcelPackage(new FileInfo(filePath)))
+                    {
+                        sheetNames = package.Workbook.Worksheets.Select(ws => ws.Name).ToList();
+                    }
+
+                    if (!sheetNames.Any())
+                    {
+                        XtraMessageBox.Show($"⚠️ File '{fileName}' không chứa sheet nào.", "Sheet trống", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        continue;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    XtraMessageBox.Show($"❌ Không đọc được file Excel '{fileName}':\n{ex.Message}", "Lỗi đọc file", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    continue;
+                }
+
+                // Cho người dùng chọn sheet
+                string selectedSheet = null;
+                using (var form = new KpiApplication.Forms.SheetSelectionForm(sheetNames))
+                {
+                    if (form.ShowDialog() != DialogResult.OK || string.IsNullOrEmpty(form.SelectedSheet))
+                        continue;
+
+                    selectedSheet = form.SelectedSheet;
+                }
+
+                List<WeeklyPlanData_Model> importedData;
+                try
+                {
+                    importedData = await Task.Run(() =>
+                        ExcelImporter.ImportWeeklyPlanFromExcel(filePath, selectedSheet));
+                }
+                catch (Exception ex)
+                {
+                    XtraMessageBox.Show($"❌ Lỗi khi đọc sheet '{selectedSheet}' trong file '{fileName}':\n{ex.Message}", "Lỗi đọc sheet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    continue;
+                }
+
+                if (importedData == null || importedData.Count == 0)
+                {
+                    XtraMessageBox.Show($"⚠️ Sheet '{selectedSheet}' trong file '{fileName}' không chứa dữ liệu hợp lệ.", "Dữ liệu rỗng", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    continue;
+                }
+
+                // Bổ sung article mới
                 var newArticles = importedData
                     .Where(x => !string.IsNullOrWhiteSpace(x.ArticleName) && !existingArticleNames.Contains(x.ArticleName))
-                    .Select(x => (ArticleName: x.ArticleName, ModelName: x.ModelName ?? string.Empty))
-                    .Distinct()
+                    .GroupBy(x => x.ArticleName)
+                    .Select(g => (
+                        ArticleName: g.Key,
+                        ModelName: g.FirstOrDefault()?.ModelName ?? string.Empty
+                    ))
                     .ToList();
 
-                if (newArticles.Count > 0)
+                if (newArticles.Any())
                 {
                     var insertedArticles = weeklyPlan_DAL.BulkInsertArticles(newArticles);
-                    var newArticleIDs = insertedArticles.Select(x => x.ArticleID).ToList();
-                    var insertedIEIDs = weeklyPlan_DAL.InsertArticleIDsToIE_PPH_Data(newArticleIDs);
-                    weeklyPlan_DAL.InsertIEIDsToProductionStages(insertedIEIDs);
-
                     foreach (var art in newArticles)
                         existingArticleNames.Add(art.ArticleName);
                 }
 
+                // Lọc các dòng chưa có key trùng
                 var newItems = importedData
-                    .Where(item => !string.IsNullOrWhiteSpace(item.ArticleName)
-                        && !existingKeys.Contains((
-                            item.ArticleName,
+                    .Where(item => !string.IsNullOrWhiteSpace(item.ArticleName))
+                    .Where(item =>
+                    {
+                        var key = (
+                            item.ArticleName ?? string.Empty,
                             item.ModelName ?? string.Empty,
                             item.Week ?? 0,
                             item.Month ?? 0,
-                            item.Year ?? 0)))
+                            item.Year ?? 0
+                        );
+                        if (existingKeys.Contains(key)) return false;
+
+                        existingKeys.Add(key);
+                        return true;
+                    })
                     .ToList();
 
-                int duplicatedCount = importedData.Count - newItems.Count;
                 int insertedCount = newItems.Count;
+                int duplicatedCount = importedData.Count - insertedCount;
 
-                foreach (var newItem in newItems)
-                {
-                    existingKeys.Add((
-                        newItem.ArticleName ?? string.Empty,
-                        newItem.ModelName ?? string.Empty,
-                        newItem.Week ?? 0,
-                        newItem.Month ?? 0,
-                        newItem.Year ?? 0));
-                }
-
-                if (newItems.Count > 0)
+                if (insertedCount > 0)
                     weeklyPlan_DAL.BulkInsertWeeklyPlans(newItems);
 
                 totalInserted += insertedCount;
@@ -168,24 +214,26 @@ namespace KpiApplication.Controls
                 {
                     int inserted = 0, duplicated = 0;
 
+                    (inserted, duplicated) = await ImportWeeklyPlanFilesAsync(openFileDialog.FileNames);
+
                     await AsyncLoaderHelper.LoadDataWithSplashAsync(
                         this,
-                        async () =>
+                        FetchData,
+                        data =>
                         {
-                            (inserted, duplicated) = await ImportWeeklyPlanFilesAsync(openFileDialog.FileNames);
+                            LoadDataToGrid(data);
+                            ConfigureGridAfterDataBinding();
                         },
-                        "Importing..."
+                        "Đang tải lại dữ liệu..."
                     );
 
                     XtraMessageBox.Show(
                         $"✔️ Đã nhập tổng cộng {inserted} dòng mới.\n⚠️ Bỏ qua tổng cộng {duplicated} dòng trùng.",
                         "Kết quả", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    await LoadDataAsync();
                 }
                 catch (Exception ex)
                 {
-                    XtraMessageBox.Show($"Có lỗi xảy ra khi nhập dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    XtraMessageBox.Show($"❌ Lỗi khi nhập dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

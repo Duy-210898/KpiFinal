@@ -2,6 +2,7 @@
 using DevExpress.XtraBars;
 using DevExpress.XtraBars.Navigation;
 using DevExpress.XtraEditors;
+using KpiApplication.Common;
 using KpiApplication.Controls;
 using KpiApplication.DataAccess;
 using System;
@@ -15,14 +16,17 @@ namespace KpiApplication
     {
         private AccordionControlElement previousSelectedElement;
         private BarButtonItem btnLogOut;
-        private User_DAL dbManager;
-        private ucWorkingTime ucWorkingTime;  
+        private readonly Account_DAL account_DAL;
+        private ucWorkingTime ucWorkingTime;
+        private ucViewPPHData ucViewPPHData;
+
 
         public MainView()
         {
             InitializeComponent();
             InitializeLogOutButton();
-            dbManager = new User_DAL();
+            this.KeyPreview = true;
+            account_DAL = new Account_DAL();
             accordionControl1.ElementClick += AccordionControl1_ElementClick;
             UserLookAndFeel.Default.StyleChanged += (s, e) =>
             {
@@ -31,6 +35,7 @@ namespace KpiApplication
             };
             previousSelectedElement = accordionControl1.SelectedElement;
         }
+
         void SaveLastSkinName(string skinName)
         {
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -94,12 +99,19 @@ namespace KpiApplication
         {
             ShowUserControl<ucWeeklyPlan>("Weekly Production Plan");
         }
+        private void btnAccountManage_Click(object sender, EventArgs e)
+        {
+            ShowUserControl<ucAccountManage>("Account Management");
+        }
+        private void btnTCT_Click(object sender, EventArgs e)
+        {
+            ShowUserControl<ucTCTData>("TCT Data");
+        }
 
         private Dictionary<Type, UserControl> _userControls = new Dictionary<Type, UserControl>();
 
         private void ShowUserControl<T>(string status) where T : UserControl, new()
         {
-            // Nếu control T chưa tồn tại thì tạo mới và thêm vào panel
             if (!_userControls.TryGetValue(typeof(T), out UserControl userControl))
             {
                 userControl = new T
@@ -118,14 +130,19 @@ namespace KpiApplication
                 {
                     ucWorkingTime = null;
                 }
+
+                if (typeof(T) == typeof(ucViewPPHData))
+                {
+                    ucViewPPHData = userControl as ucViewPPHData;
+                }
             }
 
-            // Ẩn tất cả control khác trong panel
             foreach (Control ctrl in pnlControl.Controls)
             {
                 ctrl.Visible = ctrl == userControl;
             }
         }
+    
         private void HighlightSelectedItem(AccordionControlElement selectedElement)
         {
             if (selectedElement.Style != ElementStyle.Item)
@@ -162,17 +179,24 @@ namespace KpiApplication
 
         private void MainView_Load(object sender, EventArgs e)
         {
-            string department = dbManager.GetDepartmentByUsername(KpiApplication.Common.Global.Username);
-            barSubItem1.Caption = KpiApplication.Common.Global.Username + " - " + department;
+            var emp = Global.CurrentEmployee;
 
-            if (department != "ME")
+            if (emp == null)
+            {
+                MessageBox.Show("Không tìm thấy thông tin người dùng!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            barSubItem1.Caption = $"{emp.EmployeeName} - {emp.Department}";
+
+            if (emp.Department != "ME")
             {
                 btnViewData.Enabled = false;
                 btnViewPPH.Enabled = false;
                 btnWeeklyPlan.Enabled = false;
+                btnAccountManage.Enabled = false;
             }
         }
-
         private void MainView_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Control && e.KeyCode == Keys.S)
@@ -180,6 +204,12 @@ namespace KpiApplication
                 e.Handled = true;
                 ucWorkingTime?.SaveModifiedData();
             }
+            if (e.Control && e.KeyCode == Keys.F)
+            {
+                ucViewPPHData?.ShowFind(); 
+                e.Handled = true;
+            }
+
         }
 
         private void MainView_FormClosing(object sender, FormClosingEventArgs e)
@@ -194,7 +224,6 @@ namespace KpiApplication
 
                 if (result == DialogResult.No)
                 {
-                    // Người dùng không muốn thoát mà không lưu -> hủy đóng form
                     e.Cancel = true;
                 }
             }
@@ -218,10 +247,8 @@ namespace KpiApplication
 
                     return;
                 }
-                // Nếu chọn Yes -> chuyển tab luôn mà không lưu
             }
 
-            // Cập nhật tab hiện tại nếu chuyển thành công
             previousSelectedElement = e.Element;
         }
     }

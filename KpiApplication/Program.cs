@@ -15,11 +15,10 @@ namespace KpiApplication
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             BonusSkins.Register();
-            // Đọc tên skin lưu trong appSettings
             string lastSkinName = ConfigurationManager.AppSettings["LastSkinName"];
             if (string.IsNullOrEmpty(lastSkinName))
             {
-                lastSkinName = "WXI"; // skin mặc định nếu không có trong config
+                lastSkinName = "WXI";
             }
 
             UserLookAndFeel.Default.SetSkinStyle(lastSkinName);

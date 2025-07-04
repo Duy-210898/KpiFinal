@@ -2,6 +2,7 @@
 using KpiApplication.Common;
 using KpiApplication.DataAccess;
 using KpiApplication.Forms;
+using KpiApplication.Models;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -11,7 +12,7 @@ namespace KpiApplication
 {
     public partial class Login : XtraForm
     {
-        private readonly User_DAL dbManager;
+        private readonly Account_DAL account_DAL;
 
         public static bool isLoggedIn = false;
         private bool isMouseDown = false;
@@ -22,7 +23,7 @@ namespace KpiApplication
             EnableDoubleBufferingForForm();
             LookAndFeel.UseWindowsXPTheme = true;
             txtPassword.UseSystemPasswordChar = true;
-            dbManager = new User_DAL();
+            account_DAL = new Account_DAL();
             SetRoundedRegion(50);
         }
         private void SetRoundedRegion(int radius)
@@ -62,7 +63,7 @@ namespace KpiApplication
                 return;
             }
 
-            bool doesUserExist = dbManager.UserExists(username);
+            bool doesUserExist = account_DAL.UserExists(username);
             if (!doesUserExist)
             {
                 XtraMessageBox.Show("Username does not exist!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -71,8 +72,7 @@ namespace KpiApplication
                 return;
             }
 
-            bool isActive = dbManager.IsActive(username);
-
+            bool isActive = account_DAL.IsActive(username);
             if (!isActive)
             {
                 XtraMessageBox.Show("The account has been disabled!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -81,11 +81,17 @@ namespace KpiApplication
                 return;
             }
 
-            bool isUserValid = dbManager.ValidateUser(username, password);
-
+            bool isUserValid = account_DAL.ValidateUser(username, password);
             if (isUserValid)
             {
                 Global.Username = username;
+
+                EmployeeInfo_Model empInfo = account_DAL.GetEmployeeInfo(username);
+                if (empInfo != null)
+                {
+                    Global.CurrentEmployee = empInfo;
+                }
+
                 txtPassword.Clear();
                 this.Hide();
                 MainView mainView = new MainView();
@@ -141,8 +147,7 @@ namespace KpiApplication
                 return;
             }
 
-            User_DAL userDal = new User_DAL();
-            if (!userDal.UserExists(username))
+            if (!account_DAL.UserExists(username))
             {
                 XtraMessageBox.Show("Username does not exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;

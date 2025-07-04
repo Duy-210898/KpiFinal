@@ -14,8 +14,69 @@ using System.Windows.Forms;
 namespace KpiApplication.Excel
 {
     public class ExcelExporter
+
     {
-        public static void ExportIETotalPivoted(List<IETotal> ieTotalList, string filePath, bool includeTCT)
+        public static void ExportSimpleDataTableToExcel(DataTable table, string filePath, string sheetName)
+        {
+            using (var package = new ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add(sheetName);
+
+                // Load data starting from A1, including headers
+                worksheet.Cells["A1"].LoadFromDataTable(table, true);
+                worksheet.Cells[worksheet.Dimension.Address].AutoFilter = true;
+
+                int totalRows = table.Rows.Count + 1; // +1 for header
+                int totalCols = table.Columns.Count;
+
+                // Format header row (row 1)
+                using (var headerRange = worksheet.Cells[1, 1, 1, totalCols])
+                {
+                    headerRange.Style.Font.Bold = true;
+                    headerRange.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    headerRange.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    headerRange.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    headerRange.Style.Fill.BackgroundColor.SetColor(Color.LightSteelBlue);
+
+                    headerRange.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    headerRange.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                    headerRange.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    headerRange.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                }
+
+                // Format data rows
+                for (int col = 1; col <= totalCols; col++)
+                {
+                    var columnType = table.Columns[col - 1].DataType;
+
+                    var dataRange = worksheet.Cells[2, col, totalRows, col];
+
+                    if (columnType == typeof(int) || columnType == typeof(double) || columnType == typeof(decimal))
+                    {
+                        dataRange.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        dataRange.Style.Numberformat.Format = "#,##0"; // Format with comma separator
+                    }
+                    else if (columnType == typeof(DateTime))
+                    {
+                        dataRange.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        dataRange.Style.Numberformat.Format = "dd-MMM-yyyy";
+                    }
+
+                    // Border for data
+                    dataRange.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    dataRange.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                    dataRange.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    dataRange.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                }
+
+                // Auto-fit all columns
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                // Save to file
+                File.WriteAllBytes(filePath, package.GetAsByteArray());
+            }
+        }
+        public static void ExportIETotalPivoted(List<IETotal_Model> ieTotalList, string filePath, bool includeTCT)
         {
             try
             {

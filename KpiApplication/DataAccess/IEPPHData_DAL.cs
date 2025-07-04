@@ -3,147 +3,404 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
+using System.Windows.Media;
 
 namespace KpiApplication.DataAccess
 {
     public class IEPPHData_DAL
     {
         private static readonly string connectionString = ConfigurationManager.ConnectionStrings["strCon"].ConnectionString;
+
+        #region === Helper Methods ===
+
+        private static void AddParameterSafe(SqlCommand cmd, string name, object value)
+        {
+            cmd.Parameters.AddWithValue(name, value ?? DBNull.Value);
+        }
+        public static void DeletePPH(int articleID, int? processID, int? typeID)
+        {
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                string sql = @"
+            DELETE FROM ArticleProcessTypeData 
+            WHERE ArticleID = @ArticleID 
+              AND ProcessID = @ProcessID 
+              AND TypeID = @TypeID";
+
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ArticleID", articleID);
+
+                    if (processID.HasValue)
+                        cmd.Parameters.AddWithValue("@ProcessID", processID.Value);
+                    else
+                        cmd.Parameters.AddWithValue("@ProcessID", DBNull.Value);
+
+                    if (typeID.HasValue)
+                        cmd.Parameters.AddWithValue("@TypeID", typeID.Value);
+                    else
+                        cmd.Parameters.AddWithValue("@TypeID", DBNull.Value);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public List<string> GetProcessList()
+        {
+            var result = new List<string>();
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT DISTINCT ProcessName, ProcessID FROM Process WHERE ISNULL(ProcessName, '') <> '' ORDER BY ProcessID ASC";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    conn.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string process = reader.GetString(0)?.Trim();
+                            if (!string.IsNullOrWhiteSpace(process))
+                                result.Add(process);
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private bool ExecuteInsert(string tableName, Dictionary<string, object> parameters)
+        {
+            using (var conn = new SqlConnection(connectionString))
+            {
+                var cols = string.Join(", ", parameters.Keys);
+                var paramNames = string.Join(", ", parameters.Keys.Select(k => "@" + k));
+
+                string query = $"INSERT INTO {tableName} ({cols}) VALUES ({paramNames})";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    foreach (var kv in parameters)
+                    {
+                        cmd.Parameters.AddWithValue("@" + kv.Key, kv.Value ?? DBNull.Value);
+                    }
+
+                    conn.Open();
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+        private bool ExecuteMerge(string tableName, string[] keyColumns, Dictionary<string, object> parameters)
+        {
+            var updateColumns = parameters.Keys
+                .Where(k => !keyColumns.Contains(k))
+                .Select(k => $"{k} = @{k}");
+
+            var mergeCondition = string.Join(" AND ", keyColumns.Select(k => $"t.{k} = s.{k}"));
+            var insertColumns = string.Join(", ", parameters.Keys);
+            var insertValues = string.Join(", ", parameters.Keys.Select(k => "s." + k));
+
+            string query = $@"
+        MERGE {tableName} AS t
+        USING (SELECT {string.Join(", ", parameters.Keys.Select(k => "@" + k + " AS " + k))}) AS s
+        ON {mergeCondition}
+        WHEN MATCHED THEN
+            UPDATE SET {string.Join(", ", updateColumns)}
+        WHEN NOT MATCHED THEN
+            INSERT ({insertColumns}) VALUES ({insertValues});";
+
+            using (var conn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand(query, conn))
+            {
+                foreach (var kv in parameters)
+                {
+                    cmd.Parameters.AddWithValue("@" + kv.Key, kv.Value ?? DBNull.Value);
+                }
+
+                conn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
+        #endregion
+
+        #region === Lookup Methods ===
+
         public int? GetProcessID(string processName)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            const string sql = "SELECT ProcessID FROM Process WHERE ProcessName = @ProcessName";
+            using (var conn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand(sql, conn))
             {
+                AddParameterSafe(cmd, "@ProcessName", processName);
                 conn.Open();
-                using (SqlCommand cmd = new SqlCommand("SELECT ProcessID FROM Process WHERE ProcessNAme = @ProcessName", conn))
-                {
-                    cmd.Parameters.AddWithValue("@ProcessName", processName);
-                    var result = cmd.ExecuteScalar();
-                    return result != null ? Convert.ToInt32(result) : (int?)null;
-                }
+                var result = cmd.ExecuteScalar();
+                return result != null ? Convert.ToInt32(result) : (int?)null;
             }
         }
 
-        public bool UpdateIEPPHData_IE_PPH_Data_Part(IETotal data)
+        public int? GetTypeID(string typeName)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            const string sql = "SELECT TypeID FROM ArtType WHERE TypeName = @TypeName";
+            using (var conn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand(sql, conn))
             {
+                AddParameterSafe(cmd, "@TypeName", typeName);
                 conn.Open();
-                using (SqlCommand cmd = new SqlCommand(@"
-            UPDATE [IE_PPH_Data]
-            SET 
-                Person_Incharge = @PersonIncharge,
-                NoteForPC = @NoteForPC,
-                PCSend = @PCSend,
-                Outsourcing_Assembling = @OA,
-                Outsourcing_Stitching = @OS,
-                Outsourcing_StockFitting = @OF,
-                DataStatus = @DataStatus
-            WHERE IE_ID = @IE_ID", conn))
-                {
-                    // Person Incharge (string)
-                    cmd.Parameters.AddWithValue("@PersonIncharge", !string.IsNullOrEmpty(data.PersonIncharge) ? (object)data.PersonIncharge : DBNull.Value);
-
-                    // Note For PC (string)
-                    cmd.Parameters.AddWithValue("@NoteForPC", !string.IsNullOrEmpty(data.NoteForPC) ? (object)data.NoteForPC : DBNull.Value);
-
-                    // PC Send (string)
-                    cmd.Parameters.AddWithValue("@PCSend", !string.IsNullOrEmpty(data.PCSend) ? (object)data.PCSend : DBNull.Value);
-
-                    // Outsourcing flags (bool)
-                    cmd.Parameters.AddWithValue("@OA", data.OutsourcingAssemblingBool);
-                    cmd.Parameters.AddWithValue("@OS", data.OutsourcingStitchingBool);
-                    cmd.Parameters.AddWithValue("@OF", data.OutsourcingStockFittingBool);
-
-                    // Data Status (string)
-                    cmd.Parameters.AddWithValue("@DataStatus", !string.IsNullOrEmpty(data.Status) ? (object)data.Status : DBNull.Value);
-
-                    // IE_ID (primary key)
-                    cmd.Parameters.AddWithValue("@IE_ID", data.IEID);
-
-                    int rowsAffected = cmd.ExecuteNonQuery();
-                    return rowsAffected > 0;
-                }
+                var result = cmd.ExecuteScalar();
+                return result != null ? Convert.ToInt32(result) : (int?)null;
+            }
+        }
+        public bool Exists_ArticlePCIncharge(int articleID)
+        {
+            string query = "SELECT COUNT(*) FROM Article_PCIncharge WHERE ArticleID = @ArticleID";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@ArticleID", articleID);
+                conn.Open();
+                return (int)cmd.ExecuteScalar() > 0;
             }
         }
 
-        public bool UpdateIEPPHData_Articles_Part(IETotal data)
+        public bool Exists_ArticleOutsourcing(int articleID)
         {
+            string query = "SELECT COUNT(*) FROM Article_Outsourcing WHERE ArticleID = @ArticleID";
             using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
             {
+                cmd.Parameters.AddWithValue("@ArticleID", articleID);
                 conn.Open();
-                using (SqlCommand cmd = new SqlCommand(@"UPDATE [Articles]
-            SET ArticleName = @ArticleName,
-                ModelName = @ModelName
-            WHERE ArticleID = @ArticleID", conn))
-                {
-                    cmd.Parameters.AddWithValue("@ArticleName", data.ArticleName != null ? (object)data.ArticleName : DBNull.Value);
-                    cmd.Parameters.AddWithValue("@ModelName", data.ModelName != null ? (object)data.ModelName : DBNull.Value);
-                    cmd.Parameters.AddWithValue("@ArticleID", data.ArticleID);
-
-                    int rowsAffected = cmd.ExecuteNonQuery();
-                    return rowsAffected > 0;
-                }
+                return (int)cmd.ExecuteScalar() > 0;
             }
         }
 
-        public bool UpdateIEPPHData_Production_Stages_Part(IETotal data)
+        public bool Exists_ArticleProcessType(int articleID, int processID, int typeID)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            const string sql = @"
+SELECT COUNT(*) FROM ArticleProcessTypeData
+WHERE ArticleID = @ArticleID AND ProcessID = @ProcessID AND TypeID = @TypeID";
+
+            using (var conn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand(sql, conn))
             {
+                AddParameterSafe(cmd, "@ArticleID", articleID);
+                AddParameterSafe(cmd, "@ProcessID", processID);
+                AddParameterSafe(cmd, "@TypeID", typeID);
+
                 conn.Open();
-                using (SqlCommand cmd = new SqlCommand(@"
-            UPDATE [Production_Stages]
-            SET 
-                Target_Output_PC = @Target,
-                Adjust_Operator_No = @AdjustNo,
-                TypeID = @TypeID,
-                IsSigned = @IsSigned,
-                ReferenceModel = @RefModel,
-                OperatorAdjust = @OperatorAdjust,
-                ReferenceOperator = @RefOperator,
-                Notes = @Notes
-            WHERE IE_PPH_ID = @IE_ID AND ProcessID = @ProcessID", conn))
-                {
-                    // Đảm bảo xử lý nullable cho int và string
-                    cmd.Parameters.AddWithValue("@Target", data.TargetOutputPC.HasValue ? (object)data.TargetOutputPC.Value : DBNull.Value);
-                    cmd.Parameters.AddWithValue("@AdjustNo", data.AdjustOperatorNo.HasValue ? (object)data.AdjustOperatorNo.Value : DBNull.Value);
-                    cmd.Parameters.AddWithValue("@TypeID", data.TypeID.HasValue ? (object)data.TypeID.Value : DBNull.Value);
-                    cmd.Parameters.AddWithValue("@IsSigned", !string.IsNullOrEmpty(data.IsSigned) ? (object)data.IsSigned : DBNull.Value);
-                    cmd.Parameters.AddWithValue("@RefModel", !string.IsNullOrEmpty(data.ReferenceModel) ? (object)data.ReferenceModel : DBNull.Value);
-                    cmd.Parameters.AddWithValue("@OperatorAdjust", data.OperatorAdjust.HasValue ? (object)data.OperatorAdjust.Value : DBNull.Value);
-                    cmd.Parameters.AddWithValue("@RefOperator", data.ReferenceOperator.HasValue ? (object)data.ReferenceOperator.Value : DBNull.Value);
-                    cmd.Parameters.AddWithValue("@Notes", !string.IsNullOrEmpty(data.Notes) ? (object)data.Notes : DBNull.Value);
-
-                    // Không nullable nên gán trực tiếp
-                    cmd.Parameters.AddWithValue("@IE_ID", data.IEID);
-                    cmd.Parameters.AddWithValue("@ProcessID", data.ProcessID);
-
-                    int rowsAffected = cmd.ExecuteNonQuery();
-                    return rowsAffected > 0;
-                }
+                int count = (int)cmd.ExecuteScalar();
+                return count > 0;
             }
         }
-        public int? GetTypeIDByTypeName(string typeName)
+        public bool Exists_TCTData(string modelName, string typeName, string process)
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            string query = @"
+    SELECT COUNT(*) FROM [TCTData]
+    WHERE ModelName = @ModelName
+      AND TypeName = @TypeName
+      AND Process = @Process";
+
+            using (var conn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand(query, conn))
             {
+                cmd.Parameters.Add("@ModelName", SqlDbType.NVarChar).Value = modelName.Trim().ToUpper();
+                cmd.Parameters.Add("@TypeName", SqlDbType.NVarChar).Value = typeName.Trim().ToUpper();
+                cmd.Parameters.Add("@Process", SqlDbType.NVarChar).Value = process.Trim().ToUpper();
+
                 conn.Open();
-                using (SqlCommand cmd = new SqlCommand(@"SELECT TypeID FROM ArtType WHERE TypeName = @TypeName", conn))
-                {
-                    cmd.Parameters.AddWithValue("@TypeName", typeName);
-                    var result = cmd.ExecuteScalar();
-                    return result != null ? Convert.ToInt32(result) : (int?)null;
-                }
+                return (int)cmd.ExecuteScalar() > 0;
+            }
+        }
+        public static bool Update_ArticleModelName(int articleId, string newModelName)
+        {
+            string query = @"
+        UPDATE [Articles]
+        SET ModelName = @ModelName
+        WHERE ArticleID = @ArticleID";
+
+            using (var conn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.Add("@ModelName", SqlDbType.NVarChar).Value = newModelName;
+                cmd.Parameters.Add("@ArticleID", SqlDbType.Int).Value = articleId;
+
+                conn.Open();
+                int rowsAffected = cmd.ExecuteNonQuery();
+                return rowsAffected > 0;
             }
         }
 
-
-        public BindingList<IETotal> GetIEPPHData()
+        public void Insert_TCTData(string modelName, string typeName, string process, double? tctValue)
         {
-            var ieTotal = new BindingList<IETotal>();
+            string query = @"
+        INSERT INTO [TCTData] (ModelName, TypeName, Process, TCTValue, CreatedAt)
+        VALUES (@ModelName, @TypeName, @Process, @TCTValue, GETDATE())";
+
+            using (var conn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.Add("@ModelName", SqlDbType.NVarChar).Value = modelName;
+                cmd.Parameters.Add("@TypeName", SqlDbType.NVarChar).Value = typeName;
+                cmd.Parameters.Add("@Process", SqlDbType.NVarChar).Value = process;
+
+                if (tctValue.HasValue)
+                    cmd.Parameters.Add("@TCTValue", SqlDbType.Float).Value = tctValue.Value;
+                else
+                    cmd.Parameters.Add("@TCTValue", SqlDbType.Float).Value = DBNull.Value;
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void Update_TCTData(string modelName, string typeName, string process, double? tctValue, string updatedBy)
+        {
+            string query = @"
+        UPDATE [TCTData]
+        SET TCTValue = @TCTValue, UpdatedBy = @UpdatedBy, UpdatedAt = GETDATE()
+        WHERE ModelName = @ModelName AND TypeName = @TypeName AND Process = @Process";
+
+            using (var conn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.Add("@ModelName", SqlDbType.NVarChar).Value = modelName;
+                cmd.Parameters.Add("@TypeName", SqlDbType.NVarChar).Value = typeName;
+                cmd.Parameters.Add("@Process", SqlDbType.NVarChar).Value = process;
+                cmd.Parameters.Add("@UpdatedBy", SqlDbType.NVarChar).Value = updatedBy;
+
+                if (tctValue.HasValue)
+                    cmd.Parameters.Add("@TCTValue", SqlDbType.Float).Value = tctValue.Value;
+                else
+                    cmd.Parameters.Add("@TCTValue", SqlDbType.Float).Value = DBNull.Value;
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        #endregion
+
+        #region === Insert Methods ===
+
+        public bool Insert_ArticleProcessTypeData(IETotal_Model item)
+        {
+            // Kiểm tra null trước khi gọi Exists
+            if (!item.ProcessID.HasValue || !item.TypeID.HasValue)
+                return false;
+
+            if (Exists_ArticleProcessType(item.ArticleID, item.ProcessID.Value, item.TypeID.Value))
+                return false;
+
+            var parameters = new Dictionary<string, object>
+            {
+                ["ArticleID"] = item.ArticleID,
+                ["ProcessID"] = item.ProcessID.Value,
+                ["TypeID"] = item.TypeID.Value,
+                ["Target"] = item.TargetOutputPC,
+                ["AdjustOperator"] = item.AdjustOperatorNo,
+                ["ReferenceModel"] = item.ReferenceModel,
+                ["OperatorAdjust"] = item.OperatorAdjust,
+                ["ReferenceOperator"] = item.ReferenceOperator,
+                ["Notes"] = item.Notes,
+                ["IsSigned"] = item.IsSigned
+            };
+
+            return ExecuteInsert("ArticleProcessTypeData", parameters);
+        }
+
+        public bool Insert_ArticlePCIncharge(IETotal_Model item)
+        {
+            var parameters = new Dictionary<string, object>
+            {
+                ["ArticleID"] = item.ArticleID,
+                ["PersonIncharge"] = item.PersonIncharge,
+                ["PCSend"] = item.PCSend
+            };
+
+            return ExecuteInsert("Article_PCIncharge", parameters);
+        }
+
+        public bool Insert_ArticleOutsourcing(IETotal_Model item)
+        {
+            var parameters = new Dictionary<string, object>
+            {
+                ["ArticleID"] = item.ArticleID,
+                ["GCN_Stitching"] = item.OutsourcingStitchingBool,
+                ["GCN_Assembling"] = item.OutsourcingAssemblingBool,
+                ["GCN_StockFitting"] = item.OutsourcingStockFittingBool,
+                ["NoteForPC"] = item.NoteForPC,
+                ["Status"] = item.Status
+            };
+
+            return ExecuteInsert("Article_Outsourcing", parameters);
+        }
+
+        #endregion
+
+        #region === Update Methods ===
+
+        public bool Update_ArticleProcessTypeData(IETotal_Model item, string updatedBy, DateTime? updatedAt = null)
+        {
+            var parameters = new Dictionary<string, object>
+            {
+                ["ArticleID"] = item.ArticleID,
+                ["ProcessID"] = item.ProcessID,
+                ["TypeID"] = item.TypeID,
+                ["Target"] = item.TargetOutputPC,
+                ["AdjustOperator"] = item.AdjustOperatorNo,
+                ["ReferenceModel"] = item.ReferenceModel,
+                ["OperatorAdjust"] = item.OperatorAdjust,
+                ["ReferenceOperator"] = item.ReferenceOperator,
+                ["Notes"] = item.Notes,
+                ["IsSigned"] = item.IsSigned,
+                ["LastUpdatedBy"] = updatedBy,
+                ["LastUpdatedAt"] = updatedAt ?? DateTime.Now
+            };
+
+            return ExecuteMerge("ArticleProcessTypeData", new[] { "ArticleID", "ProcessID", "TypeID" }, parameters);
+        }
+        public bool Update_ArticlePCIncharge(IETotal_Model item)
+        {
+            var parameters = new Dictionary<string, object>
+            {
+                ["ArticleID"] = item.ArticleID,
+                ["PCSend"] = item.PCSend,
+                ["PersonIncharge"] = item.PersonIncharge
+            };
+
+            return ExecuteMerge("Article_PCIncharge", new[] { "ArticleID" }, parameters);
+        }
+
+        public bool Update_ArticleOutsourcing(IETotal_Model item)
+        {
+            var parameters = new Dictionary<string, object>
+            {
+                ["ArticleID"] = item.ArticleID,
+                ["GCN_Stitching"] = item.OutsourcingStitchingBool,
+                ["GCN_Assembling"] = item.OutsourcingAssemblingBool,
+                ["GCN_StockFitting"] = item.OutsourcingStockFittingBool,
+                ["NoteForPC"] = item.NoteForPC,
+                ["DataStatus"] = item.Status
+            };
+
+            return ExecuteMerge("Article_Outsourcing", new[] { "ArticleID" }, parameters);
+        }
+
+        #endregion
+        public BindingList<IETotal_Model> GetIEPPHData()
+        {
+            var ieTotal = new BindingList<IETotal_Model>();
 
             try
             {
@@ -151,14 +408,31 @@ namespace KpiApplication.DataAccess
                 var tctDataList = GetAllTCTData();
 
                 // Tạo dictionary để tra cứu nhanh TCTValue theo (ModelName, Process, Type)
-                var tctDict = tctDataList.ToDictionary(
-                    t => (
+                var tctDict = tctDataList
+                    .GroupBy(t => (
                         Model: t.ModelName?.Trim().ToLowerInvariant() ?? "",
                         Process: t.Process?.Trim().ToLowerInvariant() ?? "",
                         Type: t.Type?.Trim().ToLowerInvariant() ?? ""
-                    ),
-                    t => t.TCTValue
-                );
+                    ))
+                    .ToDictionary(
+                        g => g.Key,
+                        g => g.First().TCTValue // Giữ dòng đầu tiên nếu bị trùng
+                    );
+
+                // Ghi log các key trùng (nếu có)
+                var duplicates = tctDataList
+                    .GroupBy(t => (
+                        Model: t.ModelName?.Trim().ToLowerInvariant() ?? "",
+                        Process: t.Process?.Trim().ToLowerInvariant() ?? "",
+                        Type: t.Type?.Trim().ToLowerInvariant() ?? ""
+                    ))
+                    .Where(g => g.Count() > 1)
+                    .ToList();
+
+                foreach (var dup in duplicates)
+                {
+                    Debug.WriteLine($"⚠️ Trùng key TCT: Model='{dup.Key.Model}', Process='{dup.Key.Process}', Type='{dup.Key.Type}', Count={dup.Count()}");
+                }
 
                 using (var conn = new SqlConnection(connectionString))
                 {
@@ -166,41 +440,40 @@ namespace KpiApplication.DataAccess
 
                     string query = @"
                 SELECT 
-                    A.ArticleID,
-                    A.ArticleName,
-                    A.ModelName,
-
-                    IE.IE_ID,
-                    IE.PCSend,
-                    IE.Person_Incharge,
-                    IE.NoteForPC,
-                    IE.Outsourcing_Assembling,
-                    IE.Outsourcing_Stitching,
-                    IE.Outsourcing_StockFitting,
-                    IE.DataStatus,
-
-                    AT.TypeName,
-                    AT.TypeID,
-
-                    P.ProcessID,
-                    P.ProcessName,
-
-                    PS.StageID,
-                    PS.Target_Output_PC,
-                    PS.Adjust_Operator_No,
-                    PS.IsSigned,
-                    PS.ReferenceModel,
-                    PS.OperatorAdjust,
-                    PS.ReferenceOperator,
-                    PS.Notes
-
-                    FROM Articles A
-                    LEFT JOIN IE_PPH_Data IE ON IE.ArticleID = A.ArticleID
-                    LEFT JOIN Production_Stages PS ON PS.IE_PPH_ID = IE.IE_ID
-                    LEFT JOIN ArtType AT ON PS.TypeID = AT.TypeID
-                    LEFT JOIN Process P ON P.ProcessID = PS.ProcessID
-                    ORDER BY A.ArticleName, P.ProcessID            
-";
+                    a.ArticleID,
+                    a.ArticleName,
+                    a.ModelName,
+                    aptd.ProcessID,
+                    p.ProcessName,
+                    aptd.TypeID,
+                    at.TypeName,
+                    aptd.Target,
+                    aptd.AdjustOperator,
+                    aptd.ReferenceModel,
+                    aptd.IsSigned,
+                    aptd.OperatorAdjust,
+                    aptd.ReferenceOperator,
+                    aptd.Notes AS Notes_ArticleProcessType,
+                    apc.PCSend,
+                    apc.PersonIncharge,
+                    ao.GCN_Stitching,
+                    ao.GCN_Assembling,
+                    ao.GCN_StockFitting,
+                    ao.NoteForPC,
+                    ao.DataStatus
+                FROM Articles a
+                LEFT JOIN ArticleProcessTypeData aptd 
+                    ON a.ArticleID = aptd.ArticleID
+                LEFT JOIN Process p 
+                    ON aptd.ProcessID = p.ProcessID
+                LEFT JOIN ArtType at 
+                    ON aptd.TypeID = at.TypeID
+                LEFT JOIN Article_PCIncharge apc 
+                    ON a.ArticleID = apc.ArticleID
+                LEFT JOIN Article_Outsourcing ao 
+                    ON a.ArticleID = ao.ArticleID
+                ORDER BY a.ArticleName, aptd.ProcessID;
+            ";
 
                     using (var cmd = new SqlCommand(query, conn))
                     {
@@ -208,70 +481,79 @@ namespace KpiApplication.DataAccess
 
                         using (var reader = cmd.ExecuteReader())
                         {
+                            int rowCount = 0;
+
                             while (reader.Read())
                             {
-                                var data = new IETotal
+                                var data = new IETotal_Model
                                 {
-                                    ArticleID = reader["ArticleID"] as int? ?? 0,
-                                    ArticleName = reader["ArticleName"] as string,
-                                    ModelName = reader["ModelName"] as string,
+                                    ArticleID = reader["ArticleID"] != DBNull.Value ? Convert.ToInt32(reader["ArticleID"]) : 0,
+                                    ArticleName = reader["ArticleName"] as string ?? "",
+                                    ModelName = reader["ModelName"] as string ?? "",
 
-                                    IEID = reader["IE_ID"] as int? ?? 0,
-                                    PCSend = reader["PCSend"] as string,
-                                    PersonIncharge = reader["Person_Incharge"] as string,
-                                    NoteForPC = reader["NoteForPC"] as string,
+                                    PCSend = reader["PCSend"] as string ?? "",
+                                    PersonIncharge = reader["PersonIncharge"] as string ?? "",
+                                    NoteForPC = reader["NoteForPC"] as string ?? "",
 
-                                    OutsourcingAssemblingBool = reader["Outsourcing_Assembling"] as bool? ?? false,
-                                    OutsourcingStitchingBool = reader["Outsourcing_Stitching"] as bool? ?? false,
-                                    OutsourcingStockFittingBool = reader["Outsourcing_StockFitting"] as bool? ?? false,
-                                    Status = reader["DataStatus"] as string,
+                                    OutsourcingStitchingBool = reader["GCN_Stitching"] != DBNull.Value && Convert.ToBoolean(reader["GCN_Stitching"]),
+                                    OutsourcingAssemblingBool = reader["GCN_Assembling"] != DBNull.Value && Convert.ToBoolean(reader["GCN_Assembling"]),
+                                    OutsourcingStockFittingBool = reader["GCN_StockFitting"] != DBNull.Value && Convert.ToBoolean(reader["GCN_StockFitting"]),
 
-                                    ProcessID = reader["ProcessID"] as int? ?? 0,
-                                    Process = reader["ProcessName"] as string,
-                                    StageID = reader["StageID"] as int? ?? 0,
+                                    Status = reader["DataStatus"] as string ?? "",
+                                    IsSigned = reader["IsSigned"] as string ?? "",
 
-                                    TargetOutputPC = reader["Target_Output_PC"] as int?,
-                                    AdjustOperatorNo = reader["Adjust_Operator_No"] as int?,
+                                    ProcessID = reader["ProcessID"] != DBNull.Value ? Convert.ToInt32(reader["ProcessID"]) : 0,
+                                    Process = reader["ProcessName"] as string ?? "",
 
-                                    TypeID = reader["TypeID"] as int? ?? 0,
-                                    TypeName = reader["TypeName"] as string,
+                                    TypeID = reader["TypeID"] != DBNull.Value ? Convert.ToInt32(reader["TypeID"]) : 0,
+                                    TypeName = reader["TypeName"] as string ?? "",
 
-                                    IsSigned = reader["IsSigned"] as string,
-                                    ReferenceModel = reader["ReferenceModel"] as string,
-                                    OperatorAdjust = reader["OperatorAdjust"] as int?,
-                                    ReferenceOperator = reader["ReferenceOperator"] as int?,
-                                    Notes = reader["Notes"] as string
+                                    TargetOutputPC = reader["Target"] != DBNull.Value ? Convert.ToInt32(reader["Target"]) : (int?)null,
+                                    AdjustOperatorNo = reader["AdjustOperator"] != DBNull.Value ? Convert.ToInt32(reader["AdjustOperator"]) : (int?)null,
+
+                                    ReferenceModel = reader["ReferenceModel"] as string ?? "",
+                                    OperatorAdjust = reader["OperatorAdjust"] != DBNull.Value ? Convert.ToInt32(reader["OperatorAdjust"]) : (int?)null,
+                                    ReferenceOperator = reader["ReferenceOperator"] != DBNull.Value ? Convert.ToInt32(reader["ReferenceOperator"]) : (int?)null,
+                                    Notes = reader["Notes_ArticleProcessType"] as string ?? ""
                                 };
 
-                                // Tạo key chuẩn hóa để tra cứu
+                                // Tạo key để tra cứu TCT
                                 var key = (
-                                    Model: data.ModelName?.Trim().ToLowerInvariant() ?? "",
-                                    Process: data.Process?.Trim().ToLowerInvariant() ?? "",
-                                    Type: data.TypeName?.Trim().ToLowerInvariant() ?? ""
+                                    Model: data.ModelName.Trim().ToLowerInvariant(),
+                                    Process: data.Process.Trim().ToLowerInvariant(),
+                                    Type: data.TypeName.Trim().ToLowerInvariant()
                                 );
 
                                 if (tctDict.TryGetValue(key, out var tctValue))
                                 {
                                     data.TCTValue = tctValue;
                                 }
+                                else
+                                {
+                                    // Không có TCT – giữ null, không làm gì
+                                    Debug.WriteLine($"⚠️ Không tìm thấy TCT cho: Model='{key.Model}', Process='{key.Process}', Type='{key.Type}'");
+                                }
 
+                                rowCount++;
                                 ieTotal.Add(data);
                             }
+
+                            Debug.WriteLine($"✅ Tổng số dòng đọc được: {rowCount}");
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"⚠️ Lỗi khi lấy dữ liệu IEPPH: {ex.Message}");
+                Debug.WriteLine($"❌ Lỗi khi lấy dữ liệu IEPPH:\n{ex}");
             }
 
             return ieTotal;
         }
 
-        public List<TCTData> GetAllTCTData()
+        public List<TCTData_Model> GetAllTCTData()
         {
-            var list = new List<TCTData>();
+            var list = new List<TCTData_Model>();
 
             try
             {
@@ -287,7 +569,7 @@ namespace KpiApplication.DataAccess
                         {
                             while (reader.Read())
                             {
-                                var item = new TCTData
+                                var item = new TCTData_Model
                                 {
                                     TCTID = reader["TCTID"] != DBNull.Value ? Convert.ToInt32(reader["TCTID"]) : 0,
                                     ModelName = reader["ModelName"] as string ?? string.Empty,
@@ -309,9 +591,9 @@ namespace KpiApplication.DataAccess
             return list;
         }
 
-        public BindingList<IEPPHDataForUser> GetIEPPHDataForUser()
+        public BindingList<IEPPHDataForUser_Model> GetIEPPHDataForUser(string modelName = null, int? processId = null, string dataStatus = null)
         {
-            var iePPHList = new BindingList<IEPPHDataForUser>();
+            var iePPHList = new BindingList<IEPPHDataForUser_Model>();
 
             try
             {
@@ -319,73 +601,102 @@ namespace KpiApplication.DataAccess
                 {
                     conn.Open();
 
-                    string query = @"
-                    SELECT 
-                        A.ArticleName,
-                        A.ModelName,
-                        IE.PCSend,
-                        IE.Person_Incharge,
-                        IE.NoteForPC,
-                        IE.Outsourcing_Assembling,
-                        IE.Outsourcing_Stitching,
-                        IE.Outsourcing_StockFitting,
-                        IE.DataStatus,
-                        PS.ProcessID, 
-                        PP.ProcessName,
-                        PS.Target_Output_PC,
-                        PS.Adjust_Operator_No,
-                        ROUND(PS.IE_PPH_Value, 2) AS IE_PPH_Value,
-                        AT.TypeName,
-                        PS.IsSigned,
-                        AT.TypeID
-                    FROM [KPI-DATA].[dbo].[Articles] A
-                    INNER JOIN [KPI-DATA].[dbo].[IE_PPH_Data] IE 
-                        ON IE.ArticleID = A.ArticleID
-                    INNER JOIN [KPI-DATA].[dbo].[Production_Stages] PS 
-                        ON PS.IE_PPH_ID = IE.IE_ID
-                    INNER JOIN [KPI-DATA].[dbo].[ArtType] AT 
-                        ON PS.TypeID = AT.TypeID
-                    LEFT JOIN [KPI-DATA].[dbo].[Process] PP 
-                        ON PS.ProcessID = PP.ProcessID  -- Join để lấy tên công đoạn
-                    ORDER BY A.ArticleName ASC, PS.ProcessID ASC, AT.TypeID ASC;
-                    ";
+                    // Tạo câu truy vấn động dựa trên tham số truyền vào
+                    var queryBuilder = new StringBuilder(@"
+                SELECT 
+                    a.ArticleID,
+                    a.ArticleName,
+                    a.ModelName,
+                    aptd.ProcessID,
+                    p.ProcessName,
+                    aptd.TypeID,
+                    at.TypeName,
+                    aptd.Target,
+                    aptd.AdjustOperator,
+                    aptd.ReferenceModel,
+                    aptd.IsSigned,
+                    aptd.OperatorAdjust,
+                    aptd.ReferenceOperator,
+                    aptd.Notes AS Notes_ArticleProcessType,
+                    apc.PCSend,
+                    apc.PersonIncharge,
+                    ao.GCN_Stitching,
+                    ao.GCN_Assembling,
+                    ao.GCN_StockFitting,
+                    ao.NoteForPC,
+                    ao.DataStatus
+                FROM Articles a
+                LEFT JOIN ArticleProcessTypeData aptd ON a.ArticleID = aptd.ArticleID
+                LEFT JOIN Process p ON aptd.ProcessID = p.ProcessID
+                LEFT JOIN ArtType at ON aptd.TypeID = at.TypeID
+                LEFT JOIN Article_PCIncharge apc ON a.ArticleID = apc.ArticleID
+                LEFT JOIN Article_Outsourcing ao ON a.ArticleID = ao.ArticleID
+                WHERE 1 = 1
+            ");
 
-                    using (var cmd = new SqlCommand(query, conn))
+                    var cmd = new SqlCommand();
+                    if (!string.IsNullOrEmpty(modelName))
                     {
-                        cmd.CommandTimeout = 300;
+                        queryBuilder.Append(" AND a.ModelName = @ModelName");
+                        cmd.Parameters.AddWithValue("@ModelName", modelName);
+                    }
 
-                        using (var reader = cmd.ExecuteReader())
+                    if (processId.HasValue)
+                    {
+                        queryBuilder.Append(" AND aptd.ProcessID = @ProcessID");
+                        cmd.Parameters.AddWithValue("@ProcessID", processId.Value);
+                    }
+
+                    if (!string.IsNullOrEmpty(dataStatus))
+                    {
+                        queryBuilder.Append(" AND ao.DataStatus = @DataStatus");
+                        cmd.Parameters.AddWithValue("@DataStatus", dataStatus);
+                    }
+
+                    queryBuilder.Append(" ORDER BY a.ArticleName, aptd.ProcessID;");
+
+                    cmd.CommandText = queryBuilder.ToString();
+                    cmd.Connection = conn;
+                    cmd.CommandTimeout = 300;
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
                         {
-                            while (reader.Read())
+                            var data = new IEPPHDataForUser_Model
                             {
-                                var data = new IEPPHDataForUser
-                                {
-                                    ArticleName = reader["ArticleName"] as string,
-                                    ModelName = reader["ModelName"] as string,
-                                    PCSend = reader["PCSend"] as string,
-                                    PersonIncharge = reader["Person_Incharge"] as string,
-                                    NoteForPC = reader["NoteForPC"] as string,
-                                    OutsourcingAssemblingBool = reader["Outsourcing_Assembling"] as bool? ?? false,
-                                    OutsourcingStitchingBool = reader["Outsourcing_Stitching"] as bool? ?? false,
-                                    OutsourcingStockFittingBool = reader["Outsourcing_StockFitting"] as bool? ?? false,
-                                    DataStatus = reader["DataStatus"] as string,
-                                    Process = reader["ProcessName"] as string,
-                                    TargetOutputPC = reader["Target_Output_PC"] as int?,
-                                    AdjustOperatorNo = reader["Adjust_Operator_No"] as int?,
-                                    IEPPHValue = reader["IE_PPH_Value"] as double?,
-                                    TypeName = reader["TypeName"] as string,
-                                    IsSigned = reader["IsSigned"] as string
-                                };
+                                ArticleName = reader["ArticleName"] as string ?? "",
+                                ModelName = reader["ModelName"] as string ?? "",
+                                PCSend = reader["PCSend"] as string ?? "",
+                                PersonIncharge = reader["PersonIncharge"] as string ?? "",
+                                NoteForPC = reader["NoteForPC"] as string ?? "",
+                                DataStatus = reader["DataStatus"] as string ?? "",
+                                Process = reader["ProcessName"] as string ?? "",
+                                TypeName = reader["TypeName"] as string ?? "",
+                                IsSigned = reader["IsSigned"] as string ?? "",
 
-                                iePPHList.Add(data);
+                                TargetOutputPC = reader["Target"] != DBNull.Value ? Convert.ToInt32(reader["Target"]) : (int?)null,
+                                AdjustOperatorNo = reader["AdjustOperator"] != DBNull.Value ? Convert.ToInt32(reader["AdjustOperator"]) : (int?)null,
+
+                                OutsourcingAssemblingBool = reader["GCN_Assembling"] != DBNull.Value && Convert.ToBoolean(reader["GCN_Assembling"]),
+                                OutsourcingStitchingBool = reader["GCN_Stitching"] != DBNull.Value && Convert.ToBoolean(reader["GCN_Stitching"]),
+                                OutsourcingStockFittingBool = reader["GCN_StockFitting"] != DBNull.Value && Convert.ToBoolean(reader["GCN_StockFitting"]),
+                            };
+
+                            // Tính IE_PPH nếu có đủ dữ liệu
+                            if (data.TargetOutputPC.HasValue && data.AdjustOperatorNo.HasValue && data.AdjustOperatorNo.Value != 0)
+                            {
+                                data.IEPPHValue = Math.Round((double)data.TargetOutputPC.Value / data.AdjustOperatorNo.Value, 2);
                             }
+
+                            iePPHList.Add(data);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"⚠️ Lỗi khi lấy dữ liệu IEPPH: {ex.Message}");
+                Debug.WriteLine($"⚠️ Lỗi khi lấy dữ liệu IEPPH: {ex}");
             }
 
             return iePPHList;

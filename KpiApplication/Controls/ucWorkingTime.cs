@@ -22,12 +22,12 @@ namespace KpiApplication.Controls
         private ToolStripMenuItem mergeMenuItem;
         private ToolStripMenuItem unmergeMenuItem;
         public bool HasUnsavedChanges => _modifiedDataList.Count > 0;
+        private ProductionDataService_Model _productionDataService;
 
         private readonly ProductionData_DAL productionData_DAL = new ProductionData_DAL();
 
-        private ProductionDataListManager _listManager;
-        private readonly List<ProductionData> _modifiedDataList = new List<ProductionData>();
-        private List<ExcelRowData> _excelPreviewData;
+        private readonly List<ProductionData_Model> _modifiedDataList = new List<ProductionData_Model>();
+        private List<ExcelRowData_Model> _excelPreviewData;
         public ucWorkingTime()
         {
             InitializeComponent();
@@ -55,15 +55,92 @@ namespace KpiApplication.Controls
         {
             layoutPreview.Visible = false;
         }
-        private void btnImportExcel_Click(object sender, EventArgs e)
+        private async void ucWorkingTime_Load(object sender, EventArgs e)
         {
+            await AsyncLoaderHelper.LoadDataWithSplashAsync(
+                this,
+                FetchData,
+                data =>
+                {
+                    LoadDataToGrid(data);
+                    ConfigureGridAfterDataBinding();
+                },
+                "Loading"
+            );
         }
+
+        private void mergeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selectedItems = GetSelectedProductionData();
+            if (selectedItems.Count < 2)
+            {
+                ShowMessage("Vui lòng chọn ít nhất 2 dòng để gộp.");
+                return;
+            }
+
+            // Kiểm tra điều kiện hợp lệ để gộp (vd: cùng Process, Line, ScanDate...)
+            if (!CanMergeItems(selectedItems))
+            {
+                ShowMessage("Các dòng chọn không hợp lệ để gộp.");
+                dgvWorkingTime.ClearSelection();
+                return;
+            }
+
+            // Gọi service gộp (cập nhật model, tính toán...)
+            _productionDataService.MergeItems(selectedItems);
+
+            // Cập nhật database cho từng ProductionID với MergeGroupID mới
+            foreach (var item in selectedItems)
+            {
+                if (item.MergeGroupID.HasValue)
+                {
+                    productionData_DAL.SetMergeInfo(item.ProductionID, item.MergeGroupID.Value);
+                }
+            }
+
+            dgvWorkingTime.ClearSelection();
+            dgvWorkingTime.RefreshData();
+        }
+
+        private void unmergeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selectedItems = GetSelectedProductionData();
+            var mergedItem = selectedItems.FirstOrDefault(x => x.IsMerged && x.MergeGroupID.HasValue);
+            if (mergedItem == null)
+            {
+                ShowMessage("Dòng đã chọn chưa được gộp.\nHãy thử lại!");
+                return;
+            }
+
+            int groupId = mergedItem.MergeGroupID.Value;
+
+            // Lấy toàn bộ các dòng có MergeGroupID này từ dữ liệu gốc
+            var groupItems = _productionDataService.RawData
+                .Where(x => x.MergeGroupID == groupId)
+                .ToList();
+
+            if (groupItems.Count == 0)
+            {
+                ShowMessage("Không tìm thấy dòng nào thuộc nhóm đã chọn để hủy gộp.");
+                return;
+            }
+
+            // Cập nhật DB để hủy gộp (có thể gọi thủ tục hoặc update trường MergeGroupID = null)
+            productionData_DAL.SetUnmergeInfo(groupId);
+
+            // Cập nhật lại dữ liệu model (gỡ merge)
+            _productionDataService.UnmergeItems(groupId, groupItems.Select(x => x.ProductionID).ToList());
+
+            dgvWorkingTime.ClearSelection();
+            dgvWorkingTime.RefreshData();
+        }
+
         private void btnPreviewSave_Click(object sender, EventArgs e)
         {
             if (_excelPreviewData == null)
                 return;
 
-            var productionList = _listManager?.MergedList.ToList();
+            var productionList = _productionDataService?.MergedList.ToList();
             if (productionList == null || productionList.Count == 0)
             {
                 XtraMessageBox.Show("Dữ liệu sản xuất chưa được tải.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -71,7 +148,6 @@ namespace KpiApplication.Controls
             }
 
             int updatedCount = 0;
-
             foreach (var excelRow in _excelPreviewData)
             {
                 var matchedRows = productionList.Where(p =>
@@ -81,7 +157,6 @@ namespace KpiApplication.Controls
                 foreach (var matched in matchedRows)
                 {
                     bool hasChanged = false;
-
                     if (excelRow.TotalWorker.HasValue && matched.TotalWorker != excelRow.TotalWorker)
                     {
                         matched.TotalWorker = excelRow.TotalWorker.Value;
@@ -152,42 +227,6 @@ namespace KpiApplication.Controls
                 XtraMessageBox.Show("Không có dữ liệu trong file Excel.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
-        private int MergeExcelDataToProductionList(List<ExcelRowData> excelList, List<ProductionData> productionList)
-        {
-            int updatedCount = 0;
-
-            foreach (var excelRow in excelList)
-            {
-                var matchedRows = productionList.Where(p =>
-                    string.Equals(p.LineName, excelRow.LineName, StringComparison.OrdinalIgnoreCase) &&
-                    p.ScanDate == excelRow.WorkingDate).ToList();
-
-                if (matchedRows.Any())
-                {
-                    foreach (var matched in matchedRows)
-                    {
-                        bool isUpdated = false;
-
-                        if (excelRow.TotalWorker.HasValue && matched.TotalWorker != excelRow.TotalWorker)
-                        {
-                            matched.TotalWorker = excelRow.TotalWorker.Value;
-                            isUpdated = true;
-                        }
-
-                        if (excelRow.WorkingHours.HasValue && matched.WorkingTime != excelRow.WorkingHours)
-                        {
-                            matched.WorkingTime = excelRow.WorkingHours.Value;
-                            isUpdated = true;
-                        }
-
-                        if (isUpdated)
-                            updatedCount++;
-                    }
-                }
-            }
-
-            return updatedCount;
-        }
 
 
         private void ConfigureGridAfterDataBinding()
@@ -202,10 +241,10 @@ namespace KpiApplication.Controls
             GridViewHelper.EnableWordWrapForGridView(dgvWorkingTime);
 
             GridViewHelper.HideColumns(dgvWorkingTime,
-                "ArticleID", "DepartmentCode", "ProductionID",
-                "Rate", "", "IsVisible", "TotalWorkingHours",
+                "ArticleID", "DepartmentCode", "ProductionID","TargetOfPC",
+                "Rate", "IsMerged", "IsVisible", "TotalWorkingHours",
                 "MergeGroupID", "IsSlides", "PPHRateValue", "PPHFallsBelowReasons",
-                "Process", "ActualPPH", "PPHRate", "LargestOutput"
+                "Process", "ActualPPH", "PPHRate", "LargestOutput", "OperatorAdjust"
             );
 
             GridViewHelper.SetColumnCaptions(dgvWorkingTime, new Dictionary<string, string>
@@ -233,26 +272,15 @@ namespace KpiApplication.Controls
 
             _modifiedDataList.Clear();
         }
-        private void LoadDataToGrid(ProductionDataListManager manager)
+        private void LoadDataToGrid(ProductionDataService_Model manager)
         {
-            _listManager = manager;
-            gridControl1.DataSource = _listManager.MergedList;
+            _productionDataService = manager;
+            gridControl1.DataSource = _productionDataService.MergedList;
 
-            PopulateProcessComboBox(_listManager.MergedList.ToList());
+            PopulateProcessComboBox(_productionDataService.MergedList.ToList());
             ApplyFilter();
         }
 
-        private async void ucWorkingTime_Load(object sender, EventArgs e)
-        {
-            await AsyncLoaderHelper.LoadDataWithSplashAsync(
-                this,
-                FetchData,
-                data =>
-                {
-                    LoadDataToGrid(data);
-                    ConfigureGridAfterDataBinding();
-                });
-        }
         public async Task SaveModifiedData()
         {
             if (_modifiedDataList == null || !_modifiedDataList.Any())
@@ -294,9 +322,6 @@ namespace KpiApplication.Controls
                 }
                 catch (Exception ex)
                 {
-                    // Nếu bạn muốn handle lỗi trùng tại đây, có thể ghi log hoặc ghi flag, 
-                    // nhưng không gọi MessageBox.
-                    // Ví dụ:
                     if (ex.Message.ToLower().Contains("duplicate") || ex.Message.ToLower().Contains("trùng"))
                     {
                         // Có thể log lỗi hoặc thêm xử lý khác
@@ -313,7 +338,7 @@ namespace KpiApplication.Controls
         private void dgvWorkingTime_CellValueChanged(object sender, DevExpress.XtraGrid.Views.Base.CellValueChangedEventArgs e)
         {
             var gridView = sender as GridView;
-            var data = gridView.GetRow(e.RowHandle) as ProductionData;
+            var data = gridView.GetRow(e.RowHandle) as ProductionData_Model;
             if (data == null)
                 return;
 
@@ -326,11 +351,11 @@ namespace KpiApplication.Controls
             var modified = _modifiedDataList.FirstOrDefault(x => x.ProductionID == data.ProductionID);
             if (modified != null)
             {
-                typeof(ProductionData).GetProperty(fieldName)?.SetValue(modified, newValue);
+                typeof(ProductionData_Model).GetProperty(fieldName)?.SetValue(modified, newValue);
             }
             else
             {
-                var clone = new ProductionData
+                var clone = new ProductionData_Model
                 {
                     ProductionID = data.ProductionID,
                     TotalWorker = data.TotalWorker,
@@ -339,18 +364,18 @@ namespace KpiApplication.Controls
                     IEPPH = data.IEPPH,
                     // Copy thêm các trường khác nếu cần
                 };
-                typeof(ProductionData).GetProperty(fieldName)?.SetValue(clone, newValue);
+                typeof(ProductionData_Model).GetProperty(fieldName)?.SetValue(clone, newValue);
                 _modifiedDataList.Add(clone);
             }
 
             // Cập nhật trực tiếp vào RawData (BindingList<ProductionData>)
-            var rawItem = _listManager.RawData.FirstOrDefault(r => r.ProductionID == data.ProductionID);
+            var rawItem = _productionDataService.RawData.FirstOrDefault(r => r.ProductionID == data.ProductionID);
             if (rawItem != null)
             {
-                typeof(ProductionData).GetProperty(fieldName)?.SetValue(rawItem, newValue);
+                typeof(ProductionData_Model).GetProperty(fieldName)?.SetValue(rawItem, newValue);
 
                 // Optional: Nếu có cần tính toán lại Target/Rate thì gọi Recalculate()
-                if (fieldName == nameof(ProductionData.TotalWorker) || fieldName == nameof(ProductionData.WorkingTime) || fieldName == nameof(ProductionData.IEPPH))
+                if (fieldName == nameof(ProductionData_Model.TotalWorker) || fieldName == nameof(ProductionData_Model.WorkingTime) || fieldName == nameof(ProductionData_Model.IEPPH))
                 {
                     rawItem.Recalculate();
                 }
@@ -423,51 +448,19 @@ namespace KpiApplication.Controls
                 return;
             }
         }
-        private ProductionDataListManager FetchData()
+        private ProductionDataService_Model FetchData()
         {
             var data = productionData_DAL.GetAllData();
-            return new ProductionDataListManager(data);
+            return new ProductionDataService_Model(data);
         }
 
-        private void unmergeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var selectedItems = GetSelectedProductionData();
-
-            // Lấy dòng đầu tiên được chọn mà đang ở trạng thái Merged
-            var selectedItem = selectedItems.FirstOrDefault(x => x.IsMerged && x.MergeGroupID.HasValue);
-
-            if (selectedItem == null)
-            {
-                ShowMessage("Dòng đã chọn chưa được gộp.\nHãy thử lại!");
-                return;
-            }
-
-            int groupId = selectedItem.MergeGroupID.Value;
-
-            // 🔥 Lấy toàn bộ ProductionID của groupId (không chỉ dòng được chọn)
-            var selectedIDs = _listManager.RawData
-                .Where(x => x.MergeGroupID == groupId)
-                .Select(x => x.ProductionID)
-                .ToList();
-
-            if (selectedIDs.Count == 0)
-            {
-                ShowMessage("Không tìm thấy dòng nào thuộc nhóm đã chọn để hủy gộp.");
-                return;
-            }
-
-            productionData_DAL.SetUnmergeInfo(groupId);
-            _listManager.UnmergeItems(groupId, selectedIDs);
-
-            dgvWorkingTime.ClearSelection();
-        }
 
         private void dgvWorkingTime_CustomRowFilter(object sender, DevExpress.XtraGrid.Views.Base.RowFilterEventArgs e)
         {
             var view = sender as DevExpress.XtraGrid.Views.Grid.GridView;
             if (view == null) return;
 
-            var data = view.GetRow(e.ListSourceRow) as ProductionData;
+            var data = view.GetRow(e.ListSourceRow) as ProductionData_Model;
             if (data != null && data.IsVisible == false)
             {
                 e.Visible = false;
@@ -493,38 +486,12 @@ namespace KpiApplication.Controls
                 }
             }
         }
-        private void mergeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var selectedItems = GetSelectedProductionData();
-
-            if (selectedItems.Count < 2)
-            {
-                ShowMessage("Vui lòng chọn ít nhất 2 dòng để gộp.");
-                return;
-            }
-
-            if (!CanMergeItems(selectedItems))
-            {
-                dgvWorkingTime.ClearSelection();
-                return;
-            }
-
-            _listManager.MergeItems(selectedItems);
-
-            foreach (var item in selectedItems)
-            {
-                productionData_DAL.SetMergeInfo(item.ProductionID, item.MergeGroupID ?? 0);
-            }
-
-            dgvWorkingTime.ClearSelection();
-            dgvWorkingTime.RefreshData();
-        }
         private void ShowMessage(string message)
         {
             XtraMessageBox.Show(message, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private bool CanMergeItems(List<ProductionData> selectedItems)
+        private bool CanMergeItems(List<ProductionData_Model> selectedItems)
         {
             if (!HasSameScanDate(selectedItems))
             {
@@ -548,7 +515,7 @@ namespace KpiApplication.Controls
         }
 
         // Hàm kiểm tra xem các dòng có cùng ScanDate không
-        private bool HasSameScanDate(List<ProductionData> selectedItems)
+        private bool HasSameScanDate(List<ProductionData_Model> selectedItems)
         {
             var distinctDates = selectedItems
                 .Where(x => x.ScanDate.HasValue)
@@ -559,30 +526,30 @@ namespace KpiApplication.Controls
         }
 
         // Hàm kiểm tra xem các dòng có cùng DepartmentCode không
-        private bool HasSameDepartmentCode(List<ProductionData> selectedItems)
+        private bool HasSameDepartmentCode(List<ProductionData_Model> selectedItems)
         {
-            var distinctDepartments = selectedItems.Select(x => x.DepartmentCode).Distinct().ToList();
+            var distinctDepartments = selectedItems.Select(x => x.LineName).Distinct().ToList();
             return distinctDepartments.Count == 1;
         }
 
         // Hàm kiểm tra xem có dòng nào đã thuộc nhóm merge không
-        private bool HasMergedItems(List<ProductionData> selectedItems)
+        private bool HasMergedItems(List<ProductionData_Model> selectedItems)
         {
             return selectedItems.Any(x => x.MergeGroupID != null);
         }
 
         // Hàm lấy dữ liệu sản xuất đã chọn
-        private List<ProductionData> GetSelectedProductionData()
+        private List<ProductionData_Model> GetSelectedProductionData()
         {
             return dgvWorkingTime.GetSelectedRows()
-                .Select(i => dgvWorkingTime.GetRow(i) as ProductionData)
+                .Select(i => dgvWorkingTime.GetRow(i) as ProductionData_Model)
                 .Where(x => x != null)
                 .ToList();
         }
         private void dgvWorkingTime_RowCellStyle(object sender, RowCellStyleEventArgs e)
         {
             var view = sender as DevExpress.XtraGrid.Views.Grid.GridView;
-            var row = view.GetRow(e.RowHandle) as ProductionData;
+            var row = view.GetRow(e.RowHandle) as ProductionData_Model;
 
             if (row?.IsMerged == true)
             {
@@ -611,7 +578,7 @@ namespace KpiApplication.Controls
             // Áp dụng filter cho GridView
             dgvWorkingTime.ActiveFilterString = $"[ScanDate] >= #{startDate}# AND [ScanDate] < #{endDate}#";
         }
-        private void PopulateProcessComboBox(List<ProductionData> productionDataList)
+        private void PopulateProcessComboBox(List<ProductionData_Model> productionDataList)
         {
             try
             {
@@ -708,9 +675,6 @@ namespace KpiApplication.Controls
             string article1 = dgvWorkingTime.GetRowCellValue(e.RowHandle1, "Plant")?.ToString();
             string article2 = dgvWorkingTime.GetRowCellValue(e.RowHandle2, "Plant")?.ToString();
 
-            // Gộp nếu:
-            // - Đang ở cột ArticleName và giá trị giống nhau
-            // - Hoặc các cột khác, nhưng ArticleName giống nhau
             if (e.Column.FieldName == "Plant")
             {
                 e.Merge = article1 == article2;

@@ -26,7 +26,7 @@
     <InstallUrl>http://10.30.0.116:8080/KpiApplication/</InstallUrl>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>15</ApplicationRevision>
+    <ApplicationRevision>30</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -130,11 +130,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Global.cs" />
+    <Compile Include="Controls\ucAccountManage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ucAccountManage.Designer.cs">
+      <DependentUpon>ucAccountManage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ucPPHData.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\ucPPHData.Designer.cs">
       <DependentUpon>ucPPHData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ucTCTData.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ucTCTData.Designer.cs">
+      <DependentUpon>ucTCTData.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\ucViewData.cs">
       <SubType>UserControl</SubType>
@@ -160,10 +172,10 @@
     <Compile Include="Controls\ucWorkingTime.Designer.cs">
       <DependentUpon>ucWorkingTime.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataAccess\Account_DAL.cs" />
     <Compile Include="DataAccess\IEPPHData_DAL.cs" />
     <Compile Include="DataAccess\ProductionData_DAL.cs" />
     <Compile Include="DataAccess\TCT_DAL.cs" />
-    <Compile Include="DataAccess\User_DAL.cs" />
     <Compile Include="DataAccess\WeeklyPlan_DAL.cs" />
     <Compile Include="Excel\ExcelExporter.cs" />
     <Compile Include="Excel\ExcelImporter.cs" />
@@ -197,23 +209,34 @@
     <Compile Include="Forms\SheetSelectionForm.Designer.cs">
       <DependentUpon>SheetSelectionForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\ExcelRowData.cs" />
-    <Compile Include="Models\IEPPHDataForUser.cs" />
-    <Compile Include="Models\IETotal.cs" />
-    <Compile Include="Models\ProductionData.cs" />
-    <Compile Include="Models\ProductionDataListManager.cs" />
-    <Compile Include="Models\SlidesModel.cs" />
-    <Compile Include="Models\TCTData.cs" />
-    <Compile Include="Models\TCTImport.cs" />
-    <Compile Include="Models\WeeklyPlanData.cs" />
+    <Compile Include="Models\Account_Model.cs" />
+    <Compile Include="Models\EmployeeInfo_Model.cs" />
+    <Compile Include="Models\ExcelRowData_Model.cs" />
+    <Compile Include="Models\IEPPHDataForUser_Model.cs" />
+    <Compile Include="Models\IETotal_Model.cs" />
+    <Compile Include="Services\ProductionBackupService.cs" />
+    <Compile Include="Models\ProductionData_Model.cs" />
+    <Compile Include="Models\ProductionDataService_Model.cs" />
+    <Compile Include="Models\Slides_Model.cs" />
+    <Compile Include="Models\TCTData_Model.cs" />
+    <Compile Include="Models\TCTImport_Model.cs" />
+    <Compile Include="Models\WeeklyPlanData_Model.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\ProductionDataMapper.cs" />
-    <Compile Include="Services\ProductionDataMerger.cs" />
+    <Compile Include="Services\ProductionDataMapperService.cs" />
+    <Compile Include="Services\ProductionDataMergerService.cs" />
     <Compile Include="Utils\AsyncLoaderHelper.cs" />
     <Compile Include="Utils\GridViewHelper.cs" />
+    <Compile Include="Utils\HashHelper.cs" />
+    <Compile Include="Utils\PivoteHelper.cs" />
+    <EmbeddedResource Include="Controls\ucAccountManage.resx">
+      <DependentUpon>ucAccountManage.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ucPPHData.resx">
       <DependentUpon>ucPPHData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ucTCTData.resx">
+      <DependentUpon>ucTCTData.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ucViewData.resx">
       <DependentUpon>ucViewData.cs</DependentUpon>
@@ -291,6 +314,16 @@
     <None Include="Resources\reset2_32x32.png" />
     <None Include="Resources\open2_16x16.png" />
     <None Include="Resources\cancel_16x16.png" />
+    <None Include="Resources\refresh_16x16.png" />
+    <None Include="Resources\refresh_32x32.png" />
+    <None Include="Resources\refresh_32x321.png" />
+    <None Include="Resources\refresh_16x161.png" />
+    <None Include="Resources\loadfrom_16x16.png" />
+    <None Include="Resources\loadfrom_32x32.png" />
+    <None Include="Resources\download_16x161.png" />
+    <None Include="Resources\download_32x321.png" />
+    <None Include="Resources\refresh_16x162.png" />
+    <None Include="Resources\refresh_32x322.png" />
     <Content Include="Resources\Success.png" />
   </ItemGroup>
   <ItemGroup>

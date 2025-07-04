@@ -3,47 +3,159 @@
   "WorkspaceRootPath": "D:\\Kpi_V2\\KpiApplication\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\controls\\ucworkingtime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\dataaccess\\tct_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\dataaccess\\tct_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\controls\\uctctdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\uctctdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\utils\\pivotehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\utils\\pivotehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\models\\tctdata_model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\models\\tctdata_model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\controls\\ucworkingtime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucworkingtime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\utils\\asyncloaderhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\utils\\asyncloaderhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\models\\tctimport_model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\models\\tctimport_model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\controls\\ucweeklyplan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucweeklyplan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\controls\\ucviewpphdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucviewpphdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\dataaccess\\weeklyplan_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\dataaccess\\weeklyplan_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\controls\\ucviewdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucviewdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\excel\\excelimporter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\excel\\excelimporter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\forms\\sheetselectionform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\forms\\sheetselectionform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\forms\\mainview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\forms\\mainview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\forms\\login.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\forms\\login.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\models\\ietotal_model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\models\\ietotal_model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\dataaccess\\iepphdata_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\dataaccess\\iepphdata_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\controls\\ucviewpphdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucviewpphdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\controls\\ucpphdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucpphdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\controls\\ucweeklyplan.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\forms\\mainview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\forms\\mainview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\common\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\common\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\controls\\ucviewdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucviewdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\controls\\ucviewdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucviewdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\dataaccess\\account_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\dataaccess\\account_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\forms\\customwaitform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\forms\\customwaitform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\common\\global.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\common\\global.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\controls\\ucviewdata.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucviewdata.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\controls\\ucpphdata.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucpphdata.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\controls\\ucweeklyplan.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucweeklyplan.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\controls\\ucviewpphdata.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\utils\\hashhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\utils\\hashhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\forms\\frmchangepassword.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\forms\\frmchangepassword.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\forms\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\forms\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\controls\\ucaccountmanage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucaccountmanage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\controls\\ucaccountmanage.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucaccountmanage.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\utils\\asyncloaderhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\utils\\asyncloaderhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\utils\\gridviewhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\utils\\gridviewhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\controls\\ucviewpphdata.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucviewpphdata.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\dataaccess\\tct_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\dataaccess\\tct_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\dataaccess\\productiondata_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\dataaccess\\productiondata_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\excel\\excelimporter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\excel\\excelimporter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\controls\\ucworkingtime.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucworkingtime.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\excel\\excelexporter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\properties\\resources.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}",
+      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\properties\\resources.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\excel\\excelexporter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\excel\\excelexporter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -51,124 +163,332 @@
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:packages\\EPPlus.4.5.3\\readme.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|KpiApplication||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\EmployeeInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:KpiApplication\\Models\\EmployeeInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\dataaccess\\productiondata_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\dataaccess\\productiondata_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\AccountModel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:KpiApplication\\Models\\AccountModel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\ProductionBackupService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:KpiApplication\\Models\\ProductionBackupService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\forms\\mainview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\forms\\mainview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Services\\ProductionDataMerger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:KpiApplication\\Services\\ProductionDataMerger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\controls\\ucworkingtime.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucworkingtime.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\IETotal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:KpiApplication\\Models\\IETotal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\dataaccess\\iepphdata_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\dataaccess\\iepphdata_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\ProductionData.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:KpiApplication\\Models\\ProductionData.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\models\\productiondatalistmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\models\\productiondatalistmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Services\\ProductionDataMapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:KpiApplication\\Services\\ProductionDataMapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\services\\productiondatamerger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\services\\productiondatamerger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\ProductionDataService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:KpiApplication\\Models\\ProductionDataService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\forms\\mainview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\forms\\mainview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\forms\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\forms\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\forms\\customwaitform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\forms\\customwaitform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\forms\\customwaitform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\forms\\customwaitform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\forms\\login.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\forms\\login.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\dataaccess\\user_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\dataaccess\\user_dal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\controls\\ucpphdata.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\controls\\ucpphdata.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\forms\\sheetselectionform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\forms\\sheetselectionform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\services\\productiondatamapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\services\\productiondatamapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\models\\productiondata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\models\\productiondata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\forms\\mainview.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\forms\\mainview.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\models\\ietotal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\models\\ietotal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\models\\tctdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\models\\tctdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\properties\\resources.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\properties\\resources.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\common\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\common\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|D:\\Kpi_V2\\KpiApplication\\kpiapplication\\forms\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|solutionrelative:kpiapplication\\forms\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1373AE64-3FCE-4C10-8994-048BFFC721B0}|KpiApplication\\KpiApplication.csproj|d:\\kpi_v2\\kpiapplication\\kpiapplication\\||{B270807C-D8C6-49EB-8EBE-8E8D566637A1}|cc4014f5-b18d-439c-9352-f99d984cca85"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\TCTData.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:KpiApplication\\Models\\TCTData.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
-      "VerticalTabListWidth": 212,
+      "VerticalTabListWidth": 211,
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 24,
+          "SelectedChildIndex": 28,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "ucAccountManage.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucAccountManage.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Controls\\ucAccountManage.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucAccountManage.cs",
+              "RelativeToolTip": "KpiApplication\\Controls\\ucAccountManage.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABoAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-11T02:18:43.923Z",
+              "IsPinned": true
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b450264e-b767-428c-bfe2-f70fb97354dd}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 2,
+              "Title": "PivoteHelper.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Utils\\PivoteHelper.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Utils\\PivoteHelper.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Utils\\PivoteHelper.cs",
+              "RelativeToolTip": "KpiApplication\\Utils\\PivoteHelper.cs",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAABwAAABgAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-03T08:34:09.973Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ucTCTData.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucTCTData.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Controls\\ucTCTData.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucTCTData.cs",
+              "RelativeToolTip": "KpiApplication\\Controls\\ucTCTData.cs",
+              "ViewState": "AQIAACgBAAAAAAAAAAAvwMYAAAAWAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-03T08:22:21.985Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "TCTImport_Model.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\TCTImport_Model.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Models\\TCTImport_Model.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\TCTImport_Model.cs",
+              "RelativeToolTip": "KpiApplication\\Models\\TCTImport_Model.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-03T08:18:41.053Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "TCTData_Model.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\TCTData_Model.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Models\\TCTData_Model.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\TCTData_Model.cs",
+              "RelativeToolTip": "KpiApplication\\Models\\TCTData_Model.cs",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAqwBcAAAAsAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-03T08:17:34.211Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "IETotal_Model.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\IETotal_Model.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Models\\IETotal_Model.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\IETotal_Model.cs",
+              "RelativeToolTip": "KpiApplication\\Models\\IETotal_Model.cs",
+              "ViewState": "AQIAAIEAAAAAAAAAAAAqwOcAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-03T01:59:17.842Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "App.config",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Common\\App.config",
+              "RelativeDocumentMoniker": "KpiApplication\\Common\\App.config",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Common\\App.config",
+              "RelativeToolTip": "KpiApplication\\Common\\App.config",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2025-06-25T08:03:32.073Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "ucViewData.cs [Design]",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucViewData.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Controls\\ucViewData.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucViewData.cs [Design]*",
+              "RelativeToolTip": "KpiApplication\\Controls\\ucViewData.cs [Design]*",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-20T08:52:47.355Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "frmChangePassword.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\frmChangePassword.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Forms\\frmChangePassword.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\frmChangePassword.cs",
+              "RelativeToolTip": "KpiApplication\\Forms\\frmChangePassword.cs",
+              "ViewState": "AQIAABgAAAAAAAAAAAAAwCoAAAAvAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-12T03:42:43.892Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "EmployeeInfo.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\EmployeeInfo.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Models\\EmployeeInfo.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\EmployeeInfo.cs",
+              "RelativeToolTip": "KpiApplication\\Models\\EmployeeInfo.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAA5AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-12T03:34:23.766Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "Global.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Common\\Global.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Common\\Global.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Common\\Global.cs",
+              "RelativeToolTip": "KpiApplication\\Common\\Global.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAgAAAAyAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-12T02:43:24.104Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "AccountModel.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\AccountModel.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Models\\AccountModel.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\AccountModel.cs",
+              "RelativeToolTip": "KpiApplication\\Models\\AccountModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAqAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-12T01:27:32.319Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "Account_DAL.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\DataAccess\\Account_DAL.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\DataAccess\\Account_DAL.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\DataAccess\\Account_DAL.cs",
+              "RelativeToolTip": "KpiApplication\\DataAccess\\Account_DAL.cs",
+              "ViewState": "AQIAAEMAAAAAAAAAAAAwwHEAAAANAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-12T01:26:53.614Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "ucAccountManage.Designer.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucAccountManage.Designer.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Controls\\ucAccountManage.Designer.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucAccountManage.Designer.cs",
+              "RelativeToolTip": "KpiApplication\\Controls\\ucAccountManage.Designer.cs",
+              "ViewState": "AQIAAJwBAAAAAAAAAAAswMcBAAAeAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-11T02:51:57.519Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "MainView.cs [Design]",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\MainView.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Forms\\MainView.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\MainView.cs [Design]",
+              "RelativeToolTip": "KpiApplication\\Forms\\MainView.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-09T07:32:41.502Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "HashHelper.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Utils\\HashHelper.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Utils\\HashHelper.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Utils\\HashHelper.cs",
+              "RelativeToolTip": "KpiApplication\\Utils\\HashHelper.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABwAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-12T01:21:26.602Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "ucViewData.Designer.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucViewData.Designer.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Controls\\ucViewData.Designer.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucViewData.Designer.cs",
+              "RelativeToolTip": "KpiApplication\\Controls\\ucViewData.Designer.cs",
+              "ViewState": "AQIAAFEAAAAAAAAAAAAQwGwAAAAPAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-03T01:19:53.918Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "GridViewHelper.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Utils\\GridViewHelper.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Utils\\GridViewHelper.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Utils\\GridViewHelper.cs",
+              "RelativeToolTip": "KpiApplication\\Utils\\GridViewHelper.cs",
+              "ViewState": "AQIAADwAAAAAAAAAAAASwFUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-03T00:58:50.57Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "ProductionBackupService.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\ProductionBackupService.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Models\\ProductionBackupService.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\ProductionBackupService.cs",
+              "RelativeToolTip": "KpiApplication\\Models\\ProductionBackupService.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-02T06:55:40.656Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ucWorkingTime.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucWorkingTime.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Controls\\ucWorkingTime.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucWorkingTime.cs",
+              "RelativeToolTip": "KpiApplication\\Controls\\ucWorkingTime.cs",
+              "ViewState": "AQIAAIkAAAAAAAAAAIA5wOEAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-02T06:47:28.828Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "WeeklyPlan_DAL.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\DataAccess\\WeeklyPlan_DAL.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\DataAccess\\WeeklyPlan_DAL.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\DataAccess\\WeeklyPlan_DAL.cs",
+              "RelativeToolTip": "KpiApplication\\DataAccess\\WeeklyPlan_DAL.cs",
+              "ViewState": "AQIAABUAAAAAAAAAAAAYwDEAAAAOAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T08:02:28.985Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
               "Title": "ucWeeklyPlan.Designer.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucWeeklyPlan.Designer.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Controls\\ucWeeklyPlan.Designer.cs",
@@ -181,46 +501,45 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 34,
               "Title": "ucViewPPHData.Designer.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucViewPPHData.Designer.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Controls\\ucViewPPHData.Designer.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucViewPPHData.Designer.cs",
               "RelativeToolTip": "KpiApplication\\Controls\\ucViewPPHData.Designer.cs",
-              "ViewState": "AQIAAFAAAAAAAAAAAAArwGgAAABbAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAWAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-30T05:53:11.459Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-30T05:53:11.459Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 0,
               "Title": "TCT_DAL.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\DataAccess\\TCT_DAL.cs",
               "RelativeDocumentMoniker": "KpiApplication\\DataAccess\\TCT_DAL.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\DataAccess\\TCT_DAL.cs",
               "RelativeToolTip": "KpiApplication\\DataAccess\\TCT_DAL.cs",
-              "ViewState": "AQIAAC8AAAAAAAAAAAAkwE4AAAAAAAAA",
+              "ViewState": "AQIAAHwAAAAAAAAAAAAAwI0AAAAqAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-30T05:48:28.328Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 8,
               "Title": "ExcelImporter.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Excel\\ExcelImporter.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Excel\\ExcelImporter.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Excel\\ExcelImporter.cs",
               "RelativeToolTip": "KpiApplication\\Excel\\ExcelImporter.cs",
-              "ViewState": "AQIAADkAAAAAAAAAAAAjwEkAAABTAAAA",
+              "ViewState": "AQIAADcAAAAAAAAAAAAAwIgAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-30T05:35:47.392Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 39,
               "Title": "readme.txt",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\packages\\EPPlus.4.5.3\\readme.txt",
               "RelativeDocumentMoniker": "packages\\EPPlus.4.5.3\\readme.txt",
@@ -228,24 +547,11 @@
               "RelativeToolTip": "packages\\EPPlus.4.5.3\\readme.txt",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
-              "WhenOpened": "2025-05-30T04:29:04.261Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-30T04:29:04.261Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "KpiApplication",
-              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\KpiApplication.csproj",
-              "RelativeDocumentMoniker": "KpiApplication\\KpiApplication.csproj",
-              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\KpiApplication.csproj",
-              "RelativeToolTip": "KpiApplication\\KpiApplication.csproj",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-05-30T04:15:48.968Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 38,
               "Title": "ExcelExporter.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Excel\\ExcelExporter.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Excel\\ExcelExporter.cs",
@@ -253,12 +559,11 @@
               "RelativeToolTip": "KpiApplication\\Excel\\ExcelExporter.cs",
               "ViewState": "AQIAAAcAAAAAAAAAAAAjwBoAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-30T01:48:31.537Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-30T01:48:31.537Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 36,
               "Title": "ucWorkingTime.Designer.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucWorkingTime.Designer.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Controls\\ucWorkingTime.Designer.cs",
@@ -266,25 +571,22 @@
               "RelativeToolTip": "KpiApplication\\Controls\\ucWorkingTime.Designer.cs",
               "ViewState": "AQIAAFkAAAAAAAAAAAAqwGoAAAA3AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T09:09:54.79Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T09:09:54.79Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 43,
               "Title": "ProductionDataMerger.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Services\\ProductionDataMerger.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Services\\ProductionDataMerger.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Services\\ProductionDataMerger.cs",
               "RelativeToolTip": "KpiApplication\\Services\\ProductionDataMerger.cs",
-              "ViewState": "AQIAAFUAAAAAAAAAAADwv18AAAAHAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T06:57:42.256Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T06:57:42.256Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 21,
               "Title": "CustomWaitForm.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\CustomWaitForm.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Forms\\CustomWaitForm.cs",
@@ -292,37 +594,23 @@
               "RelativeToolTip": "KpiApplication\\Forms\\CustomWaitForm.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T05:37:58.434Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T05:37:58.434Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "CustomWaitForm.cs [Design]",
-              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\CustomWaitForm.cs",
-              "RelativeDocumentMoniker": "KpiApplication\\Forms\\CustomWaitForm.cs",
-              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\CustomWaitForm.cs [Design]",
-              "RelativeToolTip": "KpiApplication\\Forms\\CustomWaitForm.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T05:37:54.265Z",
-              "EditorCaption": " [Design]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 32,
               "Title": "AsyncLoaderHelper.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Utils\\AsyncLoaderHelper.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Utils\\AsyncLoaderHelper.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Utils\\AsyncLoaderHelper.cs",
               "RelativeToolTip": "KpiApplication\\Utils\\AsyncLoaderHelper.cs",
-              "ViewState": "AQIAABUAAAAAAAAAAAAowCoAAAAmAAAA",
+              "ViewState": "AQIAACkAAAAAAAAAAAAIwB8AAAAsAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T01:47:58.159Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-29T01:47:58.159Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 37,
               "Title": "Resources.resx",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Properties\\Resources.resx",
               "RelativeDocumentMoniker": "KpiApplication\\Properties\\Resources.resx",
@@ -334,187 +622,96 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
-              "Title": "App.config",
-              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Common\\App.config",
-              "RelativeDocumentMoniker": "KpiApplication\\Common\\App.config",
-              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Common\\App.config",
-              "RelativeToolTip": "KpiApplication\\Common\\App.config",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2025-05-28T07:26:54.946Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 31,
-              "Title": "app.config",
-              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\app.config",
-              "RelativeDocumentMoniker": "KpiApplication\\app.config",
-              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\app.config",
-              "RelativeToolTip": "KpiApplication\\app.config",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2025-05-28T07:26:09.102Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 28,
               "Title": "Login.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\Login.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Forms\\Login.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\Login.cs",
               "RelativeToolTip": "KpiApplication\\Forms\\Login.cs",
-              "ViewState": "AQIAAE0AAAAAAAAAAAAIwHYAAABNAAAA",
+              "ViewState": "AQIAAEsAAAAAAAAAAAAYwGAAAAAzAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-28T03:26:45.131Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-28T03:26:45.131Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
-              "Title": "User_DAL.cs",
-              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\DataAccess\\User_DAL.cs",
-              "RelativeDocumentMoniker": "KpiApplication\\DataAccess\\User_DAL.cs",
-              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\DataAccess\\User_DAL.cs",
-              "RelativeToolTip": "KpiApplication\\DataAccess\\User_DAL.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAFAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-28T07:02:10.948Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "MainView.cs [Design]",
-              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\MainView.cs",
-              "RelativeDocumentMoniker": "KpiApplication\\Forms\\MainView.cs",
-              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\MainView.cs [Design]",
-              "RelativeToolTip": "KpiApplication\\Forms\\MainView.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-28T03:43:56.992Z",
-              "EditorCaption": " [Design]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 30,
-              "Title": "MainView.Designer.cs",
-              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\MainView.Designer.cs",
-              "RelativeDocumentMoniker": "KpiApplication\\Forms\\MainView.Designer.cs",
-              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\MainView.Designer.cs",
-              "RelativeToolTip": "KpiApplication\\Forms\\MainView.Designer.cs",
-              "ViewState": "AQIAAKQAAAAAAAAAAAAqwL8AAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-28T03:46:58.675Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "MainView.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\MainView.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Forms\\MainView.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\MainView.cs",
               "RelativeToolTip": "KpiApplication\\Forms\\MainView.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAACQAAAAAAAAA",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAACIAAAAOAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-28T03:44:18.36Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 9,
               "Title": "SheetSelectionForm.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\SheetSelectionForm.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Forms\\SheetSelectionForm.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\SheetSelectionForm.cs",
               "RelativeToolTip": "KpiApplication\\Forms\\SheetSelectionForm.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABoAAAAZAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAA6AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-28T03:36:36.345Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 11,
               "Title": "Login.Designer.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\Login.Designer.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Forms\\Login.Designer.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\Login.Designer.cs",
               "RelativeToolTip": "KpiApplication\\Forms\\Login.Designer.cs",
-              "ViewState": "AQIAABUAAAAAAAAAAAAowJoAAAArAAAA",
+              "ViewState": "AQIAAC8AAAAAAAAAAAAwwB4AAAA7AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-28T03:27:38.579Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "Login.cs [Design]",
-              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\Login.cs",
-              "RelativeDocumentMoniker": "KpiApplication\\Forms\\Login.cs",
-              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Forms\\Login.cs [Design]",
-              "RelativeToolTip": "KpiApplication\\Forms\\Login.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-28T03:23:37.874Z",
-              "EditorCaption": " [Design]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ucWorkingTime.cs",
-              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucWorkingTime.cs",
-              "RelativeDocumentMoniker": "KpiApplication\\Controls\\ucWorkingTime.cs",
-              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucWorkingTime.cs",
-              "RelativeToolTip": "KpiApplication\\Controls\\ucWorkingTime.cs",
-              "ViewState": "AQIAACABAAAAAAAAAAAEwDUBAAANAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-28T02:23:42.753Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 6,
               "Title": "ucWeeklyPlan.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucWeeklyPlan.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Controls\\ucWeeklyPlan.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucWeeklyPlan.cs",
               "RelativeToolTip": "KpiApplication\\Controls\\ucWeeklyPlan.cs",
-              "ViewState": "AQIAAAYAAAAAAAAAAAAewBoAAAAZAAAA",
+              "ViewState": "AQIAAGwAAAAAAAAAAAAwwIMAAAARAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-28T02:09:39.266Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 14,
               "Title": "ucViewPPHData.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucViewPPHData.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Controls\\ucViewPPHData.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucViewPPHData.cs",
               "RelativeToolTip": "KpiApplication\\Controls\\ucViewPPHData.cs",
-              "ViewState": "AQIAAAQBAAAAAAAAAAAnwBgBAAArAAAA",
+              "ViewState": "AQIAAAgBAAAAAAAAAAAYwCMBAAAlAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-28T02:01:12.621Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 18,
               "Title": "ucViewData.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucViewData.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Controls\\ucViewData.cs",
-              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucViewData.cs",
-              "RelativeToolTip": "KpiApplication\\Controls\\ucViewData.cs",
-              "ViewState": "AQIAABgAAAAAAAAAAAAMwCwAAAARAAAA",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucViewData.cs*",
+              "RelativeToolTip": "KpiApplication\\Controls\\ucViewData.cs*",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAAwCMAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-28T01:44:47.145Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-28T01:44:47.145Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 24,
               "Title": "ucPPHData.Designer.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucPPHData.Designer.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Controls\\ucPPHData.Designer.cs",
@@ -522,125 +719,111 @@
               "RelativeToolTip": "KpiApplication\\Controls\\ucPPHData.Designer.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-28T01:40:32.453Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-28T01:40:32.453Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 15,
               "Title": "ucPPHData.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucPPHData.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Controls\\ucPPHData.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Controls\\ucPPHData.cs",
               "RelativeToolTip": "KpiApplication\\Controls\\ucPPHData.cs",
-              "ViewState": "AQIAACcAAAAAAAAAAAAuwEkAAAAzAAAA",
+              "ViewState": "AQIAAEgAAAAAAAAAAAAwwCIAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-28T00:53:24.309Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-28T00:53:24.309Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 31,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Program.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Program.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Program.cs",
               "RelativeToolTip": "KpiApplication\\Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAbAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-27T09:05:26.55Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-27T09:05:26.55Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 44,
               "Title": "IETotal.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\IETotal.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Models\\IETotal.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\IETotal.cs",
               "RelativeToolTip": "KpiApplication\\Models\\IETotal.cs",
-              "ViewState": "AQIAAA8AAAAAAAAAAAAAABMAAAANAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-27T09:02:11.966Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-27T09:02:11.966Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 45,
               "Title": "ProductionData.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\ProductionData.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Models\\ProductionData.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\ProductionData.cs",
               "RelativeToolTip": "KpiApplication\\Models\\ProductionData.cs",
-              "ViewState": "AQIAAFUAAAAAAAAAAADwv0AAAAA8AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-27T08:53:33.453Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-27T08:53:33.453Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 13,
               "Title": "IEPPHData_DAL.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\DataAccess\\IEPPHData_DAL.cs",
               "RelativeDocumentMoniker": "KpiApplication\\DataAccess\\IEPPHData_DAL.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\DataAccess\\IEPPHData_DAL.cs",
               "RelativeToolTip": "KpiApplication\\DataAccess\\IEPPHData_DAL.cs",
-              "ViewState": "AQIAAHsAAAAAAAAAAAAkwGEBAAAVAAAA",
+              "ViewState": "AQIAAJoCAAAAAAAAAAAIwMECAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-27T08:49:05.5Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 46,
               "Title": "ProductionDataMapper.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Services\\ProductionDataMapper.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Services\\ProductionDataMapper.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Services\\ProductionDataMapper.cs",
               "RelativeToolTip": "KpiApplication\\Services\\ProductionDataMapper.cs",
-              "ViewState": "AQIAABsAAAAAAAAAAAAgwDYAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-27T08:47:23.029Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-27T08:47:23.029Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "ProductionDataListManager.cs",
-              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\ProductionDataListManager.cs",
-              "RelativeDocumentMoniker": "KpiApplication\\Models\\ProductionDataListManager.cs",
-              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\ProductionDataListManager.cs",
-              "RelativeToolTip": "KpiApplication\\Models\\ProductionDataListManager.cs",
-              "ViewState": "AQIAABwAAAAAAAAAAAAkwD8AAAAAAAAA",
+              "DocumentIndex": 47,
+              "Title": "ProductionDataService.cs",
+              "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\ProductionDataService.cs",
+              "RelativeDocumentMoniker": "KpiApplication\\Models\\ProductionDataService.cs",
+              "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\ProductionDataService.cs",
+              "RelativeToolTip": "KpiApplication\\Models\\ProductionDataService.cs",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-27T08:44:42.148Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-27T08:44:42.148Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 35,
               "Title": "ProductionData_DAL.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\DataAccess\\ProductionData_DAL.cs",
               "RelativeDocumentMoniker": "KpiApplication\\DataAccess\\ProductionData_DAL.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\DataAccess\\ProductionData_DAL.cs",
               "RelativeToolTip": "KpiApplication\\DataAccess\\ProductionData_DAL.cs",
-              "ViewState": "AQIAAN0AAAAAAAAAAAAcwPsAAAAAAAAA",
+              "ViewState": "AQIAANwAAAAAAAAAAIBJwOsAAAAqAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-27T08:44:33.818Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-27T08:44:33.818Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 48,
               "Title": "TCTData.cs",
               "DocumentMoniker": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\TCTData.cs",
               "RelativeDocumentMoniker": "KpiApplication\\Models\\TCTData.cs",
               "ToolTip": "D:\\Kpi_V2\\KpiApplication\\KpiApplication\\Models\\TCTData.cs",
               "RelativeToolTip": "KpiApplication\\Models\\TCTData.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAfAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-27T08:17:29.239Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-27T08:17:29.239Z"
             }
           ]
         }

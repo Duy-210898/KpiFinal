@@ -46,7 +46,6 @@ namespace KpiApplication.DataAccess
                 {   
                     string insertQuery = @"
                 INSERT INTO Articles (ArticleName, ModelName) 
-                OUTPUT INSERTED.ArticleID, INSERTED.ArticleName, INSERTED.ModelName
                 VALUES (@ArticleName, @ModelName);
             ";
 
@@ -116,24 +115,6 @@ namespace KpiApplication.DataAccess
                         allProcessIDs.Add(reader.GetInt32(0));
                     }
                 }
-
-                // Step 2: Insert vào Production_Stages
-                foreach (var ieID in ieIDs)
-                {
-                    foreach (var processID in allProcessIDs)
-                    {
-                        string insertQuery = @"
-                    INSERT INTO Production_Stages (IE_PPH_ID, ProcessID)
-                    VALUES (@IEID, @ProcessID)";
-
-                        using (var insertCmd = new SqlCommand(insertQuery, conn))
-                        {
-                            insertCmd.Parameters.AddWithValue("@IEID", ieID);
-                            insertCmd.Parameters.AddWithValue("@ProcessID", processID);
-                            insertCmd.ExecuteNonQuery();
-                        }
-                    }
-                }
             }
         }
 
@@ -164,7 +145,7 @@ namespace KpiApplication.DataAccess
 
             return keys;
         }
-        public void BulkInsertWeeklyPlans(List<WeeklyPlanData> newItems)
+        public void BulkInsertWeeklyPlans(List<WeeklyPlanData_Model> newItems)
         {
             using (var conn = new SqlConnection(connectionString))
             {
@@ -195,9 +176,9 @@ namespace KpiApplication.DataAccess
                 }
             }
         }
-        public BindingList<WeeklyPlanData> GetWeeklyPlanData()
+        public BindingList<WeeklyPlanData_Model> GetWeeklyPlanData()
         {
-            var weeklyList = new BindingList<WeeklyPlanData>();
+            var weeklyList = new BindingList<WeeklyPlanData_Model>();
 
             try
             {
@@ -226,7 +207,7 @@ namespace KpiApplication.DataAccess
                         {
                             while (reader.Read())
                             {
-                                var data = new WeeklyPlanData
+                                var data = new WeeklyPlanData_Model
                                 {
                                     ArticleName = reader["ArticleName"] as string,
                                     ModelName = reader["ModelName"] as string,

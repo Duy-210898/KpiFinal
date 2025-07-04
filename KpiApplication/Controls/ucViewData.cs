@@ -23,7 +23,7 @@ namespace KpiApplication.Controls
     {
         private readonly ProductionData_DAL productionData_DAL = new ProductionData_DAL();
 
-        private ProductionDataListManager _listManager;
+        private ProductionDataService_Model _dataService;
 
         public ucViewData()
         {
@@ -31,10 +31,9 @@ namespace KpiApplication.Controls
             AddItemsToBarMenu();
             dgvViewProductionData.RowCellStyle += dgvViewProductionData_RowCellStyle;
         }
-        private ProductionDataListManager FetchData()
+        private List<ProductionData_Model> FetchData()
         {
-            var data = productionData_DAL.GetAllData();
-            return new ProductionDataListManager(data);
+            return productionData_DAL.GetAllData();
         }
         private async void ucViewData_Load(object sender, EventArgs e)
         {
@@ -48,16 +47,23 @@ namespace KpiApplication.Controls
                 },
                 "Loading"
             );
-
         }
 
 
-        private void LoadDataToGrid(ProductionDataListManager manager)
+        private void LoadDataToGrid(List<ProductionData_Model> data)
         {
-            _listManager = manager;
-            gridControl1.DataSource = _listManager.MergedList;
-            PopulateProcessComboBox(_listManager.MergedList.ToList());
+            _dataService = new ProductionDataService_Model(data);
+
+            gridControl1.DataSource = _dataService.MergedList;
+
+            PopulateProcessComboBox(_dataService.MergedList.ToList());
+
             ApplyFilter();
+
+            _dataService.MergedListChanged += (s, e) =>
+            {
+                gridControl1.RefreshDataSource();
+            };
         }
 
         private void AddItemsToBarMenu()
@@ -74,13 +80,19 @@ namespace KpiApplication.Controls
             btnSlidesKPIExport.Caption = "Export Slide KPI report file";
             btnSlidesKPIExport.Id = 3;
 
+            BarButtonItem btnOutputPerLineExport = new BarButtonItem();
+            btnOutputPerLineExport.Caption = "Export Output Per Line report file";
+            btnOutputPerLineExport.Id = 4;
+
             btnExport.LinksPersistInfo.Add(new LinkPersistInfo(btnReportExport));
             btnExport.LinksPersistInfo.Add(new LinkPersistInfo(btnShoesKPIExport));
             btnExport.LinksPersistInfo.Add(new LinkPersistInfo(btnSlidesKPIExport));
+            btnExport.LinksPersistInfo.Add(new LinkPersistInfo(btnOutputPerLineExport));
 
             btnReportExport.ItemClick += btnReportExport_ItemClick;
             btnShoesKPIExport.ItemClick += btnShoesKPIExport_ItemClick;
             btnSlidesKPIExport.ItemClick += btnSlidesKPIExport_ItemClick;
+            btnOutputPerLineExport.ItemClick += btnOutputPerLineExport_ItemClick;
             
         }
         private void ExportDataForProcess(DataTable table, string processName, string sheetName, DateTime scanDate, string filePath)
@@ -265,8 +277,112 @@ namespace KpiApplication.Controls
                 return true;
             }
         }
+        private async void btnOutputPerLineExport_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var view = dgvViewProductionData as GridView;
+            if (view == null || view.RowCount == 0)
+            {
+                XtraMessageBox.Show("No data available to export.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DataTable dataTable = GetFilteredDataTableFromGridView(view);
+            DataTable exportTable;
+
+            try
+            {
+                exportTable = BuildOutputPerLineSummary(dataTable);
+                if (exportTable == null || exportTable.Rows.Count == 0)
+                {
+                    XtraMessageBox.Show("No valid data found to export.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                XtraMessageBox.Show($"Error while building export data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            string folderPath = @"D:\Report";
+            string filePath = Path.Combine(folderPath, $"OutputPerLine_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx");
+
+            try
+            {
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+            }
+            catch (Exception ex)
+            {
+                XtraMessageBox.Show($"Failed to create output folder: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                await AsyncLoaderHelper.LoadDataWithSplashAsync(
+                    this,
+                    async () =>
+                    {
+                        await Task.Run(() =>
+                        {
+                            ExcelExporter.ExportSimpleDataTableToExcel(exportTable, filePath, "OutputPerLine");
+                        });
+                    },
+                    "Exporting..."
+                );
+
+                XtraMessageBox.Show("Output Per Line exported successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                XtraMessageBox.Show($"Error exporting Output Per Line: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
 
+        private DataTable BuildOutputPerLineSummary(DataTable sourceTable)
+        {
+            if (!sourceTable.Columns.Contains("LineName") || !sourceTable.Columns.Contains("Quantity"))
+                throw new InvalidOperationException("Missing required columns: LineName or Quantity.");
+
+            var groupedData = sourceTable.AsEnumerable()
+                .Where(row => row["LineName"] != DBNull.Value && row["Quantity"] != DBNull.Value)
+                .GroupBy(row => row.Field<string>("LineName"))
+                .Select(g => new
+                {
+                    LineName = g.Key,
+                    TotalQuantity = g.Sum(row =>
+                    {
+                        object val = row["Quantity"];
+                        if (val == null || val == DBNull.Value) return 0;
+                        return Convert.ToDouble(val);
+                    }),
+                    TotalDays = g.Select(r =>
+                    {
+                        if (DateTime.TryParse(r["ScanDate"]?.ToString(), out DateTime dt))
+                            return dt.Date;
+                        return (DateTime?)null;
+                    }).Where(d => d.HasValue).Select(d => d.Value).Distinct().Count()
+                })
+                .OrderBy(g => g.LineName)
+                .ToList();
+
+            if (groupedData.Count == 0)
+                return null;
+
+            DataTable exportTable = new DataTable();
+            exportTable.Columns.Add("LineName", typeof(string));
+            exportTable.Columns.Add("TotalQuantity", typeof(double));
+            exportTable.Columns.Add("TotalDays", typeof(int));
+
+            foreach (var item in groupedData)
+            {
+                exportTable.Rows.Add(item.LineName, item.TotalQuantity, item.TotalDays);
+            }
+
+            return exportTable;
+        }
         private async void btnShoesKPIExport_ItemClick(object sender, ItemClickEventArgs e)
         {
             await ExportKPIDataAsync("Shoes", new[] { "Cutting", "Stitching", "Assembling", "Stock Fitting" }, false);
@@ -399,7 +515,7 @@ namespace KpiApplication.Controls
             return newFileName;
         }
 
-        private void PopulateProcessComboBox(List<ProductionData> productionDataList)
+        private void PopulateProcessComboBox(List<ProductionData_Model> productionDataList)
         {
             try
             {
@@ -454,9 +570,9 @@ namespace KpiApplication.Controls
             // Ẩn các cột không cần thiết
             GridViewHelper.HideColumns(dgvViewProductionData,
                 "ArticleID", "DepartmentCode", "OutputRate",
-                "Process", "PPHRateValue", "IsSlides",
+                "Process", "PPHRateValue", "IsSlides", "TargetOfPC", "",
                 "ProductionID", "Rate", "IsMerged", "PPHFallsBelowReasons",
-                "IsVisible", "MergeGroupID", "LargestOutput");
+                "IsVisible", "MergeGroupID", "LargestOutput", "Target", "OperatorAdjust");
 
             // Đặt tiêu đề cột
             GridViewHelper.SetColumnCaptions(dgvViewProductionData, new Dictionary<string, string>
@@ -548,11 +664,25 @@ namespace KpiApplication.Controls
         private void dgvViewProductionData_RowCellStyle(object sender, DevExpress.XtraGrid.Views.Grid.RowCellStyleEventArgs e)
         {
             var view = sender as DevExpress.XtraGrid.Views.Grid.GridView;
-            var row = view.GetRow(e.RowHandle) as ProductionData;
+            if (view == null || e.RowHandle < 0)
+                return;
 
+            var row = view.GetRow(e.RowHandle) as ProductionData_Model;
+
+            // Tô nền vàng nếu dòng đã gộp
             if (row?.IsMerged == true)
             {
                 e.Appearance.BackColor = Color.LightYellow;
+            }
+
+            if (e.Column.FieldName == "PPHRate")
+            {
+                var pphRate = row?.PPHRateValue;
+
+                if (pphRate.HasValue && pphRate.Value < 0.9)
+                {
+                    e.Appearance.ForeColor = Color.Red;
+                }
             }
         }
 
@@ -576,6 +706,19 @@ namespace KpiApplication.Controls
                     gridView.ActiveFilterString = $"[Process] = '{selectedValue}'";
                 }
             }
+        }
+        private async void btnRefresh_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            await AsyncLoaderHelper.LoadDataWithSplashAsync(
+                this,
+                FetchData,
+                data =>
+                {
+                    LoadDataToGrid(data);
+                    ConfigureGridAfterDataBinding();
+                },
+                "Loading"
+            );
         }
     }
 }

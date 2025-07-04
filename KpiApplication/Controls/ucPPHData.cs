@@ -12,7 +12,7 @@ namespace KpiApplication.Controls
 {
     public partial class ucPPHData : DevExpress.XtraEditors.XtraUserControl
     {
-        private BindingList<IEPPHDataForUser> iepphDataList;
+        private BindingList<IEPPHDataForUser_Model> iepphDataList;
         private readonly IEPPHData_DAL iePPHData_DAL = new IEPPHData_DAL();
 
         public ucPPHData()
@@ -22,18 +22,13 @@ namespace KpiApplication.Controls
             dgvPPHData.CustomDrawCell += dgvPPHData_CustomDrawCell;
         }
 
-        private void DgvPPHData_CellMerge(object sender, CellMergeEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void LoadDataToGrid(BindingList<IEPPHDataForUser> data)
+        private void LoadDataToGrid(BindingList<IEPPHDataForUser_Model> data)
         {
             iepphDataList = data;
             gridControl1.DataSource = iepphDataList;
         }
 
-        private BindingList<IEPPHDataForUser> FetchData()
+        private BindingList<IEPPHDataForUser_Model> FetchData()
         {
             return iePPHData_DAL.GetIEPPHDataForUser();
         }

@@ -99,3 +99,5 @@ D:\Kpi_V2\KpiApplication\KpiApplication\obj\Release\Kpi Application.application
 D:\Kpi_V2\KpiApplication\KpiApplication\obj\Release\KpiAppli.A4444AD1.Up2Date
 D:\Kpi_V2\KpiApplication\KpiApplication\obj\Release\Kpi Application.exe
 D:\Kpi_V2\KpiApplication\KpiApplication\obj\Release\Kpi Application.pdb
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Release\KpiApplication.Controls.ucAccountManage.resources
+D:\Kpi_V2\KpiApplication\KpiApplication\obj\Release\KpiApplication.Controls.ucTCTData.resources

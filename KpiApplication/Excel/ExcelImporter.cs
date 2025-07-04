@@ -3,6 +3,7 @@ using KpiApplication.Models;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -66,9 +67,9 @@ namespace KpiApplication.Excel
             return null;
         }
 
-        public static List<WeeklyPlanData> ImportWeeklyPlanFromExcel(string filePath)
+        public static List<WeeklyPlanData_Model> ImportWeeklyPlanFromExcel(string filePath, string sheetName)
         {
-            var list = new List<WeeklyPlanData>();
+            var list = new List<WeeklyPlanData_Model>();
 
             // Lấy tên file không có phần mở rộng, ví dụ: "KẾ HOẠCH SẢN XUẤT TUẦN 4 THÁNG 5"
             string fileName = Path.GetFileNameWithoutExtension(filePath).ToUpper();
@@ -89,12 +90,14 @@ namespace KpiApplication.Excel
 
             using (var package = new ExcelPackage(new FileInfo(filePath)))
             {
-                var worksheet = package.Workbook.Worksheets[0];
+                var worksheet = package.Workbook.Worksheets[sheetName];
+                if (worksheet == null)
+                    throw new Exception($"Không tìm thấy sheet '{sheetName}'.");
                 int rowCount = worksheet.Dimension.Rows;
 
                 for (int row = 2; row <= rowCount; row++)
                 {
-                    var data = new WeeklyPlanData
+                    var data = new WeeklyPlanData_Model
                     {
                         ModelName = worksheet.Cells[row, 1].Text.Trim(),
                         ArticleName = worksheet.Cells[row, 2].Text.Trim(),
@@ -114,19 +117,22 @@ namespace KpiApplication.Excel
 
             return list;
         }
-        public static List<ExcelRowData> LoadExcelData(string filePath)
+        public static List<ExcelRowData_Model> LoadExcelData(string filePath)
         {
-            var dataList = new List<ExcelRowData>();
+            var dataList = new List<ExcelRowData_Model>();
 
             using (ExcelPackage package = new ExcelPackage(new FileInfo(filePath)))
             {
                 List<string> sheetNames = GetSheetNames(filePath);
+                Debug.WriteLine($"Found sheets: {string.Join(", ", sheetNames)}");
+
                 bool isMegaFile = filePath.IndexOf("MEGA", StringComparison.OrdinalIgnoreCase) >= 0;
                 bool isTeraFile = filePath.IndexOf("TERA", StringComparison.OrdinalIgnoreCase) >= 0;
 
                 if (isMegaFile || isTeraFile)
                 {
                     string selectedSheet = ShowSheetSelectionDialog(sheetNames);
+                    Debug.WriteLine($"Selected sheet: {selectedSheet}");
                     if (selectedSheet == null) return dataList;
 
                     DateTime workingDate = NormalizeSheetNameAsDate(selectedSheet);
@@ -134,7 +140,8 @@ namespace KpiApplication.Excel
                 }
                 else
                 {
-                    int[] sheetIndexes = { 4, 6, 7, 8, 9, 10, 11 };
+                    int[] sheetIndexes = { 5, 6, 7, 8, 9, 10, 11 };
+                    Debug.WriteLine($"Total worksheets count: {package.Workbook.Worksheets.Count}");
                     foreach (int index in sheetIndexes)
                     {
                         if (index <= package.Workbook.Worksheets.Count)
@@ -142,16 +149,26 @@ namespace KpiApplication.Excel
                             string sheetName = package.Workbook.Worksheets[index - 1].Name;
                             var worksheet = package.Workbook.Worksheets[sheetName];
                             string workingDate = worksheet.Cells["L2"].Text.Trim();
+                            Debug.WriteLine($"Sheet {sheetName} L2 = {workingDate}");
                             string dateOnlyStr = ExtractDateFromText(workingDate);
                             if (DateTime.TryParse(dateOnlyStr, out DateTime dateOnly))
                             {
                                 ProcessWorksheet(package, sheetName, dataList, isMegaFile, isTeraFile, dateOnly);
                             }
+                            else
+                            {
+                                Debug.WriteLine($"Cannot parse date from sheet {sheetName} L2");
+                            }
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"Sheet index {index} exceeds worksheet count");
                         }
                     }
                 }
             }
 
+            Debug.WriteLine($"Total rows loaded: {dataList.Count}");
             return dataList;
         }
         private static DateTime NormalizeSheetNameAsDate(string sheetName)
@@ -182,16 +199,33 @@ namespace KpiApplication.Excel
 
         private static string ExtractDateFromText(string input)
         {
-            // VD: "Ngày: 24/10/2024" -> "24-Oct-24"
             var parts = input.Split(new[] { ':', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length > 1 && DateTime.TryParse(parts[1], out DateTime parsedDate))
+
+            if (parts.Length > 1)
             {
-                return parsedDate.ToString("dd-MMM-yy");
+                string datePart = parts[1];
+
+                string[] dateFormats = {
+            "dd/MM/yyyy", "MM/dd/yyyy", "dd-MM-yyyy", "MM-dd-yyyy",
+            "dd.MM.yyyy", "yyyy/MM/dd", "yyyy-MM-dd", "yyyy.MM.dd",
+            "d/M/yyyy", "M/d/yyyy", "d-M-yyyy", "M-d-yyyy"
+        };
+
+                if (DateTime.TryParseExact(datePart, dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
+                {
+                    return parsedDate.ToString("dd-MMM-yy", CultureInfo.InvariantCulture);
+                }
+
+                if (DateTime.TryParse(datePart, CultureInfo.CurrentCulture, DateTimeStyles.None, out parsedDate))
+                {
+                    return parsedDate.ToString("dd-MMM-yy", CultureInfo.CurrentCulture);
+                }
             }
+
             return string.Empty;
         }
 
-        private static void ProcessWorksheet(ExcelPackage package, string sheetName, List<ExcelRowData> dataList, bool isMegaFile, bool isTeraFile, DateTime workingDate)
+        private static void ProcessWorksheet(ExcelPackage package, string sheetName, List<ExcelRowData_Model> dataList, bool isMegaFile, bool isTeraFile, DateTime workingDate)
         {
             ExcelWorksheet worksheet = package.Workbook.Worksheets[sheetName];
             if (worksheet?.Dimension == null) return;
@@ -249,7 +283,7 @@ namespace KpiApplication.Excel
             return null;
         }
 
-        private static void ProcessRow(string colBValue, string colJValue, string colCValue, List<ExcelRowData> dataList, bool isMegaFile, bool isTeraFile, DateTime workingDate)
+        private static void ProcessRow(string colBValue, string colJValue, string colCValue, List<ExcelRowData_Model> dataList, bool isMegaFile, bool isTeraFile, DateTime workingDate)
         {
             colBValue = NormalizeBValue(colBValue);
 
@@ -266,18 +300,18 @@ namespace KpiApplication.Excel
 
             if (colBValue.Contains("AL1+ PAL2"))
             {
-                dataList.Add(new ExcelRowData { LineName = "AL01", TotalWorker = parsedJ, WorkingHours = parsedC, WorkingDate = workingDate });
-                dataList.Add(new ExcelRowData { LineName = "AL02", TotalWorker = null, WorkingHours = parsedC, WorkingDate = workingDate });
+                dataList.Add(new ExcelRowData_Model { LineName = "AL01", TotalWorker = parsedJ, WorkingHours = parsedC, WorkingDate = workingDate });
+                dataList.Add(new ExcelRowData_Model { LineName = "AL02", TotalWorker = null, WorkingHours = parsedC, WorkingDate = workingDate });
             }
             else if (colBValue.Contains("AL3+ PAL5"))
             {
-                dataList.Add(new ExcelRowData { LineName = "AL03", TotalWorker = null, WorkingHours = parsedC, WorkingDate = workingDate });
-                dataList.Add(new ExcelRowData { LineName = "AL05", TotalWorker = parsedJ, WorkingHours = parsedC, WorkingDate = workingDate });
+                dataList.Add(new ExcelRowData_Model { LineName = "AL03", TotalWorker = null, WorkingHours = parsedC, WorkingDate = workingDate });
+                dataList.Add(new ExcelRowData_Model { LineName = "AL05", TotalWorker = parsedJ, WorkingHours = parsedC, WorkingDate = workingDate });
             }
             else
             {
                 colBValue = NormalizeKey(colBValue);
-                dataList.Add(new ExcelRowData { LineName = colBValue, TotalWorker = parsedJ, WorkingHours = parsedC, WorkingDate = workingDate });
+                dataList.Add(new ExcelRowData_Model { LineName = colBValue, TotalWorker = parsedJ, WorkingHours = parsedC, WorkingDate = workingDate });
             }
         }
 
