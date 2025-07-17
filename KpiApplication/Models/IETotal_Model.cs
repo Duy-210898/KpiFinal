@@ -91,13 +91,19 @@ namespace KpiApplication.Models
         public double? IEPPHValue
         {
             get => _iePPHValue;
-            private set => SetProperty(ref _iePPHValue, value);
+            set => SetProperty(ref _iePPHValue, value);
         }
         private double? _tctValue;
         public double? TCTValue
         {
             get => _tctValue;
             set => SetProperty(ref _tctValue, value);
+        }
+        private double? _thtValue;
+        public double? THTValue
+        {
+            get => _thtValue;
+            set => SetProperty(ref _thtValue, value);
         }
 
         private string _typeName;

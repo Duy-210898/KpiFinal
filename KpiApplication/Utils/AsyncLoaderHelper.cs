@@ -12,10 +12,10 @@ namespace KpiApplication.Utils
         {
             switch (caption)
             {
-                case "Loading...": return "Please wait while the data is loading.";
-                case "Exporting...": return "Please wait while the data is being exported.";
-                case "Importing...": return "Please wait while the data is being imported.";
-                default: return "Please wait while the operation is in progress.";
+                case "Loading...": return "Please wait while the data is loading...";
+                case "Exporting...": return "Please wait while the data is being exported...";
+                case "Importing...": return "Please wait while the data is being imported...";
+                default: return "Please wait while the operation is in progress...";
             }
         }
 

@@ -14,6 +14,7 @@ namespace KpiApplication.Models
         {
             ScanDate = DateTime.Today;
             IsVisible = true;
+
         }
 
         public ProductionData_Model Clone() => (ProductionData_Model)this.MemberwiseClone();
@@ -240,10 +241,15 @@ namespace KpiApplication.Models
         // 🆕 Hàm tính toán tự động
         private void CalculateIEPPH()
         {
-            if (TargetOfPC.HasValue && OperatorAdjust.HasValue && OperatorAdjust.Value != 0)
+            if (TargetOfPC.HasValue && OperatorAdjust.HasValue &&
+                OperatorAdjust.Value != 0 && TargetOfPC.Value != 0)
+            {
                 IEPPH = Math.Round((double)TargetOfPC.Value / OperatorAdjust.Value, 2);
+            }
             else
+            {
                 IEPPH = null;
+            }
         }
 
         private string _typeName;
@@ -253,13 +259,13 @@ namespace KpiApplication.Models
             set => SetProperty(ref _typeName, value);
         }
 
-        private double? _rate;
-        public double? Rate
+        private double? _outputRateValue;
+        public double? OutputRateValue
         {
-            get => _rate;
+            get => _outputRateValue;
             set
             {
-                if (SetProperty(ref _rate, value))
+                if (SetProperty(ref _outputRateValue, value))
                     OnPropertyChanged(nameof(OutputRate));
             }
         }
@@ -286,8 +292,13 @@ namespace KpiApplication.Models
             }
         }
 
-        public string OutputRate => Rate.HasValue ? $"{Rate.Value * 100:#0.0}%" : string.Empty;
-        public string PPHRate => PPHRateValue.HasValue ? $"{PPHRateValue.Value * 100:#0.0}%" : string.Empty;
+        public string OutputRate => OutputRateValue.HasValue
+            ? $"{(int)(OutputRateValue.Value * 1000) / 10.0:0.0}%"
+            : string.Empty;
+
+        public string PPHRate => PPHRateValue.HasValue
+            ? $"{Math.Round(PPHRateValue.Value * 100, 1):0.0}%"
+            : string.Empty;
 
         private bool _isMerged;
         public bool IsMerged
@@ -341,14 +352,22 @@ namespace KpiApplication.Models
 
         private void CalculateTarget()
         {
-            TargetOfPC = (TotalWorker.HasValue && WorkingTime.HasValue && IEPPH.HasValue)
-                ? (int?)Math.Round(TotalWorker.Value * WorkingTime.Value * IEPPH.Value, 1)
-                : null;
+            if (TotalWorker.HasValue && WorkingTime.HasValue && IEPPH.HasValue &&
+                TotalWorker.Value > 0 && WorkingTime.Value > 0 && IEPPH.Value > 0)
+            {
+                TargetOfPC = (int?)Math.Round(TotalWorker.Value * WorkingTime.Value * IEPPH.Value, 1);
+            }
+            else
+            {
+                TargetOfPC = null;
+            }
         }
+
 
         private void CalculateActualPPH()
         {
-            if (TotalWorker.HasValue && WorkingTime.HasValue && Quantity.HasValue)
+            if (Quantity.HasValue && TotalWorker.HasValue && WorkingTime.HasValue &&
+                Quantity.Value > 0 && TotalWorker.Value > 0 && WorkingTime.Value > 0)
             {
                 ActualPPH = Math.Round(Quantity.Value / WorkingTime.Value / TotalWorker.Value, 1);
             }
@@ -357,10 +376,10 @@ namespace KpiApplication.Models
                 ActualPPH = null;
             }
         }
-
         private void CalculateTotalWorkingHours()
         {
-            if (TotalWorker.HasValue && WorkingTime.HasValue)
+            if (TotalWorker.HasValue && WorkingTime.HasValue &&
+                TotalWorker.Value > 0 && WorkingTime.Value > 0)
             {
                 TotalWorkingHours = Math.Round(TotalWorker.Value * WorkingTime.Value, 1);
             }
@@ -369,24 +388,25 @@ namespace KpiApplication.Models
                 TotalWorkingHours = null;
             }
         }
-
         public void CalculateOutputRate()
         {
-            if (TargetOfPC.HasValue && TargetOfPC > 0 && Quantity.HasValue)
+            if (Quantity.HasValue && TargetOfPC.HasValue &&
+                Quantity.Value > 0 && TargetOfPC.Value > 0)
             {
-                Rate = Math.Round((double)Quantity.Value / TargetOfPC.Value, 4);
+                OutputRateValue = Math.Round((double)Quantity.Value / TargetOfPC.Value, 4);
             }
             else
             {
-                Rate = null;
+                OutputRateValue = null;
             }
         }
 
         private void CalculatePPHRate()
         {
-            if (IEPPH.HasValue && TargetOfPC.HasValue && TargetOfPC > 0 && ActualPPH.HasValue)
+            if (IEPPH.HasValue && ActualPPH.HasValue &&
+                IEPPH.Value > 0 && ActualPPH.Value > 0)
             {
-                PPHRateValue = Math.Round(ActualPPH.Value / IEPPH.Value, 4);
+                PPHRateValue = ActualPPH.Value / IEPPH.Value; 
             }
             else
             {
@@ -424,7 +444,7 @@ namespace KpiApplication.Models
             OperatorAdjust = source.OperatorAdjust;
             IEPPH = source.IEPPH;
             TypeName = source.TypeName;
-            Rate = source.Rate;
+            OutputRateValue = source.OutputRateValue;
             PPHRateValue = source.PPHRateValue;
             ActualPPH = source.ActualPPH;
             IsMerged = source.IsMerged;

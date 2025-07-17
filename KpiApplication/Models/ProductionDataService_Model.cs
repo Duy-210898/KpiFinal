@@ -166,35 +166,32 @@ public class ProductionDataService_Model
         return mergedItem;
     }
 
-
     private void CalculateIETarget(ProductionData_Model item)
     {
         // Tính TargetIE
         if (item.IEPPH.HasValue && item.TotalWorker.HasValue && item.WorkingTime.HasValue)
         {
-            item.TargetIE = (int)Math.Round(item.IEPPH.Value * item.TotalWorker.Value * item.WorkingTime.Value);
+            item.TargetIE = (int)(item.IEPPH.Value * item.TotalWorker.Value * item.WorkingTime.Value);
         }
         else
         {
             item.TargetIE = null;
         }
 
-        // Tính OutputRate (Rate)
+        // Tính OutputRate (Rate) = Quantity / TargetIE
         if (item.Quantity.HasValue && item.TargetIE.HasValue && item.TargetIE.Value > 0)
         {
-            double rate = (double)item.Quantity.Value / item.TargetIE.Value;
-            item.Rate = Math.Round(rate, 1);
+            item.OutputRateValue = (double)item.Quantity.Value / item.TargetIE.Value;
         }
         else
         {
-            item.Rate = null;
+            item.OutputRateValue = null;
         }
 
         // Tính PPHRate = ActualPPH / IEPPH
         if (item.ActualPPH.HasValue && item.IEPPH.HasValue && item.IEPPH.Value != 0)
         {
-            double pphRate = item.ActualPPH.Value / item.IEPPH.Value;
-            item.PPHRateValue = Math.Round(pphRate, 1);
+            item.PPHRateValue = item.ActualPPH.Value / item.IEPPH.Value;
         }
         else
         {

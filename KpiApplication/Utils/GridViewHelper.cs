@@ -43,6 +43,8 @@ namespace KpiApplication.Utils
             gridView.OptionsView.ColumnAutoWidth = false;
             gridView.OptionsDetail.EnableMasterViewMode = false;
             gridView.Appearance.HeaderPanel.BackColor = Color.LightGray;
+            gridView.OptionsView.EnableAppearanceEvenRow = true;
+            gridView.OptionsView.EnableAppearanceOddRow = true;
 
             gridView.CustomDrawCell += (s, e) =>
             {
@@ -61,21 +63,8 @@ namespace KpiApplication.Utils
                 }
             };
         }
-        public static void ApplyRowStyleAlternateColors(GridView gridView, Color evenRowColor, Color oddRowColor)
-        {
-            if (gridView == null) return;
 
-            gridView.RowStyle += (s, e) =>
-            {
-                if (e.RowHandle >= 0)
-                {
-                    e.Appearance.BackColor = (e.RowHandle % 2 == 0) ? evenRowColor : oddRowColor;
-                    e.Appearance.TextOptions.VAlignment = VertAlignment.Center;
-                }
-            };
-        }
-
-        public static void FixColumns( GridView gridView, params string[] columnNames)
+        public static void FixColumns(GridView gridView, params string[] columnNames)
         {
             foreach (var colName in columnNames)
             {
@@ -145,6 +134,17 @@ namespace KpiApplication.Utils
                 }
             }
         }
+        public static void SetColumnFixedWidth(GridView gridView, Dictionary<string, int> columnWidths)
+        {
+            foreach (var pair in columnWidths)
+            {
+                var column = gridView.Columns[pair.Key];
+                if (column == null) continue;
+
+                column.Width = pair.Value;
+                column.OptionsColumn.FixedWidth = true;
+            }
+        }
 
 
         public static void HideColumns(GridView gridView, params string[] columnNames)
@@ -155,7 +155,7 @@ namespace KpiApplication.Utils
             foreach (var col in gridView.Columns.Cast<GridColumn>().Where(c => nameSet.Contains(c.FieldName)))
                 col.Visible = false;
         }
-        public static void ZoomGrid( GridView gridView, float zoomFactor)
+        public static void ZoomGrid(GridView gridView, float zoomFactor)
         {
             var currentFont = gridView.Appearance.Row.Font;
             var newSize = Math.Max(6f, currentFont.Size * zoomFactor);

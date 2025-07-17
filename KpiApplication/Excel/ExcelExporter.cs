@@ -1,5 +1,7 @@
-﻿using DevExpress.XtraEditors;
+﻿using DevExpress.Mvvm;
+using DevExpress.XtraEditors;
 using KpiApplication.Models;
+using KpiApplication.Utils;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System;
@@ -278,8 +280,8 @@ namespace KpiApplication.Excel
             }
             catch (Exception ex)
             {
-                XtraMessageBox.Show($"Lỗi xuất Excel: {ex.Message}\nChi tiết:\n{ex.StackTrace}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw; 
+                MessageBoxHelper.ShowError("Lỗi xuất Excel", ex);
+                throw;
             }
         }
         private static void ApplyExcelStylesVariableColumns(
@@ -394,6 +396,146 @@ namespace KpiApplication.Excel
                 package.SaveAs(new FileInfo(filePath));
             }
         }
+        public static void ExportVerticalReport(DataTable dataTable, string filePath, string sheetName)
+        {
+            var columnsToExport = GetColumnsToExport();
+            var columnMappings = GetColumnMappings();
+
+            // Ép sắp xếp theo ScanDate tăng dần nếu có cột này
+            if (dataTable.Columns.Contains("ScanDate"))
+            {
+                dataTable = dataTable.AsEnumerable()
+                    .OrderBy(r => r.Field<DateTime>("ScanDate"))
+                    .CopyToDataTable();
+            }
+
+            if (!columnsToExport.Contains("ScanDate"))
+                columnsToExport.Insert(0, "ScanDate");
+
+            if (!columnMappings.ContainsKey("ScanDate"))
+                columnMappings["ScanDate"] = "ScanDate";
+
+            var fileInfo = new FileInfo(filePath);
+            using (var package = new ExcelPackage(fileInfo))
+            {
+                var worksheet = package.Workbook.Worksheets[sheetName] ?? package.Workbook.Worksheets.Add(sheetName);
+
+                int headerRow = 1;
+                int startCol = 1;
+
+                // Kiểm tra xem sheet có dữ liệu chưa
+                bool isNewSheet = worksheet.Dimension == null;
+                int startRow = worksheet.Dimension?.End.Row + 1 ?? 2;
+
+                var validColumns = columnsToExport.Where(col => dataTable.Columns.Contains(col)).ToList();
+
+                // Ghi tiêu đề nếu là sheet mới
+                if (isNewSheet)
+                {
+                    for (int col = 0; col < validColumns.Count; col++)
+                    {
+                        string colName = validColumns[col];
+                        var cell = worksheet.Cells[headerRow, startCol + col];
+                        cell.Value = columnMappings.ContainsKey(colName) ? columnMappings[colName] : colName;
+                        cell.Style.Font.Bold = true;
+                        cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        cell.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                        cell.Style.WrapText = true;
+                        cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        cell.Style.Fill.BackgroundColor.SetColor(Color.PaleTurquoise);
+                        cell.Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    }
+                }
+
+                int rowIndex = startRow;
+                var numericColumns = new HashSet<string> { "IEPPH", "TotalWorker", "WorkingTime", "Quantity", "ActualPPH", "PPHRate" };
+
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    bool isEvenRow = rowIndex % 2 == 0;
+                    Color defaultColor = isEvenRow ? Color.AliceBlue : Color.White;
+                    Color lineNameColor = isEvenRow ? Color.LightYellow : Color.White;
+                    double? actualPPH = null;
+
+                    for (int col = 0; col < validColumns.Count; col++)
+                    {
+                        string colName = validColumns[col];
+                        var cell = worksheet.Cells[rowIndex, startCol + col];
+                        var value = row[colName];
+
+                        switch (colName)
+                        {
+                            case "ScanDate":
+                                if (DateTime.TryParse(value?.ToString(), out DateTime dateValue))
+                                {
+                                    cell.Value = dateValue;
+                                    cell.Style.Numberformat.Format = "dd-MMM-yyyy";
+                                }
+                                else
+                                {
+                                    cell.Value = value;
+                                }
+                                break;
+
+                            case "PPHRate":
+                                string rawValue = value?.ToString()?.Trim() ?? "";
+                                rawValue = rawValue.Replace("%", "").Replace(",", ".");
+
+                                if (double.TryParse(rawValue, NumberStyles.Any, CultureInfo.InvariantCulture, out double pphRate))
+                                {
+                                    cell.Style.Numberformat.Format = "0.0%";
+                                    cell.Value = pphRate / 100.0;
+
+                                    if (pphRate < 90)
+                                    {
+                                        cell.Style.Font.Color.SetColor(Color.Red);
+                                    }
+                                }
+                                else
+                                {
+                                    cell.Value = value;
+                                }
+                                break;
+
+                            case "ActualPPH":
+                                if (double.TryParse(value?.ToString(), out double parsed))
+                                {
+                                    actualPPH = parsed;
+                                    cell.Value = parsed;
+                                }
+                                else
+                                {
+                                    cell.Value = value;
+                                }
+                                break;
+
+                            default:
+                                cell.Value = value;
+                                break;
+                        }
+
+                        if (numericColumns.Contains(colName))
+                        {
+                            cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        }
+
+                        var bg = colName == "LineName" ? lineNameColor : defaultColor;
+                        ApplyCellStyle(cell, bg);
+                    }
+
+                    if (actualPPH.HasValue)
+                    {
+                        HighlightLowPPH(worksheet, rowIndex, validColumns, startCol, actualPPH.Value);
+                    }
+
+                    rowIndex++;
+                }
+
+                AutoFitColumns(worksheet, startCol, validColumns.Count);
+                package.Save();
+            }
+        }
+
         public static void ExportReportDataToExcel(DataTable dataTable, string filePath, string newFilePath, string sheetName, string scanDate)
         {
             var columnsToExport = GetColumnsToExport();
@@ -413,7 +555,6 @@ namespace KpiApplication.Excel
                 package.SaveAs(new FileInfo(newFilePath));
             }
         }
-
         private static List<string> GetColumnsToExport()
         {
             return new List<string>
@@ -428,7 +569,6 @@ namespace KpiApplication.Excel
         "PPHRate"
     };
         }
-
         private static Dictionary<string, string> GetColumnMappings()
         {
             return new Dictionary<string, string>
@@ -444,39 +584,6 @@ namespace KpiApplication.Excel
     };
         }
 
-        private static void SetColumnHeaders(ExcelWorksheet worksheet, List<string> columnsToExport, Dictionary<string, string> columnMappings, int startColumnIndex)
-        {
-            int colIndex = startColumnIndex;
-
-            foreach (var columnName in columnsToExport)
-            {
-                if (columnMappings.ContainsKey(columnName))
-                {
-                    var cell = worksheet.Cells[3, colIndex];
-                    cell.Value = columnMappings[columnName];
-                    cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                    cell.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                    cell.Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                    cell.Style.Font.Bold = true;
-                    cell.Style.WrapText = true;
-
-                    if (columnName == "LineName")
-                    {
-                        cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        cell.Style.Fill.BackgroundColor.SetColor(Color.LightYellow);
-                    }
-                    else
-                    {
-                        cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        cell.Style.Fill.BackgroundColor.SetColor(Color.PaleTurquoise);
-                    }
-
-                    colIndex++;
-                }
-            }
-
-            worksheet.Cells[3, startColumnIndex, 3, colIndex - 1].AutoFilter = true;
-        }
 
         private static void PopulateData(ExcelWorksheet worksheet, DataTable dataTable, List<string> columnsToExport, int startColumnIndex)
         {
@@ -550,6 +657,43 @@ namespace KpiApplication.Excel
                 rowIndex++;
             }
         }
+
+
+
+        private static void SetColumnHeaders(ExcelWorksheet worksheet, List<string> columnsToExport, Dictionary<string, string> columnMappings, int startColumnIndex)
+        {
+            int colIndex = startColumnIndex;
+
+            foreach (var columnName in columnsToExport)
+            {
+                if (columnMappings.ContainsKey(columnName))
+                {
+                    var cell = worksheet.Cells[3, colIndex];
+                    cell.Value = columnMappings[columnName];
+                    cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    cell.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    cell.Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    cell.Style.Font.Bold = true;
+                    cell.Style.WrapText = true;
+
+                    if (columnName == "LineName")
+                    {
+                        cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        cell.Style.Fill.BackgroundColor.SetColor(Color.LightYellow);
+                    }
+                    else
+                    {
+                        cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        cell.Style.Fill.BackgroundColor.SetColor(Color.PaleTurquoise);
+                    }
+
+                    colIndex++;
+                }
+            }
+
+            worksheet.Cells[3, startColumnIndex, 3, colIndex - 1].AutoFilter = true;
+        }
+
         private static void HighlightLowPPH(ExcelWorksheet worksheet, int rowIndex, List<string> columnsToExport, int startColumnIndex, double actualPPH)
         {
             var iePphCell = worksheet.Cells[rowIndex, columnsToExport.IndexOf("IEPPH") + startColumnIndex];

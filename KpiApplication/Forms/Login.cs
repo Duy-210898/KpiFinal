@@ -1,8 +1,11 @@
-﻿using DevExpress.XtraEditors;
+﻿using DevExpress.LookAndFeel;
+using DevExpress.Skins;
+using DevExpress.XtraEditors;
 using KpiApplication.Common;
 using KpiApplication.DataAccess;
 using KpiApplication.Forms;
 using KpiApplication.Models;
+using KpiApplication.Utils;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -12,130 +15,124 @@ namespace KpiApplication
 {
     public partial class Login : XtraForm
     {
-        private readonly Account_DAL account_DAL;
-
-        public static bool isLoggedIn = false;
+        private readonly Account_DAL account_DAL = new Account_DAL();
         private bool isMouseDown = false;
 
         public Login()
         {
+            // CHỐNG CHỚP NHÁY
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint, true);
+            UpdateStyles();
+
             InitializeComponent();
-            EnableDoubleBufferingForForm();
-            LookAndFeel.UseWindowsXPTheme = true;
+
+            // DevExpress Skin
+            LookAndFeel.UseDefaultLookAndFeel = true;
+            LookAndFeel.Style = LookAndFeelStyle.Skin;
+
+            // Mật khẩu dạng ẩn
             txtPassword.UseSystemPasswordChar = true;
-            account_DAL = new Account_DAL();
-            SetRoundedRegion(50);
+
+            // Hover label
+            LabelHoverHelper.ApplyHoverStyleToAllLabels(this);
+
+            // Chỉ bo góc sau khi form hiển thị (tránh redraw liên tục)
+            this.Shown += (s, e) => SetRoundedRegion(50);
         }
+
+        // ✅ KHÔNG CHỚP NHÁY do redraw control con
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                var cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED
+                return cp;
+            }
+        }
+
         private void SetRoundedRegion(int radius)
         {
             var path = new GraphicsPath();
-
             path.StartFigure();
             path.AddArc(new Rectangle(0, 0, radius, radius), 180, 90);
-            path.AddLine(radius, 0, this.Width - radius, 0);
-            path.AddArc(new Rectangle(this.Width - radius, 0, radius, radius), -90, 90);
-            path.AddLine(this.Width, radius, this.Width, this.Height - radius);
-            path.AddArc(new Rectangle(this.Width - radius, this.Height - radius, radius, radius), 0, 90);
-            path.AddLine(this.Width - radius, this.Height, radius, this.Height);
-            path.AddArc(new Rectangle(0, this.Height - radius, radius, radius), 90, 90);
+            path.AddLine(radius, 0, Width - radius, 0);
+            path.AddArc(new Rectangle(Width - radius, 0, radius, radius), -90, 90);
+            path.AddLine(Width, radius, Width, Height - radius);
+            path.AddArc(new Rectangle(Width - radius, Height - radius, radius, radius), 0, 90);
+            path.AddLine(Width - radius, Height, radius, Height);
+            path.AddArc(new Rectangle(0, Height - radius, radius, radius), 90, 90);
             path.CloseFigure();
 
-            this.Region = new Region(path);
-        }
-
-
-        private void EnableDoubleBufferingForForm()
-        {
-            this.DoubleBuffered = true;
-            this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
-            this.UpdateStyles();
+            Region = new Region(path);
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            string username = txtUsername.Text;
+            string username = txtUsername.Text.Trim();
             string password = txtPassword.Text;
 
             if (string.IsNullOrEmpty(username))
             {
-                XtraMessageBox.Show("Please enter your username!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxHelper.ShowError("Please enter your username!");
                 txtUsername.Focus();
                 return;
             }
 
-            bool doesUserExist = account_DAL.UserExists(username);
-            if (!doesUserExist)
+            if (!account_DAL.UserExists(username))
             {
-                XtraMessageBox.Show("Username does not exist!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxHelper.ShowError("Username does not exist!");
                 txtPassword.Clear();
                 txtPassword.Focus();
                 return;
             }
 
-            bool isActive = account_DAL.IsActive(username);
-            if (!isActive)
+            if (!account_DAL.IsActive(username))
             {
-                XtraMessageBox.Show("The account has been disabled!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxHelper.ShowError("The account has been disabled!");
                 txtPassword.Clear();
                 txtPassword.Focus();
                 return;
             }
 
-            bool isUserValid = account_DAL.ValidateUser(username, password);
-            if (isUserValid)
+            if (account_DAL.ValidateUser(username, password))
             {
                 Global.Username = username;
-
-                EmployeeInfo_Model empInfo = account_DAL.GetEmployeeInfo(username);
-                if (empInfo != null)
-                {
-                    Global.CurrentEmployee = empInfo;
-                }
+                Global.CurrentEmployee = account_DAL.GetEmployeeInfo(username) ?? new EmployeeInfo_Model();
 
                 txtPassword.Clear();
-                this.Hide();
-                MainView mainView = new MainView();
+                Hide();
+
+                var mainView = new MainView();
+                mainView.FormClosed += (s, args) => Close();
                 mainView.Show();
-                mainView.FormClosed += (s, args) => this.Close();
             }
             else
             {
-                XtraMessageBox.Show("Incorrect password!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxHelper.ShowError("Incorrect password!");
                 txtPassword.Clear();
                 txtPassword.Focus();
             }
         }
 
-        private void LblShowPassword_MouseEnter(object sender, EventArgs e)
+        private void btnGuestLogin_Click(object sender, EventArgs e)
         {
-            lblShowPassword.ForeColor = System.Drawing.Color.Black;
+            Global.Username = "Guest";
+            Global.CurrentEmployee = new EmployeeInfo_Model
+            {
+                EmployeeName = "Guest User",
+                Department = "N/A"
+            };
+
+            Hide();
+            var mainView = new MainView();
+            mainView.FormClosed += (s, args) => Close();
+            mainView.Show();
         }
 
-        private void LblChangePassword_MouseEnter(object sender, EventArgs e)
+        private void btnExit_Click(object sender, EventArgs e)
         {
-            lblChangePassword.ForeColor = System.Drawing.Color.Black;
-        }
-
-        private void LblShowPassword_MouseDown(object sender, MouseEventArgs e)
-        {
-            isMouseDown = true;
-            TogglePasswordVisibility();
-        }
-
-        private void LblShowPassword_MouseUp(object sender, MouseEventArgs e)
-        {
-            isMouseDown = false;
-            TogglePasswordVisibility();
-        }
-
-        private void TogglePasswordVisibility()
-        {
-            txtPassword.UseSystemPasswordChar = !isMouseDown;
-        }
-
-        private void LblShowPassword_MouseLeave(object sender, EventArgs e)
-        {
-            lblShowPassword.ForeColor = System.Drawing.Color.Silver;
+            Application.Exit();
         }
 
         private void lblChangePassword_Click(object sender, EventArgs e)
@@ -143,32 +140,56 @@ namespace KpiApplication
             string username = txtUsername.Text.Trim();
             if (string.IsNullOrEmpty(username))
             {
-                XtraMessageBox.Show("Please enter your username before changing the password!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxHelper.ShowError("Please enter your username before changing the password!");
                 return;
             }
 
             if (!account_DAL.UserExists(username))
             {
-                XtraMessageBox.Show("Username does not exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxHelper.ShowError("Username does not exist.");
                 return;
             }
 
-            frmChangePassword frm = new frmChangePassword(username);
-            frm.ShowDialog();
+            new frmChangePassword(username).ShowDialog();
         }
+
         private void frmLogin_FormClosed(object sender, FormClosedEventArgs e)
         {
             Application.Exit();
         }
 
-        private void lblChangePassword_MouseLeave(object sender, EventArgs e)
+        private void TogglePasswordVisibility()
         {
-            lblChangePassword.ForeColor = System.Drawing.Color.Silver;
+            txtPassword.UseSystemPasswordChar = !isMouseDown;
         }
 
-        private void btnExit_Click(object sender, EventArgs e)
+        private void lblShowPassword_MouseDown(object sender, MouseEventArgs e)
         {
-            Application.Exit();
+            isMouseDown = true;
+            TogglePasswordVisibility();
+        }
+
+        private void lblShowPassword_MouseUp(object sender, MouseEventArgs e)
+        {
+            isMouseDown = false;
+            TogglePasswordVisibility();
+        }
+
+        private void ConfigureHoverAppearance(LabelControl label)
+        {
+            var skin = CommonSkins.GetSkin(UserLookAndFeel.Default);
+            Color hoverColor = Color.Blue;
+
+            if (skin != null && skin["Hyperlink"] != null)
+            {
+                hoverColor = skin["Hyperlink"].Color.BackColor;
+            }
+
+            var originalColor = label.ForeColor;
+            label.Cursor = Cursors.Hand;
+
+            label.MouseEnter += (s, e) => label.ForeColor = hoverColor;
+            label.MouseLeave += (s, e) => label.ForeColor = originalColor;
         }
     }
 }

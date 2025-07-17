@@ -39,15 +39,19 @@
             this.btnAccountManage = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             this.accordionControlElement2 = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             this.btnViewData = new DevExpress.XtraBars.Navigation.AccordionControlElement();
-            this.btnViewPPH = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            this.btnTCT = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            this.btnPPHData = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            this.btnBonus = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             this.btnWeeklyPlan = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             this.accordionControlElement1 = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             this.btnWorkingTime = new DevExpress.XtraBars.Navigation.AccordionControlElement();
-            this.btnPPHData = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            this.btnViewPPHData = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             this.accordionControl1 = new DevExpress.XtraBars.Navigation.AccordionControl();
+            this.accordionControlElement4 = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            this.btnViewBonusDocuments = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            this.btnViewTCT = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             this.fluentDesignFormContainer1 = new DevExpress.XtraBars.FluentDesignSystem.FluentDesignFormContainer();
             this.pnlControl = new System.Windows.Forms.Panel();
-            this.btnTCT = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             ((System.ComponentModel.ISupportInitialize)(this.fluentDesignFormControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fluentFormDefaultManager1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemFontEdit1)).BeginInit();
@@ -106,7 +110,6 @@
             // 
             this.accordionControlElement3.Elements.AddRange(new DevExpress.XtraBars.Navigation.AccordionControlElement[] {
             this.btnAccountManage});
-            this.accordionControlElement3.Expanded = true;
             this.accordionControlElement3.Name = "accordionControlElement3";
             this.accordionControlElement3.Text = "Management";
             // 
@@ -121,10 +124,10 @@
             // 
             this.accordionControlElement2.Elements.AddRange(new DevExpress.XtraBars.Navigation.AccordionControlElement[] {
             this.btnViewData,
-            this.btnViewPPH,
             this.btnTCT,
+            this.btnPPHData,
+            this.btnBonus,
             this.btnWeeklyPlan});
-            this.accordionControlElement2.Expanded = true;
             this.accordionControlElement2.Name = "accordionControlElement2";
             this.accordionControlElement2.Text = "ME Department";
             // 
@@ -132,15 +135,29 @@
             // 
             this.btnViewData.Name = "btnViewData";
             this.btnViewData.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
-            this.btnViewData.Text = "View Data";
+            this.btnViewData.Text = "KPI Data";
             this.btnViewData.Click += new System.EventHandler(this.btnViewData_Click);
             // 
-            // btnViewPPH
+            // btnTCT
             // 
-            this.btnViewPPH.Name = "btnViewPPH";
-            this.btnViewPPH.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
-            this.btnViewPPH.Text = "View IE PPH";
-            this.btnViewPPH.Click += new System.EventHandler(this.btnViewIEPPH_Click);
+            this.btnTCT.Name = "btnTCT";
+            this.btnTCT.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
+            this.btnTCT.Text = "TCT Data";
+            this.btnTCT.Click += new System.EventHandler(this.btnTCT_Click);
+            // 
+            // btnPPHData
+            // 
+            this.btnPPHData.Name = "btnPPHData";
+            this.btnPPHData.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
+            this.btnPPHData.Text = "IE PPH";
+            this.btnPPHData.Click += new System.EventHandler(this.btnPPHData_Click);
+            // 
+            // btnBonus
+            // 
+            this.btnBonus.Name = "btnBonus";
+            this.btnBonus.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
+            this.btnBonus.Text = "Bonus Document";
+            this.btnBonus.Click += new System.EventHandler(this.btnBonus_Click);
             // 
             // btnWeeklyPlan
             // 
@@ -152,9 +169,7 @@
             // accordionControlElement1
             // 
             this.accordionControlElement1.Elements.AddRange(new DevExpress.XtraBars.Navigation.AccordionControlElement[] {
-            this.btnWorkingTime,
-            this.btnPPHData});
-            this.accordionControlElement1.Expanded = true;
+            this.btnWorkingTime});
             this.accordionControlElement1.Name = "accordionControlElement1";
             this.accordionControlElement1.Text = "PC Department";
             // 
@@ -165,17 +180,18 @@
             this.btnWorkingTime.Text = "Working Time";
             this.btnWorkingTime.Click += new System.EventHandler(this.btnWorkingTime_Click);
             // 
-            // btnPPHData
+            // btnViewPPHData
             // 
-            this.btnPPHData.Name = "btnPPHData";
-            this.btnPPHData.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
-            this.btnPPHData.Text = "PPH Data";
-            this.btnPPHData.Click += new System.EventHandler(this.btnPPHData_Click);
+            this.btnViewPPHData.Name = "btnViewPPHData";
+            this.btnViewPPHData.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
+            this.btnViewPPHData.Text = "View PPH Data";
+            this.btnViewPPHData.Click += new System.EventHandler(this.btnViewPPHData_Click);
             // 
             // accordionControl1
             // 
             this.accordionControl1.Dock = System.Windows.Forms.DockStyle.Left;
             this.accordionControl1.Elements.AddRange(new DevExpress.XtraBars.Navigation.AccordionControlElement[] {
+            this.accordionControlElement4,
             this.accordionControlElement1,
             this.accordionControlElement2,
             this.accordionControlElement3});
@@ -186,6 +202,29 @@
             this.accordionControl1.TabIndex = 1;
             this.accordionControl1.ViewType = DevExpress.XtraBars.Navigation.AccordionControlViewType.HamburgerMenu;
             this.accordionControl1.SelectedElementChanged += new DevExpress.XtraBars.Navigation.SelectedElementChangedEventHandler(this.accordionControl1_SelectedElementChanged);
+            // 
+            // accordionControlElement4
+            // 
+            this.accordionControlElement4.Elements.AddRange(new DevExpress.XtraBars.Navigation.AccordionControlElement[] {
+            this.btnViewPPHData,
+            this.btnViewBonusDocuments,
+            this.btnViewTCT});
+            this.accordionControlElement4.Name = "accordionControlElement4";
+            this.accordionControlElement4.Text = "Shared Data";
+            // 
+            // btnViewBonusDocuments
+            // 
+            this.btnViewBonusDocuments.Name = "btnViewBonusDocuments";
+            this.btnViewBonusDocuments.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
+            this.btnViewBonusDocuments.Text = "View Bonus Documents";
+            this.btnViewBonusDocuments.Click += new System.EventHandler(this.btnViewBonusDocuments_Click);
+            // 
+            // btnViewTCT
+            // 
+            this.btnViewTCT.Name = "btnViewTCT";
+            this.btnViewTCT.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
+            this.btnViewTCT.Text = "View TCT Data";
+            this.btnViewTCT.Click += new System.EventHandler(this.btnViewTCT_Click);
             // 
             // fluentDesignFormContainer1
             // 
@@ -204,13 +243,6 @@
             this.pnlControl.Size = new System.Drawing.Size(900, 613);
             this.pnlControl.TabIndex = 0;
             // 
-            // btnTCT
-            // 
-            this.btnTCT.Name = "btnTCT";
-            this.btnTCT.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
-            this.btnTCT.Text = "TCT Data";
-            this.btnTCT.Click += new System.EventHandler(this.btnTCT_Click);
-            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -225,10 +257,11 @@
             this.KeyPreview = true;
             this.Name = "MainView";
             this.NavigationControl = this.accordionControl1;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Home";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainView_FormClosing);
             this.Load += new System.EventHandler(this.MainView_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainView_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.fluentDesignFormControl1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fluentFormDefaultManager1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemFontEdit1)).EndInit();
@@ -249,13 +282,17 @@
         private DevExpress.XtraBars.Navigation.AccordionControl accordionControl1;
         private DevExpress.XtraBars.Navigation.AccordionControlElement accordionControlElement1;
         private DevExpress.XtraBars.Navigation.AccordionControlElement btnWorkingTime;
-        private DevExpress.XtraBars.Navigation.AccordionControlElement btnPPHData;
+        private DevExpress.XtraBars.Navigation.AccordionControlElement btnViewPPHData;
         private DevExpress.XtraBars.Navigation.AccordionControlElement accordionControlElement2;
         private DevExpress.XtraBars.Navigation.AccordionControlElement btnViewData;
-        private DevExpress.XtraBars.Navigation.AccordionControlElement btnViewPPH;
+        private DevExpress.XtraBars.Navigation.AccordionControlElement btnPPHData;
         private DevExpress.XtraBars.Navigation.AccordionControlElement btnWeeklyPlan;
         private DevExpress.XtraBars.Navigation.AccordionControlElement accordionControlElement3;
         private DevExpress.XtraBars.Navigation.AccordionControlElement btnAccountManage;
         private DevExpress.XtraBars.Navigation.AccordionControlElement btnTCT;
+        private DevExpress.XtraBars.Navigation.AccordionControlElement btnBonus;
+        private DevExpress.XtraBars.Navigation.AccordionControlElement accordionControlElement4;
+        private DevExpress.XtraBars.Navigation.AccordionControlElement btnViewBonusDocuments;
+        private DevExpress.XtraBars.Navigation.AccordionControlElement btnViewTCT;
     }
 }

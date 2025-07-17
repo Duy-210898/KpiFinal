@@ -74,22 +74,22 @@ namespace KpiApplication.Controls
             var selectedItems = GetSelectedProductionData();
             if (selectedItems.Count < 2)
             {
-                ShowMessage("Vui lòng chọn ít nhất 2 dòng để gộp.");
+                MessageBoxHelper.ShowWarning("Please select at least 2 rows to merge.");
                 return;
             }
 
-            // Kiểm tra điều kiện hợp lệ để gộp (vd: cùng Process, Line, ScanDate...)
+            // Check if the selected rows are eligible to be merged (e.g., same Process, Line, ScanDate...)
             if (!CanMergeItems(selectedItems))
             {
-                ShowMessage("Các dòng chọn không hợp lệ để gộp.");
+                MessageBoxHelper.ShowWarning("Selected rows are not valid for merging.");
                 dgvWorkingTime.ClearSelection();
                 return;
             }
 
-            // Gọi service gộp (cập nhật model, tính toán...)
+            // Call service to perform merge (update model, recalculate, etc.)
             _productionDataService.MergeItems(selectedItems);
 
-            // Cập nhật database cho từng ProductionID với MergeGroupID mới
+            // Update the database for each ProductionID with the new MergeGroupID
             foreach (var item in selectedItems)
             {
                 if (item.MergeGroupID.HasValue)
@@ -101,38 +101,39 @@ namespace KpiApplication.Controls
             dgvWorkingTime.ClearSelection();
             dgvWorkingTime.RefreshData();
         }
-
         private void unmergeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var selectedItems = GetSelectedProductionData();
             var mergedItem = selectedItems.FirstOrDefault(x => x.IsMerged && x.MergeGroupID.HasValue);
             if (mergedItem == null)
             {
-                ShowMessage("Dòng đã chọn chưa được gộp.\nHãy thử lại!");
+                MessageBoxHelper.ShowWarning("The selected row is not merged.\nPlease try again!");
                 return;
             }
 
             int groupId = mergedItem.MergeGroupID.Value;
 
-            // Lấy toàn bộ các dòng có MergeGroupID này từ dữ liệu gốc
+            // Get all rows with this MergeGroupID from raw data
             var groupItems = _productionDataService.RawData
                 .Where(x => x.MergeGroupID == groupId)
                 .ToList();
 
             if (groupItems.Count == 0)
             {
-                ShowMessage("Không tìm thấy dòng nào thuộc nhóm đã chọn để hủy gộp.");
+                MessageBoxHelper.ShowWarning("No rows found for the selected group to unmerge.");
                 return;
             }
 
-            // Cập nhật DB để hủy gộp (có thể gọi thủ tục hoặc update trường MergeGroupID = null)
+            // Update DB to unmerge (e.g., set MergeGroupID = null)
             productionData_DAL.SetUnmergeInfo(groupId);
 
-            // Cập nhật lại dữ liệu model (gỡ merge)
+            // Update in-memory model (remove merge)
             _productionDataService.UnmergeItems(groupId, groupItems.Select(x => x.ProductionID).ToList());
 
             dgvWorkingTime.ClearSelection();
             dgvWorkingTime.RefreshData();
+
+            MessageBoxHelper.ShowInfo("✅ Unmerge completed successfully.");
         }
 
         private void btnPreviewSave_Click(object sender, EventArgs e)
@@ -143,10 +144,9 @@ namespace KpiApplication.Controls
             var productionList = _productionDataService?.MergedList.ToList();
             if (productionList == null || productionList.Count == 0)
             {
-                XtraMessageBox.Show("Dữ liệu sản xuất chưa được tải.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBoxHelper.ShowWarning("Production data has not been loaded yet.");
                 return;
             }
-
             int updatedCount = 0;
             foreach (var excelRow in _excelPreviewData)
             {
@@ -182,13 +182,13 @@ namespace KpiApplication.Controls
 
             if (updatedCount > 0)
             {
-                XtraMessageBox.Show($"{updatedCount} dòng đã được cập nhật.", "Hoàn tất", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBoxHelper.ShowInfo($"{updatedCount} row(s) updated.");
                 gridControl1.RefreshDataSource();
                 dgvWorkingTime.RefreshData();
             }
             else
             {
-                XtraMessageBox.Show("Không có dòng nào được cập nhật.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBoxHelper.ShowInfo("No rows were updated.");
             }
 
             layoutPreview.Visible = false;
@@ -212,10 +212,13 @@ namespace KpiApplication.Controls
             if (_excelPreviewData != null && _excelPreviewData.Count > 0)
             {
                 previewGrid.DataSource = _excelPreviewData;
+
                 if (previewView.Columns["LineName"] != null)
                     previewView.Columns["LineName"].Caption = "Line";
+
                 if (previewView.Columns["TotalWorker"] != null)
-                    previewView.Columns["TotalWorker"].Caption = "Person";
+                    previewView.Columns["TotalWorker"].Caption = "Worker Count";
+
                 if (previewView.Columns["WorkingHours"] != null)
                     previewView.Columns["WorkingHours"].Caption = "Working Hours";
 
@@ -224,7 +227,7 @@ namespace KpiApplication.Controls
             }
             else
             {
-                XtraMessageBox.Show("Không có dữ liệu trong file Excel.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBoxHelper.ShowWarning("No data found in the Excel file.");
             }
         }
 
@@ -233,7 +236,6 @@ namespace KpiApplication.Controls
         {
             var editableCols = new List<string> { "WorkingTime", "TotalWorker" };
             GridViewHelper.ApplyDefaultFormatting(dgvWorkingTime, editableCols);
-            GridViewHelper.ApplyRowStyleAlternateColors(dgvWorkingTime, Color.AliceBlue, Color.White);
 
             dgvWorkingTime.OptionsSelection.MultiSelect = true;
             dgvWorkingTime.OptionsSelection.MultiSelectMode = GridMultiSelectMode.CheckBoxRowSelect;
@@ -242,7 +244,7 @@ namespace KpiApplication.Controls
 
             GridViewHelper.HideColumns(dgvWorkingTime,
                 "ArticleID", "DepartmentCode", "ProductionID","TargetOfPC",
-                "Rate", "IsMerged", "IsVisible", "TotalWorkingHours",
+                "OutputRateValue", "IsMerged", "IsVisible", "TotalWorkingHours",
                 "MergeGroupID", "IsSlides", "PPHRateValue", "PPHFallsBelowReasons",
                 "Process", "ActualPPH", "PPHRate", "LargestOutput", "OperatorAdjust"
             );
@@ -285,7 +287,7 @@ namespace KpiApplication.Controls
         {
             if (_modifiedDataList == null || !_modifiedDataList.Any())
             {
-                XtraMessageBox.Show("There is no modified data to save.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBoxHelper.ShowInfo("There is no modified data to save.");
                 return;
             }
 
@@ -295,17 +297,15 @@ namespace KpiApplication.Controls
                     this,
                     SaveAllDataToDatabase,
                     (result) => { },
-                                    
-                "Loading"
+                    "Loading"
                 );
 
-                XtraMessageBox.Show("Data saved successfully!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                MessageBoxHelper.ShowInfo("Data saved successfully!");
                 _modifiedDataList.Clear();
             }
             catch (Exception ex)
             {
-                XtraMessageBox.Show($"Error while saving data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxHelper.ShowError("Error while saving data", ex);
             }
         }
 
@@ -324,7 +324,6 @@ namespace KpiApplication.Controls
                 {
                     if (ex.Message.ToLower().Contains("duplicate") || ex.Message.ToLower().Contains("trùng"))
                     {
-                        // Có thể log lỗi hoặc thêm xử lý khác
                         throw new Exception("Duplicate data detected, please check your input.");
                     }
                     else
@@ -396,9 +395,9 @@ namespace KpiApplication.Controls
                     string toolTip = null;
 
                     if (fieldName == "TotalWorker")
-                        toolTip = "Số người là số nguyên dương (ví dụ: 20)";
+                        toolTip = "Number of workers must be a positive integer (e.g., 20)";
                     else if (fieldName == "WorkingTime")
-                        toolTip = "Số giờ làm việc là số thực dương, có thể có dấu chấm (ví dụ: 9.5)";
+                        toolTip = "Working hours must be a positive decimal number (e.g., 9.5)";
 
                     if (!string.IsNullOrEmpty(toolTip))
                     {
@@ -426,7 +425,7 @@ namespace KpiApplication.Controls
                 if (!int.TryParse(valueStr, out int tw) || tw <= 0)
                 {
                     e.Valid = false;
-                    e.ErrorText = "Chỉ được nhập số nguyên dương hoặc để trống.";
+                    e.ErrorText = "Only positive integers are allowed or leave it blank.";
                 }
             }
             else if (field == "WorkingTime")
@@ -434,7 +433,7 @@ namespace KpiApplication.Controls
                 if (!double.TryParse(valueStr, out double wt) || wt <= 0)
                 {
                     e.Valid = false;
-                    e.ErrorText = "Chỉ được nhập số thực dương hoặc để trống.";
+                    e.ErrorText = "Only positive decimal numbers are allowed or leave it blank.";
                 }
             }
         }
@@ -486,28 +485,23 @@ namespace KpiApplication.Controls
                 }
             }
         }
-        private void ShowMessage(string message)
-        {
-            XtraMessageBox.Show(message, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
         private bool CanMergeItems(List<ProductionData_Model> selectedItems)
         {
             if (!HasSameScanDate(selectedItems))
             {
-                ShowMessage("Các dòng có ngày làm việc khác nhau, không thể gộp.");
+                MessageBoxHelper.ShowWarning("The selected rows have different working dates and cannot be merged.");
                 return false;
             }
 
             if (!HasSameDepartmentCode(selectedItems))
             {
-                ShowMessage("Không thể gộp dữ liệu của các chuyền khác nhau.");
+                MessageBoxHelper.ShowWarning("Cannot merge data from different lines.");
                 return false;
             }
 
             if (HasMergedItems(selectedItems))
             {
-                ShowMessage("Có dòng đã gộp trước đó, hãy tách trước khi thực hiện gộp.");
+                MessageBoxHelper.ShowWarning("Some rows have already been merged. Please unmerge them first.");
                 return false;
             }
 
@@ -610,7 +604,7 @@ namespace KpiApplication.Controls
             }
             catch (Exception ex)
             {
-                XtraMessageBox.Show("Đã xảy ra lỗi khi tải danh sách Process:\n" + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxHelper.ShowError("An error occurred while loading the list of processes", ex);
             }
         }
 

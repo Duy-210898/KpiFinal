@@ -75,7 +75,6 @@ namespace KpiApplication.Controls
         private void ConfigureGridAfterDataBinding()
         {
             GridViewHelper.ApplyDefaultFormatting(dgvWeeklyPlan);
-            GridViewHelper.ApplyRowStyleAlternateColors(dgvWeeklyPlan, Color.AliceBlue, Color.White);
             GridViewHelper.EnableWordWrapForGridView(dgvWeeklyPlan);
             GridViewHelper.AdjustGridColumnWidthsAndRowHeight(dgvWeeklyPlan);
             GridViewHelper.EnableCopyFunctionality(dgvWeeklyPlan);
@@ -104,16 +103,17 @@ namespace KpiApplication.Controls
 
                     if (!sheetNames.Any())
                     {
-                        XtraMessageBox.Show($"⚠️ File '{fileName}' không chứa sheet nào.", "Sheet trống", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBoxHelper.ShowWarning(
+                            $"⚠️ File '{fileName}' does not contain any sheets.");
                         continue;
                     }
                 }
                 catch (Exception ex)
                 {
-                    XtraMessageBox.Show($"❌ Không đọc được file Excel '{fileName}':\n{ex.Message}", "Lỗi đọc file", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBoxHelper.ShowError(
+                        $"❌ Unable to read Excel file '{fileName}':\n{ex.Message}");
                     continue;
                 }
-
                 // Cho người dùng chọn sheet
                 string selectedSheet = null;
                 using (var form = new KpiApplication.Forms.SheetSelectionForm(sheetNames))
@@ -130,19 +130,20 @@ namespace KpiApplication.Controls
                     importedData = await Task.Run(() =>
                         ExcelImporter.ImportWeeklyPlanFromExcel(filePath, selectedSheet));
                 }
+                // Sheet read error
                 catch (Exception ex)
                 {
-                    XtraMessageBox.Show($"❌ Lỗi khi đọc sheet '{selectedSheet}' trong file '{fileName}':\n{ex.Message}", "Lỗi đọc sheet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBoxHelper.ShowError(
+                        $"❌ Error reading sheet '{selectedSheet}' in file '{fileName}'", ex);
                     continue;
                 }
 
                 if (importedData == null || importedData.Count == 0)
                 {
-                    XtraMessageBox.Show($"⚠️ Sheet '{selectedSheet}' trong file '{fileName}' không chứa dữ liệu hợp lệ.", "Dữ liệu rỗng", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBoxHelper.ShowWarning(
+                        $"⚠️ Sheet '{selectedSheet}' in file '{fileName}' contains no valid data.");
                     continue;
                 }
-
-                // Bổ sung article mới
                 var newArticles = importedData
                     .Where(x => !string.IsNullOrWhiteSpace(x.ArticleName) && !existingArticleNames.Contains(x.ArticleName))
                     .GroupBy(x => x.ArticleName)
@@ -190,12 +191,6 @@ namespace KpiApplication.Controls
 
             return (totalInserted, totalDuplicated);
         }
-        private async Task LoadDataAsync()
-        {
-            var data = await Task.Run(() => FetchData());
-            LoadDataToGrid(data);
-        }
-
         private async void btnImport_ItemClick(object sender, ItemClickEventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog
@@ -224,16 +219,15 @@ namespace KpiApplication.Controls
                             LoadDataToGrid(data);
                             ConfigureGridAfterDataBinding();
                         },
-                        "Đang tải lại dữ liệu..."
+                        "Reloading data..."
                     );
 
-                    XtraMessageBox.Show(
-                        $"✔️ Đã nhập tổng cộng {inserted} dòng mới.\n⚠️ Bỏ qua tổng cộng {duplicated} dòng trùng.",
-                        "Kết quả", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBoxHelper.ShowInfo(
+                        $"✔️ Successfully imported {inserted} new rows.\n⚠️ Skipped {duplicated} duplicated rows.");
                 }
                 catch (Exception ex)
                 {
-                    XtraMessageBox.Show($"❌ Lỗi khi nhập dữ liệu: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBoxHelper.ShowError("❌ Error during data import", ex);
                 }
             }
         }

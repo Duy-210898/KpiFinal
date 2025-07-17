@@ -30,13 +30,14 @@
         {
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.lblShowPassword = new System.Windows.Forms.Label();
             this.btnExit = new DevExpress.XtraEditors.SimpleButton();
             this.btnLogin = new DevExpress.XtraEditors.SimpleButton();
             this.label12 = new System.Windows.Forms.Label();
-            this.lblChangePassword = new System.Windows.Forms.Label();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.txtUsername = new System.Windows.Forms.TextBox();
+            this.btnGuestLogin = new DevExpress.XtraEditors.SimpleButton();
+            this.lblChangePassword = new DevExpress.XtraEditors.LabelControl();
+            this.lblShowPassword = new DevExpress.XtraEditors.LabelControl();
             this.SuspendLayout();
             // 
             // label2
@@ -60,22 +61,6 @@
             this.label1.TabIndex = 29;
             this.label1.Text = "Username:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lblShowPassword
-            // 
-            this.lblShowPassword.AutoSize = true;
-            this.lblShowPassword.BackColor = System.Drawing.Color.Transparent;
-            this.lblShowPassword.Font = new System.Drawing.Font("Times New Roman", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblShowPassword.ForeColor = System.Drawing.Color.DimGray;
-            this.lblShowPassword.Location = new System.Drawing.Point(679, 277);
-            this.lblShowPassword.Name = "lblShowPassword";
-            this.lblShowPassword.Size = new System.Drawing.Size(33, 15);
-            this.lblShowPassword.TabIndex = 28;
-            this.lblShowPassword.Text = "Hiện";
-            this.lblShowPassword.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LblShowPassword_MouseDown);
-            this.lblShowPassword.MouseEnter += new System.EventHandler(this.LblShowPassword_MouseEnter);
-            this.lblShowPassword.MouseLeave += new System.EventHandler(this.LblShowPassword_MouseLeave);
-            this.lblShowPassword.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LblShowPassword_MouseUp);
             // 
             // btnExit
             // 
@@ -102,15 +87,11 @@
             this.btnLogin.Appearance.ForeColor = System.Drawing.Color.Black;
             this.btnLogin.Appearance.Options.UseFont = true;
             this.btnLogin.Appearance.Options.UseForeColor = true;
-            this.btnLogin.Location = new System.Drawing.Point(469, 318);
-            this.btnLogin.LookAndFeel.SkinMaskColor = System.Drawing.SystemColors.ActiveCaption;
-            this.btnLogin.LookAndFeel.SkinMaskColor2 = System.Drawing.Color.DarkOrange;
-            this.btnLogin.LookAndFeel.SkinName = "Seven Classic";
-            this.btnLogin.LookAndFeel.UseDefaultLookAndFeel = false;
+            this.btnLogin.Location = new System.Drawing.Point(581, 313);
             this.btnLogin.Name = "btnLogin";
-            this.btnLogin.Size = new System.Drawing.Size(208, 35);
+            this.btnLogin.Size = new System.Drawing.Size(129, 29);
             this.btnLogin.TabIndex = 25;
-            this.btnLogin.Text = "Log in";
+            this.btnLogin.Text = "Login";
             this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
             // 
             // label12
@@ -125,22 +106,6 @@
             this.label12.Size = new System.Drawing.Size(193, 15);
             this.label12.TabIndex = 27;
             this.label12.Text = "Developed by the ME  Department";
-            // 
-            // lblChangePassword
-            // 
-            this.lblChangePassword.AutoSize = true;
-            this.lblChangePassword.BackColor = System.Drawing.Color.Transparent;
-            this.lblChangePassword.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblChangePassword.ForeColor = System.Drawing.Color.Gray;
-            this.lblChangePassword.Location = new System.Drawing.Point(525, 366);
-            this.lblChangePassword.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblChangePassword.Name = "lblChangePassword";
-            this.lblChangePassword.Size = new System.Drawing.Size(93, 17);
-            this.lblChangePassword.TabIndex = 26;
-            this.lblChangePassword.Text = "Đổi mật khẩu";
-            this.lblChangePassword.Click += new System.EventHandler(this.lblChangePassword_Click);
-            this.lblChangePassword.MouseEnter += new System.EventHandler(this.LblChangePassword_MouseEnter);
-            this.lblChangePassword.MouseLeave += new System.EventHandler(this.lblChangePassword_MouseLeave);
             // 
             // txtPassword
             // 
@@ -166,6 +131,39 @@
             this.txtUsername.Size = new System.Drawing.Size(173, 22);
             this.txtUsername.TabIndex = 22;
             // 
+            // btnGuestLogin
+            // 
+            this.btnGuestLogin.Appearance.Font = new System.Drawing.Font("Times New Roman", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnGuestLogin.Appearance.ForeColor = System.Drawing.Color.Black;
+            this.btnGuestLogin.Appearance.Options.UseFont = true;
+            this.btnGuestLogin.Appearance.Options.UseForeColor = true;
+            this.btnGuestLogin.Location = new System.Drawing.Point(435, 314);
+            this.btnGuestLogin.Name = "btnGuestLogin";
+            this.btnGuestLogin.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light;
+            this.btnGuestLogin.Size = new System.Drawing.Size(129, 29);
+            this.btnGuestLogin.TabIndex = 25;
+            this.btnGuestLogin.Text = "Login as guest";
+            this.btnGuestLogin.Click += new System.EventHandler(this.btnGuestLogin_Click);
+            // 
+            // lblChangePassword
+            // 
+            this.lblChangePassword.Location = new System.Drawing.Point(521, 368);
+            this.lblChangePassword.Name = "lblChangePassword";
+            this.lblChangePassword.Size = new System.Drawing.Size(86, 13);
+            this.lblChangePassword.TabIndex = 31;
+            this.lblChangePassword.Text = "Change password";
+            this.lblChangePassword.Click += new System.EventHandler(this.lblChangePassword_Click);
+            // 
+            // lblShowPassword
+            // 
+            this.lblShowPassword.Location = new System.Drawing.Point(684, 280);
+            this.lblShowPassword.Name = "lblShowPassword";
+            this.lblShowPassword.Size = new System.Drawing.Size(26, 13);
+            this.lblShowPassword.TabIndex = 32;
+            this.lblShowPassword.Text = "Show";
+            this.lblShowPassword.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblShowPassword_MouseDown);
+            this.lblShowPassword.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lblShowPassword_MouseUp);
+            // 
             // Login
             // 
             this.AcceptButton = this.btnLogin;
@@ -175,13 +173,14 @@
             this.BackgroundImageStore = global::KpiApplication.Properties.Resources.Background;
             this.CancelButton = this.btnExit;
             this.ClientSize = new System.Drawing.Size(796, 518);
+            this.Controls.Add(this.lblShowPassword);
+            this.Controls.Add(this.lblChangePassword);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.lblShowPassword);
             this.Controls.Add(this.btnExit);
+            this.Controls.Add(this.btnGuestLogin);
             this.Controls.Add(this.btnLogin);
             this.Controls.Add(this.label12);
-            this.Controls.Add(this.lblChangePassword);
             this.Controls.Add(this.txtPassword);
             this.Controls.Add(this.txtUsername);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -201,12 +200,13 @@
 
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label lblShowPassword;
         private DevExpress.XtraEditors.SimpleButton btnExit;
         private DevExpress.XtraEditors.SimpleButton btnLogin;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label lblChangePassword;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.TextBox txtUsername;
+        private DevExpress.XtraEditors.SimpleButton btnGuestLogin;
+        private DevExpress.XtraEditors.LabelControl lblChangePassword;
+        private DevExpress.XtraEditors.LabelControl lblShowPassword;
     }
 }

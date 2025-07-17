@@ -1,21 +1,16 @@
-﻿using KpiApplication.Services;
-using KpiApplication.Models;
+﻿using KpiApplication.Models;
+using KpiApplication.Services;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Text;
-using System.Windows.Forms;
-using System.Threading.Tasks;
-using KpiApplication.Common;
 
 namespace KpiApplication.DataAccess
 {
     public class ProductionData_DAL
     {
         private static readonly string connectionString = ConfigurationManager.ConnectionStrings["strCon"].ConnectionString;
-        public event Action OnDataChanged;
         public void SetUnmergeInfo(int mergeGroupId)
         {
             try
