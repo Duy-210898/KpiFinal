@@ -26,7 +26,7 @@
     <InstallUrl>http://10.30.0.116:8080/KpiApplication/</InstallUrl>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>38</ApplicationRevision>
+    <ApplicationRevision>46</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -179,6 +179,7 @@
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -192,6 +193,7 @@
   <ItemGroup>
     <Compile Include="Common\Enum.cs" />
     <Compile Include="Common\Global.cs" />
+    <Compile Include="Common\Lang.cs" />
     <Compile Include="Controls\ucAccountManage.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -203,6 +205,12 @@
     </Compile>
     <Compile Include="Controls\ucBonusDocument.Designer.cs">
       <DependentUpon>ucBonusDocument.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ucCIDocument.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ucCIDocument.Designer.cs">
+      <DependentUpon>ucCIDocument.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\ucViewBonusDocuments.cs">
       <SubType>UserControl</SubType>
@@ -318,26 +326,45 @@
     <Compile Include="Models\WeeklyPlanData_Model.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\BonusDocumentService.cs" />
+    <Compile Include="Services\ISupportLoadAsync.cs" />
+    <Compile Include="Services\ILoadingService.cs" />
+    <Compile Include="Services\IUserControlReloadable.cs" />
     <Compile Include="Services\ProductionBackupService.cs" />
     <Compile Include="Services\ProductionDataMapperService.cs" />
     <Compile Include="Services\ProductionDataMergerService.cs" />
+    <Compile Include="Services\TCTService.cs" />
+    <Compile Include="Services\UserControlServices.cs" />
+    <Compile Include="Services\WeeklyPlanService.cs" />
     <Compile Include="Utils\AsyncLoaderHelper.cs" />
+    <Compile Include="Utils\ControlExtensions.cs" />
     <Compile Include="Utils\DocumentViewerHelper.cs" />
+    <Compile Include="Utils\EditFormLocalizer.cs" />
     <Compile Include="Utils\GridViewHelper.cs" />
     <Compile Include="Utils\HashHelper.cs" />
+    <Compile Include="Utils\IEPPHSelector.cs" />
     <Compile Include="Utils\ImageRotationHelper.cs" />
     <Compile Include="Utils\ImageToPdfConverter.cs" />
     <Compile Include="Utils\LabelHoverHelper.cs" />
+    <Compile Include="Utils\LangHelper.cs" />
     <Compile Include="Utils\LruCache.cs" />
     <Compile Include="Utils\MessageBoxHelper.cs" />
+    <Compile Include="Utils\ModelExtensions.cs" />
+    <Compile Include="Utils\NormalizeHelper.cs" />
+    <Compile Include="Utils\OverlayHelper.cs" />
     <Compile Include="Utils\PivoteHelper.cs" />
     <Compile Include="Utils\TCTDataHelper.cs" />
+    <Compile Include="Utils\TCTGridHelper.cs" />
+    <Compile Include="Utils\UserLogHelper.cs" />
     <Compile Include="Utils\ViewerResetHelper.cs" />
     <EmbeddedResource Include="Controls\ucAccountManage.resx">
       <DependentUpon>ucAccountManage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ucBonusDocument.resx">
       <DependentUpon>ucBonusDocument.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ucCIDocument.resx">
+      <DependentUpon>ucCIDocument.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ucViewBonusDocuments.resx">
       <DependentUpon>ucViewBonusDocuments.cs</DependentUpon>
@@ -384,6 +411,7 @@
     <EmbeddedResource Include="Forms\SheetSelectionForm.resx">
       <DependentUpon>SheetSelectionForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -394,6 +422,15 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Resources\Strings.en.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Strings.vi.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Strings.zh.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="KpiApplication_TemporaryKey.pfx" />
     <None Include="packages.config" />
@@ -411,6 +448,9 @@
     <Content Include="Common\App.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\ui.png" />
+    <None Include="Resources\translate.png" />
+    <None Include="Resources\add-user.png" />
     <Content Include="Resources\addfile_16x16.png" />
     <Content Include="Resources\addfile_32x32.png" />
     <Content Include="Resources\Background.jpg" />
@@ -421,19 +461,37 @@
     <Content Include="Resources\converttorange_32x32.png" />
     <Content Include="Resources\converttorange_32x321.png" />
     <Content Include="Resources\converttorange_32x322.png" />
+    <None Include="Resources\dot.png" />
     <Content Include="Resources\download_16x16.png" />
     <Content Include="Resources\download_16x161.png" />
     <Content Include="Resources\download_32x32.png" />
     <Content Include="Resources\download_32x321.png" />
+    <None Include="Resources\user %282%29.png" />
+    <None Include="Resources\user.png" />
+    <None Include="Resources\user1.png" />
+    <None Include="Resources\export1.png" />
+    <None Include="Resources\export.png" />
+    <None Include="Resources\excel.png" />
+    <None Include="Resources\excel %283%29.png" />
+    <None Include="Resources\editUser.png" />
+    <None Include="Resources\excel %281%29.png" />
     <Content Include="Resources\exporttopdf_16x16.png" />
     <Content Include="Resources\export_16x16.png" />
     <Content Include="Resources\export_32x32.png" />
+    <None Include="Resources\icoLogout.png" />
+    <None Include="Resources\import1.png" />
+    <None Include="Resources\import11.png" />
+    <None Include="Resources\home.png" />
     <Content Include="Resources\insert_16x16.png" />
     <Content Include="Resources\insert_32x32.png" />
-    <Content Include="Resources\kpi.ico" />
+    <None Include="Resources\kpi.ico" />
     <Content Include="Resources\loadfrom_16x16.png" />
     <Content Include="Resources\loadfrom_32x32.png" />
+    <None Include="Resources\logout.png" />
     <Content Include="Resources\open2_16x16.png" />
+    <None Include="Resources\refresh.png" />
+    <None Include="Resources\refresh1.png" />
+    <None Include="Resources\refresh %282%29.png" />
     <Content Include="Resources\refresh2_16x16.png" />
     <Content Include="Resources\refresh2_32x32.png" />
     <Content Include="Resources\refresh_16x16.png" />
@@ -444,6 +502,8 @@
     <Content Include="Resources\refresh_32x322.png" />
     <Content Include="Resources\reset2_16x16.png" />
     <Content Include="Resources\reset2_32x32.png" />
+    <None Include="Resources\rotate.png" />
+    <None Include="Resources\rotate %281%29.png" />
     <Content Include="Resources\Success.png" />
   </ItemGroup>
   <ItemGroup>

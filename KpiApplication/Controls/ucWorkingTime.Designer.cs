@@ -32,7 +32,6 @@
             this.barManager1 = new DevExpress.XtraBars.BarManager(this.components);
             this.bar2 = new DevExpress.XtraBars.Bar();
             this.btnImportFile = new DevExpress.XtraBars.BarButtonItem();
-            this.btnRefresh = new DevExpress.XtraBars.BarButtonItem();
             this.barDockControlTop = new DevExpress.XtraBars.BarDockControl();
             this.barDockControlBottom = new DevExpress.XtraBars.BarDockControl();
             this.barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
@@ -55,6 +54,10 @@
             this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
             this.layoutControlItem4 = new DevExpress.XtraLayout.LayoutControlItem();
             this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
+            this.emptySpaceItem3 = new DevExpress.XtraLayout.EmptySpaceItem();
+            this.emptySpaceItem4 = new DevExpress.XtraLayout.EmptySpaceItem();
+            this.emptySpaceItem5 = new DevExpress.XtraLayout.EmptySpaceItem();
+            this.emptySpaceItem6 = new DevExpress.XtraLayout.EmptySpaceItem();
             ((System.ComponentModel.ISupportInitialize)(this.barManager1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
             this.layoutControl1.SuspendLayout();
@@ -72,6 +75,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem6)).BeginInit();
             this.SuspendLayout();
             // 
             // barManager1
@@ -84,8 +91,7 @@
             this.barManager1.DockControls.Add(this.barDockControlRight);
             this.barManager1.Form = this;
             this.barManager1.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
-            this.btnImportFile,
-            this.btnRefresh });
+            this.btnImportFile});
             this.barManager1.MainMenu = this.bar2;
             this.barManager1.MaxItemId = 3;
             // 
@@ -96,8 +102,7 @@
             this.bar2.DockRow = 0;
             this.bar2.DockStyle = DevExpress.XtraBars.BarDockStyle.Top;
             this.bar2.LinksPersistInfo.AddRange(new DevExpress.XtraBars.LinkPersistInfo[] {
-            new DevExpress.XtraBars.LinkPersistInfo(this.btnImportFile),
-            new DevExpress.XtraBars.LinkPersistInfo(this.btnRefresh) });
+            new DevExpress.XtraBars.LinkPersistInfo(this.btnImportFile)});
             this.bar2.OptionsBar.MultiLine = true;
             this.bar2.OptionsBar.UseWholeRow = true;
             this.bar2.Text = "Main menu";
@@ -106,23 +111,12 @@
             // 
             this.btnImportFile.Caption = "Import File";
             this.btnImportFile.Id = 0;
-            this.btnImportFile.ImageOptions.Image = global::KpiApplication.Properties.Resources.insert_16x16;
+            this.btnImportFile.ImageOptions.Image = global::KpiApplication.Properties.Resources.import1;
             this.btnImportFile.ImageOptions.LargeImage = global::KpiApplication.Properties.Resources.insert_32x32;
             this.btnImportFile.Name = "btnImportFile";
             this.btnImportFile.PaintStyle = DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph;
             this.btnImportFile.Size = new System.Drawing.Size(100, 25);
             this.btnImportFile.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnImportFile_ItemClick);
-            // 
-            // btnRefresh
-            // 
-            this.btnRefresh.Caption = "Refresh";
-            this.btnRefresh.Id = 1;
-            this.btnRefresh.ImageOptions.Image = global::KpiApplication.Properties.Resources.reset2_16x16;
-            this.btnRefresh.ImageOptions.LargeImage = global::KpiApplication.Properties.Resources.reset2_32x32;
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.PaintStyle = DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph;
-            this.btnRefresh.Size = new System.Drawing.Size(100, 25);
-            this.btnRefresh.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnRefresh_ItemClick);
             // 
             // barDockControlTop
             // 
@@ -257,12 +251,17 @@
             this.previewGrid.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.previewView});
             // 
+            // previewView
+            // 
+            this.previewView.GridControl = this.previewGrid;
+            this.previewView.Name = "previewView";
+            // 
             // btnPreviewSave
             // 
             this.btnPreviewSave.Appearance.Font = new System.Drawing.Font("Times New Roman", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPreviewSave.Appearance.Options.UseFont = true;
             this.btnPreviewSave.ImageOptions.Image = global::KpiApplication.Properties.Resources.open2_16x16;
-            this.btnPreviewSave.Location = new System.Drawing.Point(812, 431);
+            this.btnPreviewSave.Location = new System.Drawing.Point(391, 431);
             this.btnPreviewSave.Name = "btnPreviewSave";
             this.btnPreviewSave.Size = new System.Drawing.Size(93, 32);
             this.btnPreviewSave.StyleController = this.layoutPreview;
@@ -277,16 +276,20 @@
             this.layoutControlGroup1.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.emptySpaceItem2,
             this.layoutControlItem4,
-            this.layoutControlItem3});
+            this.emptySpaceItem3,
+            this.emptySpaceItem4,
+            this.emptySpaceItem5,
+            this.layoutControlItem3,
+            this.emptySpaceItem6});
             this.layoutControlGroup1.Name = "Root";
             this.layoutControlGroup1.Size = new System.Drawing.Size(917, 475);
             this.layoutControlGroup1.TextVisible = false;
             // 
             // emptySpaceItem2
             // 
-            this.emptySpaceItem2.Location = new System.Drawing.Point(0, 419);
+            this.emptySpaceItem2.Location = new System.Drawing.Point(0, 445);
             this.emptySpaceItem2.Name = "emptySpaceItem2";
-            this.emptySpaceItem2.Size = new System.Drawing.Size(800, 36);
+            this.emptySpaceItem2.Size = new System.Drawing.Size(379, 10);
             // 
             // layoutControlItem4
             // 
@@ -301,13 +304,37 @@
             // layoutControlItem3
             // 
             this.layoutControlItem3.Control = this.btnPreviewSave;
-            this.layoutControlItem3.Location = new System.Drawing.Point(800, 419);
+            this.layoutControlItem3.Location = new System.Drawing.Point(379, 419);
             this.layoutControlItem3.MaxSize = new System.Drawing.Size(97, 36);
             this.layoutControlItem3.MinSize = new System.Drawing.Size(97, 36);
             this.layoutControlItem3.Name = "layoutControlItem3";
             this.layoutControlItem3.Size = new System.Drawing.Size(97, 36);
             this.layoutControlItem3.SizeConstraintsType = DevExpress.XtraLayout.SizeConstraintsType.Custom;
             this.layoutControlItem3.TextVisible = false;
+            // 
+            // emptySpaceItem3
+            // 
+            this.emptySpaceItem3.Location = new System.Drawing.Point(887, 419);
+            this.emptySpaceItem3.Name = "emptySpaceItem3";
+            this.emptySpaceItem3.Size = new System.Drawing.Size(10, 36);
+            // 
+            // emptySpaceItem4
+            // 
+            this.emptySpaceItem4.Location = new System.Drawing.Point(476, 419);
+            this.emptySpaceItem4.Name = "emptySpaceItem4";
+            this.emptySpaceItem4.Size = new System.Drawing.Size(411, 36);
+            // 
+            // emptySpaceItem5
+            // 
+            this.emptySpaceItem5.Location = new System.Drawing.Point(0, 419);
+            this.emptySpaceItem5.Name = "emptySpaceItem5";
+            this.emptySpaceItem5.Size = new System.Drawing.Size(10, 26);
+            // 
+            // emptySpaceItem6
+            // 
+            this.emptySpaceItem6.Location = new System.Drawing.Point(10, 419);
+            this.emptySpaceItem6.Name = "emptySpaceItem6";
+            this.emptySpaceItem6.Size = new System.Drawing.Size(369, 26);
             // 
             // ucWorkingTime
             // 
@@ -340,6 +367,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem6)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -362,7 +393,6 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuMerge;
         private DevExpress.Utils.ToolTipController toolTipController1;
         private DevExpress.Utils.DefaultToolTipController defaultToolTipController1;
-        private DevExpress.XtraBars.BarButtonItem btnRefresh;
         private DevExpress.XtraGrid.GridControl gridControl1;
         private DevExpress.XtraGrid.Views.Grid.GridView dgvWorkingTime;
         private DevExpress.XtraLayout.LayoutControl layoutPreview;
@@ -373,5 +403,9 @@
         private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem2;
         private DevExpress.XtraLayout.LayoutControlItem layoutControlItem3;
         private DevExpress.XtraLayout.LayoutControlItem layoutControlItem4;
+        private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem3;
+        private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem4;
+        private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem5;
+        private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem6;
     }
 }

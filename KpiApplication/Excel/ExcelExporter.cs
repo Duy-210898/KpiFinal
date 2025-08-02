@@ -1,6 +1,4 @@
-﻿using DevExpress.Mvvm;
-using DevExpress.XtraEditors;
-using KpiApplication.Models;
+﻿using KpiApplication.Models;
 using KpiApplication.Utils;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -11,7 +9,6 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace KpiApplication.Excel
 {
@@ -88,7 +85,7 @@ namespace KpiApplication.Excel
                 if (string.IsNullOrWhiteSpace(filePath))
                     throw new ArgumentException("Đường dẫn file không hợp lệ.");
 
-                // Lọc dữ liệu loại bỏ các bản ghi thiếu thông tin bắt buộc để tránh lỗi
+                // Lọc bỏ bản ghi thiếu thông tin
                 ieTotalList = ieTotalList
                     .Where(x => !string.IsNullOrEmpty(x.ModelName)
                              && !string.IsNullOrEmpty(x.ArticleName)
@@ -100,13 +97,20 @@ namespace KpiApplication.Excel
 
                 var fixedColumns = new List<string> { "Model Name\nTên hình thể", "Article" };
                 var processOrder = new List<string> {
-                "Stitching", "Assembly", "Stock Fitting",
-                "Cutting", "Computer Stitching", "Tongue",
-                "Outsole buffing stock", "Outsole buffing assembly",
-                "Irradiation", "Packing"
-            };
+            "Stitching", "Assembly", "Stock Fitting",
+            "Cutting", "Computer Stitching", "Tongue",
+            "Outsole Buffing Stock", "Outsole Buffing Assembly",
+            "Irradiation", "Packing"
+        };
 
                 var processesWithIsSigned = new HashSet<string> { "Stitching", "Assembly", "Stock Fitting" };
+
+                // Chuẩn hóa process về Title Case
+                TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+                foreach (var item in ieTotalList)
+                {
+                    item.Process = textInfo.ToTitleCase(item.Process.Trim().ToLower());
+                }
 
                 int GetColumnCountForProcess(string process)
                 {
@@ -134,23 +138,16 @@ namespace KpiApplication.Excel
                 {
                     var ws = package.Workbook.Worksheets.Add("IE PPH Total");
 
-                    // Định dạng các dòng header
                     ws.Row(1).Height = 50;
                     ws.Row(2).Height = 60;
                     ws.Row(3).Height = 30;
 
                     int col = 1;
-                    // Cột cố định đầu tiên: Model Name, Article
-                    foreach (var c in fixedColumns)
-                    {
-                        col++;
-                    }
+                    foreach (var c in fixedColumns) col++;
 
                     int noteForPCAfterCol = col;
-
                     var headerFillColor = Color.LightBlue;
 
-                    // Ghi tiêu đề process
                     foreach (var process in processOrder)
                     {
                         int colsCount = GetColumnCountForProcess(process);
@@ -167,7 +164,6 @@ namespace KpiApplication.Excel
                             noteForPCAfterCol = col;
                     }
 
-                    // Thêm cột Note For PC và Remark
                     ws.InsertColumn(noteForPCAfterCol, 1);
                     ws.Cells[2, noteForPCAfterCol].Value = "";
 
@@ -176,14 +172,12 @@ namespace KpiApplication.Excel
                     ws.Cells[3, remarkColIndex].Value = "Remark";
                     StyleHeaderCell(ws.Cells[3, remarkColIndex], headerFillColor, false);
 
-                    // Merge header
                     MergeAndStyleHeader(ws, 1, 1, noteForPCAfterCol,
                         "IE PPH standard for production bonus\n(Chỉ số IE PPH tiêu chuẩn cho tính tiền sản lượng của sản xuất)");
 
                     MergeAndStyleHeader(ws, 1, noteForPCAfterCol + 1, remarkColIndex,
                         "Not for bonus, data requested by the PC\n(Không sử dụng cho tính tiền sản lượng, dữ liệu được yêu cầu từ sinh quản)");
 
-                    // Header dòng 3
                     col = 1;
                     foreach (var c in fixedColumns)
                     {
@@ -199,11 +193,13 @@ namespace KpiApplication.Excel
                         List<string> currentProcessColumns = new List<string> { "Type\nLoại" };
                         if (processesWithIsSigned.Contains(process))
                             currentProcessColumns.Add("Production Sign\nSản xuất ký tên xác nhận");
-                        currentProcessColumns.AddRange(new string[] {
-                        "Target Output Of PC\nMục tiêu sản lượng của PC",
-                        "Adjust Operator No\nSố người điều chỉnh",
-                        "IE PPH"
-                    });
+
+                        currentProcessColumns.AddRange(new[] {
+                    "Target Output Of PC\nMục tiêu sản lượng của PC",
+                    "Adjust Operator No\nSố người điều chỉnh",
+                    "IE PPH"
+                });
+
                         if (includeTCT)
                             currentProcessColumns.Add("TCT");
 
@@ -228,7 +224,9 @@ namespace KpiApplication.Excel
                         ws.Cells[row, col++].Value = group.Key.ModelName;
                         ws.Cells[row, col++].Value = group.Key.ArticleName;
 
-                        var dictProcess = group.GroupBy(x => x.Process).ToDictionary(g => g.Key, g => g.First());
+                        var dictProcess = group
+                            .GroupBy(x => x.Process)
+                            .ToDictionary(g => g.Key, g => g.First());
 
                         foreach (var process in processOrder)
                         {

@@ -7,23 +7,73 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace KpiApplication.Excel
 {
     public class ExcelImporter
     {
-        public static List<TCTRaw> ReadTCTItemsFromExcel(string filePath, out List<string> errors)
+        public class ArticleDto
         {
-            var result = new List<TCTRaw>(); 
-            errors = new List<string>();
+            public string ArticleName { get; set; }
+            public string ModelName { get; set; }
+        }
 
-            var modelNamesSeen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        public static List<ArticleDto> ReadArticlesFromExcel(string filePath, string sheetName)
+        {
+            List<ArticleDto> articles = new List<ArticleDto>();
 
             using (var package = new ExcelPackage(new FileInfo(filePath)))
             {
-                var worksheet = package.Workbook.Worksheets[0];
+                var worksheet = package.Workbook.Worksheets[sheetName];
+                if (worksheet == null)
+                    throw new Exception("Sheet không tồn tại.");
+
                 int rowCount = worksheet.Dimension.Rows;
+                for (int row = 2; row <= rowCount; row++) // Bỏ qua dòng tiêu đề
+                {
+                    string articleName = worksheet.Cells[row, 1].Text?.Trim();
+                    string modelName = worksheet.Cells[row, 2].Text?.Trim();
+
+                    if (!string.IsNullOrEmpty(articleName) && !string.IsNullOrEmpty(modelName))
+                    {
+                        articles.Add(new ArticleDto
+                        {
+                            ArticleName = articleName,
+                            ModelName = modelName
+                        });
+                    }
+                }
+            }
+
+            return articles;
+        }
+
+        public static List<TCTRaw> ReadTCTItemsFromExcel(string filePath, string selectedSheetName, out List<string> errors)
+        {
+            var result = new List<TCTRaw>();
+            errors = new List<string>();
+            var modelNamesSeen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException($"❌ File không tồn tại: {filePath}");
+
+            using (var package = new ExcelPackage(new FileInfo(filePath)))
+            {
+                var workbook = package.Workbook;
+
+                if (workbook == null || workbook.Worksheets.Count == 0)
+                    throw new Exception("📄 File Excel không chứa bất kỳ sheet nào.");
+
+                var worksheet = workbook.Worksheets[selectedSheetName];
+                if (worksheet == null)
+                    throw new Exception($"📄 Sheet '{selectedSheetName}' không tồn tại trong file.");
+
+                if (worksheet.Dimension == null)
+                    throw new Exception($"⚠️ Sheet '{selectedSheetName}' không chứa dữ liệu.");
+
+                int rowCount = worksheet.Dimension.End.Row;
 
                 for (int row = 4; row <= rowCount; row++)
                 {
@@ -34,11 +84,11 @@ namespace KpiApplication.Excel
                         continue;
 
                     if (modelNamesSeen.Contains(modelName))
-                        continue; 
+                        continue;
 
                     modelNamesSeen.Add(modelName);
 
-                    var item = new TCTRaw  
+                    var item = new TCTRaw
                     {
                         ModelName = modelName,
                         Type = type,
@@ -54,7 +104,13 @@ namespace KpiApplication.Excel
 
             return result;
         }
-
+        public static List<string> GetExcelSheetNames(string filePath)
+        {
+            using (var package = new ExcelPackage(new FileInfo(filePath)))
+            {
+                return package.Workbook.Worksheets.Select(ws => ws.Name).ToList();
+            }
+        }
         private static double? TryParseDoubleOrLog(string text, int row, string columnName, List<string> errors)
         {
             if (string.IsNullOrWhiteSpace(text))
@@ -135,7 +191,8 @@ namespace KpiApplication.Excel
                     Debug.WriteLine($"Selected sheet: {selectedSheet}");
                     if (selectedSheet == null) return dataList;
 
-                    DateTime workingDate = NormalizeSheetNameAsDate(selectedSheet);
+                    var worksheet = package.Workbook.Worksheets[selectedSheet];
+                    DateTime workingDate = NormalizeSheetNameAsDate(selectedSheet, worksheet);
                     ProcessWorksheet(package, selectedSheet, dataList, isMegaFile, isTeraFile, workingDate);
                 }
                 else
@@ -171,18 +228,19 @@ namespace KpiApplication.Excel
             Debug.WriteLine($"Total rows loaded: {dataList.Count}");
             return dataList;
         }
-        private static DateTime NormalizeSheetNameAsDate(string sheetName)
+        private static DateTime NormalizeSheetNameAsDate(string sheetName, ExcelWorksheet worksheet)
         {
             DateTime date;
 
-            if (DateTime.TryParseExact(sheetName, "d.M.yyyy", null, System.Globalization.DateTimeStyles.None, out date) ||
-                DateTime.TryParseExact(sheetName, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out date))
+            // Thử parse các định dạng chuẩn
+            if (DateTime.TryParseExact(sheetName, "d.M.yyyy", null, DateTimeStyles.None, out date) ||
+                DateTime.TryParseExact(sheetName, "dd.MM.yyyy", null, DateTimeStyles.None, out date))
             {
                 return date;
             }
 
-            if (DateTime.TryParseExact(sheetName, "M.d", null, System.Globalization.DateTimeStyles.None, out date) ||
-                DateTime.TryParseExact(sheetName, "MM.dd", null, System.Globalization.DateTimeStyles.None, out date))
+            if (DateTime.TryParseExact(sheetName, "M.d", null, DateTimeStyles.None, out date) ||
+                DateTime.TryParseExact(sheetName, "MM.dd", null, DateTimeStyles.None, out date))
             {
                 var today = DateTime.Today;
                 var parsed = new DateTime(today.Year, date.Month, date.Day);
@@ -193,7 +251,23 @@ namespace KpiApplication.Excel
                 return parsed;
             }
 
-            // fallback nếu không parse được
+            // Nếu không parse được từ tên sheet, thử đọc ô A2
+            string cellText = worksheet?.Cells["A2"].Text?.Trim();
+            if (!string.IsNullOrEmpty(cellText))
+            {
+                // Tìm chuỗi "ngày dd/MM/yyyy" trong văn bản
+                var match = Regex.Match(cellText, @"ngày\s+(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})", RegexOptions.IgnoreCase);
+                if (match.Success)
+                {
+                    if (int.TryParse(match.Groups[1].Value, out int day) &&
+                        int.TryParse(match.Groups[2].Value, out int month) &&
+                        int.TryParse(match.Groups[3].Value, out int year))
+                    {
+                        return new DateTime(year, month, day);
+                    }
+                }
+            }
+
             return DateTime.MinValue;
         }
 
@@ -263,7 +337,7 @@ namespace KpiApplication.Excel
             }
         }
 
-        private static List<string> GetSheetNames(string filePath)
+        public static List<string> GetSheetNames(string filePath)
         {
             using (ExcelPackage package = new ExcelPackage(new FileInfo(filePath)))
             {

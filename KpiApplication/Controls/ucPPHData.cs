@@ -1,11 +1,12 @@
-﻿using DevExpress.XtraEditors;
-using DevExpress.XtraEditors.Controls;
-using DevExpress.XtraEditors.Repository;
+﻿using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
+using KpiApplication.Common;
 using KpiApplication.DataAccess;
 using KpiApplication.Excel;
+using KpiApplication.Extensions;
+using KpiApplication.Forms;
 using KpiApplication.Models;
 using KpiApplication.Utils;
 using System;
@@ -16,24 +17,29 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
 namespace KpiApplication.Controls
 {
-    public partial class ucPPHData : DevExpress.XtraEditors.XtraUserControl
+    public partial class ucPPHData : DevExpress.XtraEditors.XtraUserControl, ISupportLoadAsync
     {
         private BindingList<IETotal_Model> ieTotalList;
         private List<IETotal_Model> ieTotalListOriginalClone;
         private readonly HashSet<string> mergeByArticleCols;
         private IEPPHData_DAL iePPHData_DAL = new IEPPHData_DAL();
+        private OverlayHelper overlayHelper;
+        private float currentZoomFactor = 1.0f;
+        private const float MinZoom = 0.6f;
+        private const float MaxZoom = 2.0f;
 
         // Thứ tự cột hiển thị
         private readonly string[] desiredColumnOrder = {
             "ArticleName", "ModelName", "PCSend", "PersonIncharge", "NoteForPC",
-            "OutsourcingAssembling", "OutsourcingStitching", "OutsourcingStockFitting",
-            "DataStatus", "StageName", "TypeName", "TargetOutputPC", "AdjustOperatorNo",
+            "OutsourcingAssemblingBool", "OutsourcingStitchingBool", "OutsourcingStockFittingBool",
+            "Status", "Process", "StageName", "TypeName", "TargetOutputPC", "AdjustOperatorNo",
             "IEPPHValue", "TCTValue", "THTValue", "IsSigned",
             "SectionName", "ReferenceModel", "OperatorAdjust", "ReferenceOperator",
             "FinalOperator", "Notes"
@@ -42,8 +48,9 @@ namespace KpiApplication.Controls
         public ucPPHData()
         {
             InitializeComponent();
+
+            ApplyLocalizedText();
             InitZoomOverlay();
-            this.Load += ucViewPPHData_Load;
 
             dgvIEPPH.RowUpdated += dgvIEPPH_RowUpdated;
             dgvIEPPH.CellMerge += dgvIEPPH_CellMerge;
@@ -54,125 +61,249 @@ namespace KpiApplication.Controls
         "ArticleName", "ModelName", "PCSend", "PersonIncharge", "OutsourcingAssemblingBool",
         "NoteForPC", "OutsourcingStitchingBool", "OutsourcingStockFittingBool", "Status"
     };
-
         }
-        private async void ucViewPPHData_Load(object sender, EventArgs e)
+        private void ApplyLocalizedText()
         {
-            await LoadDataAsync("Loading...");
+            btnExport.Caption = Lang.Export;
         }
-
-        private async void btnRefresh_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
-        {
-            await LoadDataAsync("Refreshing data...");
-        }
-
-        // Common data loading method
-        private async Task LoadDataAsync(string splashMessage)
+        public async Task LoadDataAsync()
         {
             try
             {
-                await AsyncLoaderHelper.LoadDataWithSplashAsync(
-                    this,
-                    FetchData,
-                    data =>
-                    {
-                        LoadDataToGrid(data);
+                UseWaitCursor = true;
 
-                        SetupMemoEditColumn("NoteForPC");
-                        SetupColumnComboBox("PersonIncharge", x => x.PersonIncharge.Trim());
-                        SetupColumnComboBox("Status", x => x.Status);
-                        SetupColumnComboBox("TypeName", new[] {
-                    "Production Trial",
-                    "First Production",
-                    "Mass Production"
-                        });
-                        SetupColumnComboBox("IsSigned", new[] { "Signed", "Not Sign Yet" });
-                        SetupColumnComboBox("Process", iePPHData_DAL.GetProcessList());
-
-                        SetColumnOrder();
-                        ApplyColumnAlignment();
-                        SetColumnCaptions();
-
-                        ConfigureGridAfterDataBinding();
-                    },
-                    splashMessage
-                );
+                var data = await Task.Run(() => FetchData());
+                LoadDataToGrid(data);
+                ConfigureGridAfterDataBinding();
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError("An error occurred while loading data", ex);
+                MessageBoxHelper.ShowError(Lang.LoadDataError, ex);
+            }
+            finally
+            {
+                UseWaitCursor = false;
             }
         }
-        private void SetupColumnComboBox(string columnName, List<string> items)
+
+        private async void btnImport_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-            SetupColumnComboBox(columnName, items.ToArray());
-        }
-
-        private void SetupColumnComboBox(string columnName, Func<IETotal_Model, string> selector)
-        {
-            var list = ieTotalList.Select(selector)
-                                  .Where(x => !string.IsNullOrWhiteSpace(x))
-                                  .Distinct()
-                                  .ToList();
-
-            var combo = new DevExpress.XtraEditors.Repository.RepositoryItemComboBox();
-            combo.Items.AddRange(list);
-            combo.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
-            gridControl1.RepositoryItems.Add(combo);
-
-            if (dgvIEPPH.Columns[columnName] != null)
-                dgvIEPPH.Columns[columnName].ColumnEdit = combo;
-
-        }
-
-        private void SetupColumnComboBox(string columnName, string[] items)
-        {
-            var col = dgvIEPPH.Columns[columnName];
-            if (col == null) return;
-
-            var combo = new RepositoryItemComboBox
+            using (var openDialog = new OpenFileDialog())
             {
-                TextEditStyle = TextEditStyles.DisableTextEditor
-            };
-            combo.Items.Clear();
-            combo.Items.AddRange(items);
+                openDialog.Filter = "Excel Files|*.xlsx;*.xls";
 
-            gridControl1.RepositoryItems.Add(combo);
-            col.ColumnEdit = combo;
+                if (openDialog.ShowDialog() != DialogResult.OK)
+                    return;
 
-            col.OptionsEditForm.Visible = DevExpress.Utils.DefaultBoolean.True;
-            col.OptionsEditForm.UseEditorColRowSpan = false;
+                string filePath = openDialog.FileName;
+
+                try
+                {
+                    // Lấy danh sách sheet
+                    var sheetNames = ExcelImporter.GetSheetNames(filePath);
+
+                    // Hiển thị form chọn sheet
+                    string selectedSheet = null;
+                    using (var form = new SheetSelectionForm(sheetNames))
+                    {
+                        if (form.ShowDialog() != DialogResult.OK || string.IsNullOrEmpty(form.SelectedSheet))
+                            return;
+
+                        selectedSheet = form.SelectedSheet;
+                    }
+                    int added = 0;
+                    int modelInserted = 0;
+
+                    await AsyncLoaderHelper.LoadDataWithSplashAsync(
+                        this,
+                        () => Task.Run(() =>
+                        {
+                            // Đọc dữ liệu từ Excel
+                            var articles = ExcelImporter.ReadArticlesFromExcel(filePath, selectedSheet);
+
+                            // Thêm vào bảng Articles
+                            added = iePPHData_DAL.InsertIfNotExists(articles);
+
+                            // Lấy danh sách ModelName duy nhất từ articles
+                            var distinctModelNames = articles
+                                .Where(x => !string.IsNullOrWhiteSpace(x.ModelName))
+                                .Select(x => x.ModelName.Trim())
+                                .Distinct()
+                                .ToList();
+
+                            // Thêm vào bảng TCTData nếu chưa có
+                            modelInserted = TCT_DAL.InsertMissingModelNames(distinctModelNames, Common.Global.CurrentEmployee.Username);
+                        }),
+                        Lang.Importing
+                    );
+                    // Thông báo kết quả
+                    var sb = new StringBuilder();
+                    sb.AppendLine($"✅ {Lang.ImportSuccess}");
+                    sb.AppendLine($"🆕 {Lang.Inserted}: {added} Articles.");
+                    sb.AppendLine($"📦 {Lang.NewModelsAdded}: {modelInserted} Model(s) vào bảng TCT.");
+
+                    MessageBoxHelper.ShowInfo(sb.ToString());
+
+                    await LoadDataAsync();
+                }
+                catch (Exception ex)
+                {
+                    MessageBoxHelper.ShowError(Lang.ImportFailed, ex);
+                }
+            }
         }
         private void ConfigureGridAfterDataBinding()
         {
-            ColumnsReadOnlyInEditForm();
-            ConfigureGridView();
-            GridViewHelper.EnableCopyFunctionality((GridView)this.dgvIEPPH);
-            GridViewHelper.ApplyDefaultFormatting(this.dgvIEPPH);
+            GridViewHelper.SetupMemoEditColumn(gridControl1, dgvIEPPH, "NoteForPC");
+            GridViewHelper.SetupMemoEditColumn(gridControl1, dgvIEPPH, "ModelName");
+            GridViewHelper.SetupMemoEditColumn(gridControl1, dgvIEPPH, "Notes");
+
+            GridViewHelper.SetupComboBoxColumn(
+                gridControl1,
+                dgvIEPPH,
+                "PersonIncharge",
+                ieTotalList
+                    .Select(x => x.PersonIncharge?.Trim())
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Distinct()
+                    .OrderBy(x => x)
+            );
+            GridViewHelper.SetupComboBoxColumn(gridControl1, dgvIEPPH, "Status", ieTotalList.Select(x => x.Status));
+            GridViewHelper.SetupComboBoxColumn(gridControl1, dgvIEPPH, "TypeName", new[]
+            {
+    "Trial Pattern", "CR1", "CR2", "Presell", "SMS", "MCS", "MSO", "FGT",
+    "CS1", "CS2", "CS3",
+    "Production Trial", "First Production", "Mass Production"
+});
+            GridViewHelper.SetupComboBoxColumn(gridControl1, dgvIEPPH, "IsSigned", new[] { "Signed", "Not Sign Yet" });
+            GridViewHelper.SetupComboBoxColumn(gridControl1, dgvIEPPH, "Process", iePPHData_DAL.GetProcessList());
+
+            GridViewHelper.SetColumnCaptions(dgvIEPPH, GetCaptions());
+
+            // Cố định chiều rộng cho NoteForPC và ModelName
+            var fixedWidthCols = new Dictionary<string, int>
+    {
+        { "NoteForPC", 220 },
+        { "ModelName", 220 }
+    };
+
+            foreach (var kvp in fixedWidthCols)
+            {
+                var col = dgvIEPPH.Columns[kvp.Key];
+                if (col != null)
+                {
+                    col.Width = kvp.Value;
+                    col.OptionsColumn.FixedWidth = true;
+                }
+            }
+
+            dgvIEPPH.LayoutChanged();
+
+            Task.Delay(100).ContinueWith(_ =>
+            {
+                BeginInvoke(new Action(() =>
+                {
+                    foreach (GridColumn col in dgvIEPPH.Columns)
+                    {
+                        if (col.FieldName != "NoteForPC" && col.FieldName != "ModelName")
+                        {
+                            col.BestFit();
+                        }
+                    }
+                }));
+            });
+
+            GridViewHelper.HideColumns(dgvIEPPH, "TypeID", "IEID", "ProcessID", "StageID", "ArticleID");
+
+            GridViewHelper.ReorderColumns(dgvIEPPH, desiredColumnOrder);
+            dgvIEPPH.NewItemRowText = Lang.AddNewRowHint; 
+
+            GridViewHelper.ConfigureGrid(
+                dgvIEPPH,
+                gridControl1,
+                new[] { dgvIEPPH.Columns["ArticleName"], dgvIEPPH.Columns["ModelName"] },
+                new[] { "" }
+            );
+        }
+        private Dictionary<string, string> GetCaptions()
+        {
+            return new Dictionary<string, string>
+            {
+                ["IEPPHValue"] = "IE PPH",
+                ["OutsourcingAssemblingBool"] = Lang.OutsourcingAssembling,
+                ["OutsourcingStitchingBool"] = Lang.OutsourcingStitching,
+                ["OutsourcingStockFittingBool"] = Lang.OutsourcingStockFitting,
+                ["AdjustOperatorNo"] = Lang.AdjustOperator,
+                ["Process"] = Lang.Process,
+                ["TargetOutputPC"] = Lang.TargetOutput,
+                ["IsSigned"] = Lang.ProductionSign,
+                ["THTValue"] = "THT",
+                ["ReferenceModel"] = Lang.ReferenceModel,
+                ["OperatorAdjust"] = Lang.OperatorAdjust,
+                ["ReferenceOperator"] = Lang.ReferenceOperator,
+                ["FinalOperator"] = Lang.FinalOperator,
+                ["TypeName"] = Lang.Type,
+                ["PersonIncharge"] = Lang.PersonIncharge,
+                ["ArticleName"] = Lang.ArticleName,
+                ["Status"] = Lang.DataStatus,
+                ["NoteForPC"] = Lang.NoteForPC,
+                ["ModelName"] = Lang.ModelName,
+                ["PCSend"] = Lang.PCSend,
+                ["Notes"] = Lang.Notes,
+                ["TCTValue"] = "TCT"
+            };
         }
 
         private BindingList<IETotal_Model> FetchData()
         {
             var data = iePPHData_DAL.GetIEPPHData();
+
+            ieTotalList = data; 
+
+            foreach (var item in ieTotalList)
+            {
+                item.PersonIncharge = NormalizeHelper.NormalizeString(item.PersonIncharge);
+            }
+
             ieTotalListOriginalClone = data.Select(IETotal_Model.Clone).ToList();
             return data;
         }
-
         private void LoadDataToGrid(BindingList<IETotal_Model> data)
         {
             ieTotalList = data;
             gridControl1.DataSource = ieTotalList;
+
+        }
+        public static int GetTypePriority(string typeName)
+        {
+            switch (typeName)
+            {
+                case "Mass Production":
+                    return 0;
+                case "First Production":
+                    return 1;
+                case "Production Trial":
+                    return 2;
+                default:
+                    return 3;
+            }
         }
 
         private async void btnExport_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
             if (ieTotalList == null || ieTotalList.Count == 0)
             {
-                MessageBoxHelper.ShowInfo("No data to export.");
+                MessageBoxHelper.ShowInfo(Lang.NoDataToExport);
                 return;
             }
 
-            var result = MessageBoxHelper.ShowConfirm("Do you want to include the TCT column in the export?", "Excel Export Options");
+            var result = MessageBoxHelper.ShowConfirmYesNoCancel(
+                Lang.IncludeTCTInExport,
+                Lang.ExcelExportOptions);
+
+            if (result == DialogResult.Cancel)
+                return;
+
             bool includeTCT = (result == DialogResult.Yes);
 
             using (var saveDialog = new SaveFileDialog())
@@ -180,145 +311,67 @@ namespace KpiApplication.Controls
                 saveDialog.Filter = "Excel files (*.xlsx)|*.xlsx";
                 saveDialog.FileName = "PPHData.xlsx";
 
-                if (saveDialog.ShowDialog() == DialogResult.OK)
+                if (saveDialog.ShowDialog() != DialogResult.OK)
+                    return;
+
+                string originalPath = saveDialog.FileName;
+                string filePath = originalPath;
+                string dir = Path.GetDirectoryName(originalPath);
+                string baseName = Path.GetFileNameWithoutExtension(originalPath);
+                string ext = Path.GetExtension(originalPath);
+
+                int count = 1;
+                while (File.Exists(filePath))
                 {
-                    string originalFilePath = saveDialog.FileName;
-                    string filePath = originalFilePath;
+                    filePath = Path.Combine(dir, $"{baseName}_{count}{ext}");
+                    count++;
+                }
 
-                    int count = 1;
-                    string dir = Path.GetDirectoryName(originalFilePath);
-                    string fileNameWithoutExt = Path.GetFileNameWithoutExtension(originalFilePath);
-                    string ext = Path.GetExtension(originalFilePath);
-
-                    while (File.Exists(filePath))
+                await AsyncLoaderHelper.LoadDataWithSplashAsync(
+                    this,
+                    () =>
                     {
-                        filePath = Path.Combine(dir, $"{fileNameWithoutExt}_{count}{ext}");
-                        count++;
-                    }
+                        var filteredData = ieTotalList
+                            .GroupBy(x => new { x.ArticleName, x.Process })
+                            .Select(group =>
+                            {
+                                var best = group
+                                    .OrderBy(x => GetTypePriority(x.TypeName?.Trim() ?? string.Empty))
+                                    .First();
 
-                    await AsyncLoaderHelper.LoadDataWithSplashAsync(
-                        this,
-                        () =>
+                                return best;
+                            })
+                            .ToList();
+                        var convertedData = filteredData.Select(item => new IETotal_Model
                         {
-                            ExcelExporter.ExportIETotalPivoted(ieTotalList.ToList(), filePath, includeTCT);
-                            return true;
-                        },
-                        _ => { },
-                        "Exporting..."
-                    );
+                            ArticleName = item.ArticleName,
+                            ModelName = item.ModelName,
+                            Process = item.Process,
+                            IEPPHValue = item.IEPPHValue,
+                            THTValue = item.THTValue,
+                            TargetOutputPC = item.TargetOutputPC,
+                            AdjustOperatorNo = item.AdjustOperatorNo,
+                            IsSigned = item.IsSigned,
+                            TypeName = item.TypeName,
+                            PersonIncharge = item.PersonIncharge,
+                            NoteForPC = item.NoteForPC
+                        }).ToList();
+                        ExcelExporter.ExportIETotalPivoted(convertedData, filePath, includeTCT);
+                        return true;
+                    },
+                    _ => { },
+                    Lang.Exporting
+                );
 
-                    MessageBoxHelper.ShowInfo("Excel export completed successfully!");
+                MessageBoxHelper.ShowInfo(Lang.ExcelExportSuccess);
 
-                    try
-                    {
-                        Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
-                    }
-                    catch
-                    {
-                        // Ignore
-                    }
-                }
-            }
-        }
-        private void SetColumnOrder()
-        {
-            for (int i = 0; i < desiredColumnOrder.Length; i++)
-            {
-                var col = dgvIEPPH.Columns[desiredColumnOrder[i]];
-                if (col != null)
-                    col.VisibleIndex = i;
-            }
-        }
-
-        private void ApplyColumnAlignment()
-        {
-            foreach (var colName in mergeByArticleCols)
-            {
-                var col = dgvIEPPH.Columns[colName];
-                if (col != null)
+                try
                 {
-                    col.AppearanceCell.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
-                    col.AppearanceCell.TextOptions.VAlignment = DevExpress.Utils.VertAlignment.Center;
+                    Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
                 }
-            }
-        }
-        private void SetupMemoEditColumn(string columnName)
-        {
-            var memoEdit = new DevExpress.XtraEditors.Repository.RepositoryItemMemoEdit();
-            memoEdit.WordWrap = true;
-            memoEdit.ScrollBars = ScrollBars.Vertical;
-            gridControl1.RepositoryItems.Add(memoEdit);
-
-            if (dgvIEPPH.Columns[columnName] != null)
-            {
-                dgvIEPPH.Columns[columnName].ColumnEdit = memoEdit;
-                dgvIEPPH.Columns[columnName].AppearanceCell.TextOptions.WordWrap = DevExpress.Utils.WordWrap.Wrap;
-            }
-
-            dgvIEPPH.OptionsView.RowAutoHeight = true;
-        }
-
-        private void ColumnsReadOnlyInEditForm()
-        {
-            string[] readOnlyColumns = { "ArticleName" };
-
-            foreach (var colName in readOnlyColumns)
-            {
-                var column = dgvIEPPH.Columns[colName];
-                if (column != null)
+                catch
                 {
-                    column.OptionsColumn.AllowEdit = false;
-                    column.OptionsColumn.ReadOnly = true;
-                    column.ColumnEdit = null;
-                }
-            }
-        }
-        private void SetColumnCaptions()
-        {
-            GridViewHelper.SetColumnCaptions(dgvIEPPH, new Dictionary<string, string>()
-            {
-                ["IEPPHValue"] = "IE PPH",
-                ["IsSigned"] = "Production Sign",
-                ["OutsourcingAssemblingBool"] = "Outsourcing\nAssembling",
-                ["OutsourcingStitchingBool"] = "Outsourcing\nStitching",
-                ["OutsourcingStockFittingBool"] = "Outsourcing\nStockFitting",
-                ["AdjustOperatorNo"] = "Operator",
-                ["TargetOutputPC"] = "Target\nOutput",
-                ["ProductionSign"] = "Production\nSign",
-                ["THTValue"] = "THT",
-                ["ReferenceModel"] = "Reference\nModel",
-                ["OperatorAdjust"] = "Operator\nAdjust",
-                ["ReferenceOperator"] = "Reference\nOperator",
-                ["FinalOperator"] = "Final\nOperator",
-                ["TypeName"] = "Type",
-                ["PersonIncharge"] = "Person\nIncharge"
-            });
-        }
-
-        private void ConfigureGridView()
-        {
-            GridViewHelper.ApplyDefaultFormatting(dgvIEPPH);
-
-            dgvIEPPH.OptionsView.AllowCellMerge = true;
-            dgvIEPPH.OptionsView.RowAutoHeight = true;
-            dgvIEPPH.OptionsView.ColumnAutoWidth = false;
-            dgvIEPPH.OptionsSelection.MultiSelect = true;
-            dgvIEPPH.OptionsSelection.MultiSelectMode = GridMultiSelectMode.RowSelect;
-            gridControl1.UseEmbeddedNavigator = false;
-
-            GridViewHelper.EnableWordWrapForGridView(dgvIEPPH);
-            GridViewHelper.FixColumns(dgvIEPPH, "ArticleName", "ModelName");
-            GridViewHelper.HideColumns(dgvIEPPH, "TypeID", "IEID", "ProcessID", "StageID", "ArticleID");
-            foreach (GridColumn col in dgvIEPPH.Columns)
-            {
-                if (col.FieldName != "NoteForPC" && col.FieldName != "ModelName")
-                {
-                    col.BestFit();
-                }
-                else
-                {
-                    col.Width = 220;
-                    col.OptionsColumn.FixedWidth = true;
+                    MessageBoxHelper.ShowError(Lang.CannotOpenExportedFile);
                 }
             }
         }
@@ -327,187 +380,339 @@ namespace KpiApplication.Controls
             var current = e.Row as IETotal_Model;
             if (current == null)
             {
-                MessageBoxHelper.ShowError("❌ The current row data is invalid.");
+                MessageBoxHelper.ShowError("❌ " + Lang.InvalidRow);
                 return;
             }
 
             try
             {
                 ProcessRowUpdate(current);
-
-                dgvIEPPH.RefreshData();
-
-                await LoadDataAsync("Refreshing data...");
+                await LoadDataAsync();
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError($"❌ Error while saving data.\nDetails: {ex.Message}");
-                Debug.WriteLine($"❌ Exception: {ex}");
+                MessageBoxHelper.ShowError("❌ " + Lang.UpdateFailed + ": " + ex.Message);
             }
         }
+
         private void ProcessRowUpdate(IETotal_Model current)
         {
-            var original = FindOriginal(current);
+            int? existingArticleID = iePPHData_DAL.GetArticleIDByName(Normalize(current.ArticleName));
+            bool articleExists = existingArticleID.HasValue;
 
-            SetProcessID(current);
-            SetTypeID(current);
-
-            if (original == null)
+            if (articleExists)
             {
-                HandleNewRecord(current);
+                current.ArticleID = existingArticleID.Value;
+                var original = FindOriginal(current);
+                HandleUpdatedRecord(current, original);
             }
             else
             {
-                HandleUpdatedRecord(current, original);
+                HandleNewRecord(current);
             }
 
             UpdateOriginalClone(current);
         }
+
         private void HandleNewRecord(IETotal_Model item)
         {
-            if (!EnsureArticleDependenciesInserted(item))
-                throw new Exception("❌ Unable to insert new record due to missing dependent data.");
+            Debug.WriteLine($"[DEBUG] HandleNewRecord - ArticleName: {item.ArticleName}, ModelName: {item.ModelName}");
 
-            EnsureTCTInsertedOrUpdated(item);
-
-            Debug.WriteLine($"✅ New record inserted: ArticleID = {item.ArticleID}.");
-        }
-        private void HandleUpdatedRecord(IETotal_Model current, IETotal_Model original)
-        {
-            string updatedBy = Common.Global.CurrentEmployee.Username;
-            DateTime updatedAt = DateTime.UtcNow;
-
-            var changedProps = current.GetChangedProperties(original);
-
-            if (changedProps.Count == 0)
+            if (!EnsureArticleInserted(item))
             {
-                Debug.WriteLine($"ℹ️ No changes detected for ArticleID = {current.ArticleID}.");
+                Debug.WriteLine("[DEBUG] HandleNewRecord - EnsureArticleInserted FAILED");
+                throw new Exception(Lang.Error_InsertArticleFailed);
+            }
+
+            bool isMinimalData = !string.IsNullOrWhiteSpace(item.ArticleName) &&
+                                 !string.IsNullOrWhiteSpace(item.ModelName) &&
+                                 string.IsNullOrWhiteSpace(item.TypeName) &&
+                                 string.IsNullOrWhiteSpace(item.Process);
+
+            if (isMinimalData)
+            {
+                Debug.WriteLine("[DEBUG] HandleNewRecord - Minimal data, skipping dependencies");
+                UserLogHelper.Log("Insert", "Articles", item.ArticleID,
+                    $"Inserted Article: {item.ArticleName}, Model: {item.ModelName} (basic info)");
                 return;
             }
 
-            if (changedProps.Contains("ModelName"))
-            {
-                if (!IEPPHData_DAL.Update_ArticleModelName(current.ArticleID, current.ModelName))
-                {
-                    throw new Exception($"Failed to update ModelName for ArticleID = {current.ArticleID}.");
-                }
-                Debug.WriteLine($"✏️ ModelName updated for ArticleID = {current.ArticleID} to '{current.ModelName}'.");
-            }
+            Debug.WriteLine("[DEBUG] HandleNewRecord - Inserting dependencies and TCT");
+            EnsureArticleDependenciesInserted(item);
+            EnsureTCTInsertedOrUpdated(item);
 
-            Debug.WriteLine("🔄 Modified properties: " + string.Join(", ", changedProps));
-
-            if (changedProps.Contains("TypeName")) SetTypeID(current);
-            if (changedProps.Contains("Process")) SetProcessID(current);
-
-            var updateActions = new (Func<IETotal_Model, bool> updateFunc, string[] relatedProps, string errorMessage)[]
-            {
-        (
-            item => iePPHData_DAL.Update_ArticleProcessTypeData(item, updatedBy, updatedAt),
-            new[] {
-                "TargetOutputPC", "AdjustOperatorNo", "TypeName", "TCTValue", "IsSigned", "Process",
-                "ReferenceModel", "OperatorAdjust", "ReferenceOperator", "FinalOperator", "Notes"
-            },
-            $"Failed to update ArticleProcessTypeData for ArticleID = {current.ArticleID}."
-        ),
-        (
-            iePPHData_DAL.Update_ArticlePCIncharge,
-            new[] { "PersonIncharge", "PCSend" },
-            $"Failed to update Article_PCIncharge for ArticleID = {current.ArticleID}."
-        ),
-        (
-            iePPHData_DAL.Update_ArticleOutsourcing,
-            new[] { "OutsourcingStitchingBool", "OutsourcingAssemblingBool", "OutsourcingStockFittingBool", "NoteForPC", "Status" },
-            $"Failed to update Article_Outsourcing for ArticleID = {current.ArticleID}."
-        ),
-        (
-            item =>
-            {
-                EnsureTCTInsertedOrUpdated(item);
-                return true;
-            },
-            new[] { "TCTValue", "ModelName", "TypeName", "Process" },
-            $"Failed to update TCT for ArticleID = {current.ArticleID}."
-        )
-            };
-
-            foreach (var (updateFunc, props, errorMessage) in updateActions)
-            {
-                if (changedProps.Intersect(props).Any())
-                {
-                    if (!updateFunc(current))
-                        throw new Exception(errorMessage);
-                }
-            }
-
-            Debug.WriteLine($"✅ Record updated successfully: ArticleID = {current.ArticleID}.");
+            UserLogHelper.Log("Insert", "IETotal", item.ArticleID,
+                $"Inserted Article: {item.ArticleName}, Model: {item.ModelName} (with full data)");
         }
+        private void HandleUpdatedRecord(IETotal_Model current, IETotal_Model original)
+        {
+            string username = Common.Global.CurrentEmployee.Username;
+            DateTime now = DateTime.UtcNow;
+
+            var changedProps = original != null
+                ? current.GetChangedProperties(original)
+                : current.GetNonEmptyProperties();
+
+            if (changedProps.Count == 0)
+            {
+                Debug.WriteLine($"🔍 Không có thuộc tính nào thay đổi cho ArticleID: {current.ArticleID}");
+                return;
+            }
+
+            var changedSet = new HashSet<string>(changedProps.Keys);
+            LogChangedFields(current.ArticleID, changedProps, original);
+
+            try
+            {
+                if (changedSet.Contains("ModelName"))
+                {
+                    if (!iePPHData_DAL.Update_ArticleModelName(current.ArticleID, current.ModelName))
+                        throw new Exception(string.Format(Lang.Error_UpdateModelNameFailed, current.ArticleID));
+                }
+
+                if (changedSet.Contains("TypeName")) SetTypeID(current);
+                if (changedSet.Contains("Process")) SetProcessID(current);
+
+                var updateActions = new[]
+                {
+            (new Func<IETotal_Model, bool>(item => Upsert_ArticleProcessTypeData(item, username, now)),
+             ArticleProcessFields, Lang.Error_UpdateArticleProcess),
+
+            (new Func<IETotal_Model, bool>(item => UpdatePCIncharge(item)),
+             new[] { "PersonIncharge", "PCSend" }, Lang.Error_UpdatePCIncharge),
+
+            (new Func<IETotal_Model, bool>(iePPHData_DAL.Update_ArticleOutsourcing),
+             new[] { "OutsourcingStitchingBool", "OutsourcingAssemblingBool", "OutsourcingStockFittingBool", "NoteForPC", "Status" },
+             Lang.Error_UpdateOutsourcing),
+
+            (new Func<IETotal_Model, bool>(item => { EnsureTCTInsertedOrUpdated(item); return true; }),
+             TCTFields, Lang.Error_UpdateTCT)
+        };
+
+                foreach (var (func, props, msg) in updateActions)
+                {
+                    if (props.Any(changedSet.Contains))
+                    {
+                        Debug.WriteLine($"➡️ Gọi hàm cập nhật: {msg} cho ArticleID: {current.ArticleID}");
+                        if (!func(current))
+                            throw new Exception(string.Format(msg, current.ArticleID));
+                    }
+                }
+
+                UserLogHelper.Log("Update", "IETotal", current.ArticleID,
+                    $"Changes: {string.Join("; ", changedProps.Select(kv => $"{kv.Key}: {kv.Value}"))}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"❌ Lỗi khi cập nhật ArticleID={current.ArticleID}: {ex.Message}\n{ex}");
+                throw;
+            }
+        }
+        private static readonly string[] ArticleProcessFields = new[]
+{
+    "TargetOutputPC", "AdjustOperatorNo", "TypeName", "TCTValue", "IsSigned", "Process",
+    "ReferenceModel", "OperatorAdjust", "ReferenceOperator", "FinalOperator", "Notes"
+};
+
+        private static readonly string[] TCTFields = new[]
+        {
+    "TCTValue", "ModelName", "TypeName", "Process"
+};
+
+        private bool UpdatePCIncharge(IETotal_Model item)
+        {
+            var result = iePPHData_DAL.Update_ArticlePCIncharge(item);
+            if (!result) return false;
+
+            var col = dgvIEPPH.Columns["PersonIncharge"];
+            if (col?.ColumnEdit is RepositoryItemComboBox combo)
+            {
+                string newVal = item.PersonIncharge?.Trim();
+                if (!string.IsNullOrWhiteSpace(newVal) && !combo.Items.Contains(newVal))
+                    combo.Items.Add(newVal);
+            }
+
+            return true;
+        }
+        private void LogChangedFields(int articleID, Dictionary<string, object> changedProps, IETotal_Model original)
+        {
+            Debug.WriteLine($"📝 ArticleID: {articleID} - Các trường thay đổi:");
+            foreach (var kv in changedProps)
+            {
+                var oldVal = original?.GetType().GetProperty(kv.Key)?.GetValue(original)?.ToString() ?? "(null)";
+                var newVal = kv.Value?.ToString() ?? "(null)";
+                Debug.WriteLine($"   🔸 {kv.Key}: [{oldVal}] → [{newVal}]");
+            }
+        }
+
+
+        private bool Upsert_ArticleProcessTypeData(IETotal_Model item, string user, DateTime time)
+        {
+            return iePPHData_DAL.Exists_ArticleProcessTypeData(item.ArticleID, item.ProcessID, item.TypeID)
+                ? iePPHData_DAL.Update_ArticleProcessTypeData(item, user, time)
+                : iePPHData_DAL.Insert_ArticleProcessTypeData(item, user, time);
+        }
+
+        private bool ValidateArticleInput(IETotal_Model item, out string error)
+        {
+            error = null;
+
+            if (string.IsNullOrWhiteSpace(item.ArticleName))
+            {
+                error = Lang.InvalidArticleName;
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(item.ModelName))
+            {
+                error = Lang.InvalidModelName;
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool EnsureArticleInserted(IETotal_Model item)
+        {
+            Debug.WriteLine($"[DEBUG] EnsureArticleInserted - Input: ArticleName='{item.ArticleName}', ModelName='{item.ModelName}'");
+
+            string normName = Normalize(item.ArticleName);
+            Debug.WriteLine($"[DEBUG] EnsureArticleInserted - Normalized name: '{normName}'");
+
+            int? existingID = iePPHData_DAL.GetArticleIDByName(normName);
+            if (existingID.HasValue)
+            {
+                Debug.WriteLine($"[DEBUG] EnsureArticleInserted - Article already exists. ID = {existingID.Value}");
+                item.ArticleID = existingID.Value;
+                return true;
+            }
+
+            int? newID = iePPHData_DAL.Insert_Article(item.ArticleName, item.ModelName);
+            Debug.WriteLine($"[DEBUG] EnsureArticleInserted - Insert result: ID = {(newID.HasValue ? newID.ToString() : "null")}");
+
+            if (newID == null || newID <= 0)
+            {
+                Debug.WriteLine($"[DEBUG] EnsureArticleInserted - Insert_Article failed for '{item.ArticleName}'");
+                return false;
+            }
+
+            item.ArticleID = newID.Value;
+            Debug.WriteLine($"[DEBUG] EnsureArticleInserted - Success. Assigned ArticleID = {item.ArticleID}");
+            return true;
+        }
+        private void dgvIEPPH_ValidateRow(object sender, DevExpress.XtraGrid.Views.Base.ValidateRowEventArgs e)
+        {
+            var view = sender as GridView;
+            var item = view.GetRow(e.RowHandle) as IETotal_Model;
+
+            if (item == null)
+                return;
+
+            if (!ValidateArticleInput(item, out string error))
+            {
+                e.Valid = false;
+                view.SetColumnError(view.Columns[nameof(item.ArticleName)], error);
+                return;
+            }
+
+            // Insert nếu hợp lệ
+            if (!EnsureArticleInserted(item))
+            {
+                e.Valid = false;
+                view.SetColumnError(view.Columns[nameof(item.ArticleName)], Lang.InsertArticleFailed);
+            }
+        }
+
+        private bool EnsureArticleDependenciesInserted(IETotal_Model item)
+        {
+            string updatedBy = Common.Global.CurrentEmployee.Username;
+            string createdBy = Common.Global.CurrentEmployee.Username;
+            DateTime createdAt = DateTime.UtcNow;
+
+            if (item.ArticleID <= 0)
+            {
+                MessageBoxHelper.ShowError(Lang.InvalidArticleID);
+                return false;
+            } 
+
+            bool updatedOrInserted = false;
+
+            updatedOrInserted |= InsertIfNotExist(
+                () => iePPHData_DAL.Exists_ArticlePCIncharge(item.ArticleID),
+                () => iePPHData_DAL.Insert_ArticlePCIncharge(item));
+
+            updatedOrInserted |= InsertIfNotExist(
+                () => iePPHData_DAL.Exists_ArticleOutsourcing(item.ArticleID),
+                () => iePPHData_DAL.Insert_ArticleOutsourcing(item));
+
+            if (!item.ProcessID.HasValue || !item.TypeID.HasValue)
+            {
+                MessageBoxHelper.ShowError(Lang.MissingProcessOrTypeID);
+                return updatedOrInserted;
+            }
+
+            bool existsAPT = iePPHData_DAL.Exists_ArticleProcessTypeData(item.ArticleID, item.ProcessID.Value, item.TypeID.Value);
+            if (existsAPT)
+            {
+                bool success = iePPHData_DAL.Update_ArticleProcessTypeData(item, Common.Global.CurrentEmployee.Username, DateTime.UtcNow);
+                if (!success)
+                {
+                    MessageBoxHelper.ShowError($"❌ {Lang.Error_UpdateArticleProcess}");
+                }
+                else
+                {
+                    updatedOrInserted |= true;
+                }
+            }
+            else
+            {
+                iePPHData_DAL.Insert_ArticleProcessTypeData(item, createdBy, createdAt);
+                updatedOrInserted |= true;
+            }
+
+            return updatedOrInserted;
+        }
+
         private void EnsureTCTInsertedOrUpdated(IETotal_Model item)
         {
+            Debug.WriteLine($"🛠️ EnsureTCTInsertedOrUpdated gọi cho ArticleID: {item.ArticleID}");
+            Debug.WriteLine($"🔹 ModelName: '{item.ModelName}'");
+            Debug.WriteLine($"🔹 TypeName: '{item.TypeName}'");
+            Debug.WriteLine($"🔹 Process: '{item.Process}'");
+
             if (string.IsNullOrWhiteSpace(item.ModelName) ||
                 string.IsNullOrWhiteSpace(item.TypeName) ||
                 string.IsNullOrWhiteSpace(item.Process))
             {
-                Debug.WriteLine("⚠️ Missing information: unable to insert or update TCT.");
+                Debug.WriteLine("❌ TCT: Missing required field. ModelName, TypeName, or Process is null/empty.");
                 return;
             }
 
-            string normModel = Normalize(item.ModelName);
-            string normType = Normalize(item.TypeName);
-            string normProcess = Normalize(item.Process);
+            string model = Normalize(item.ModelName);
+            string type = Normalize(item.TypeName);
+            string process = Normalize(item.Process);
             string updatedBy = Common.Global.CurrentEmployee.Username;
 
-            double? tctValue = item.TCTValue;
-
-            if (!iePPHData_DAL.Exists_TCTData(normModel, normType, normProcess))
+            if (iePPHData_DAL.Exists_TCTData(model, type, process))
             {
-                iePPHData_DAL.Insert_TCTData(item.ModelName, item.TypeName, item.Process, tctValue);
-                Debug.WriteLine($"➕ Inserted TCT: Model = {item.ModelName}, Process = {item.Process}");
+                Debug.WriteLine("🔄 Đã tồn tại TCTData → Gọi Update");
+                iePPHData_DAL.Update_TCTData(item.ModelName, item.TypeName, item.Process, item.TCTValue, updatedBy);
             }
             else
             {
-                iePPHData_DAL.Update_TCTData(item.ModelName, item.TypeName, item.Process, tctValue, updatedBy);
-                Debug.WriteLine($"🔁 Updated TCT: Model = {item.ModelName}, Process = {item.Process}");
+                Debug.WriteLine("🆕 Chưa có TCTData → Gọi Insert");
+                iePPHData_DAL.Insert_TCTData(item.ModelName, item.TypeName, item.Process, item.TCTValue);
             }
         }
-        private bool EnsureArticleDependenciesInserted(IETotal_Model item)
+
+        private bool InsertIfNotExist(Func<bool> existsCheck, Action insertAction)
         {
-            bool inserted = false;
-
-            if (item.ArticleID <= 0)
+            if (!existsCheck())
             {
-                MessageBoxHelper.ShowError("❌ Invalid ArticleID.");
-                return false;
+                insertAction();
+                return true;
             }
-
-            if (!iePPHData_DAL.Exists_ArticlePCIncharge(item.ArticleID))
-            {
-                iePPHData_DAL.Insert_ArticlePCIncharge(item);
-                inserted = true;
-                Debug.WriteLine($"➕ Inserted Article_PCIncharge for ArticleID = {item.ArticleID}.");
-            }
-
-            if (!iePPHData_DAL.Exists_ArticleOutsourcing(item.ArticleID))
-            {
-                iePPHData_DAL.Insert_ArticleOutsourcing(item);
-                inserted = true;
-                Debug.WriteLine($"➕ Inserted Article_Outsourcing for ArticleID = {item.ArticleID}.");
-            }
-
-            if (item.ProcessID.HasValue && item.TypeID.HasValue)
-            {
-                if (!iePPHData_DAL.Exists_ArticleProcessType(item.ArticleID, item.ProcessID.Value, item.TypeID.Value))
-                {
-                    iePPHData_DAL.Insert_ArticleProcessTypeData(item);
-                    inserted = true;
-                    Debug.WriteLine($"➕ Inserted ArticleProcessType for ArticleID = {item.ArticleID}, ProcessID = {item.ProcessID}, TypeID = {item.TypeID}.");
-                }
-            }
-            else
-            {
-                Debug.WriteLine($"⚠️ Missing ProcessID or TypeID for ArticleID = {item.ArticleID}.");
-            }
-
-            return inserted;
+            return false;
         }
 
         private void UpdateOriginalClone(IETotal_Model item)
@@ -518,14 +723,11 @@ namespace KpiApplication.Controls
                 x.TypeID == item.TypeID);
 
             if (index >= 0)
-            {
                 ieTotalListOriginalClone[index] = IETotal_Model.Clone(item);
-            }
             else
-            {
                 ieTotalListOriginalClone.Add(IETotal_Model.Clone(item));
-            }
         }
+
         private IETotal_Model FindOriginal(IETotal_Model item)
         {
             return ieTotalListOriginalClone.FirstOrDefault(x =>
@@ -534,40 +736,45 @@ namespace KpiApplication.Controls
                 x.TypeID == item.TypeID);
         }
 
-
         private string Normalize(string value) => value?.Trim().ToUpper() ?? string.Empty;
-
 
         private void SetTypeID(IETotal_Model item)
         {
-            if (!string.IsNullOrWhiteSpace(item.TypeName))
+            if (string.IsNullOrWhiteSpace(item.TypeName))
             {
-                var typeID = iePPHData_DAL.GetTypeID(item.TypeName);
-                if (typeID == null)
-                    throw new Exception($"TypeID not found for TypeName = {item.TypeName}.");
+                item.TypeID = null;
+                return;
+            }
 
-                item.TypeID = typeID.Value;
+            var typeID = iePPHData_DAL.GetTypeID(item.TypeName);
+            if (typeID == null)
+            {
+                MessageBoxHelper.ShowError(string.Format(Lang.TypeIDNotFound, item.TypeName));
+                item.TypeID = null;
             }
             else
             {
-                item.TypeID = null;
+                item.TypeID = typeID.Value;
             }
         }
 
-        private void SetProcessID(IETotal_Model item)
+        private bool SetProcessID(IETotal_Model item)
         {
-            if (!string.IsNullOrWhiteSpace(item.Process))
-            {
-                var processID = iePPHData_DAL.GetProcessID(item.Process);
-                if (processID == null)
-                    throw new Exception($"ProcessID not found for Process = {item.Process}.");
-
-                item.ProcessID = processID.Value;
-            }
-            else
+            if (string.IsNullOrWhiteSpace(item.Process))
             {
                 item.ProcessID = null;
+                return true;
             }
+
+            var processID = iePPHData_DAL.GetProcessID(item.Process);
+            if (processID == null)
+            {
+                MessageBoxHelper.ShowError(string.Format(Lang.ProcessIDNotFound, item.Process));
+                return false;
+            }
+
+            item.ProcessID = processID.Value;
+            return true;
         }
 
         private void dgvIEPPH_CellMerge(object sender, CellMergeEventArgs e)
@@ -585,32 +792,9 @@ namespace KpiApplication.Controls
 
             e.Handled = true;
         }
-        private float currentZoomFactor = 1.0f;
-        private const float MinZoom = 0.6f;
-        private const float MaxZoom = 2.0f;
-        private Label zoomOverlayLabel;
-        private Timer zoomOverlayTimer;
         private void InitZoomOverlay()
         {
-            zoomOverlayLabel = new Label
-            {
-                AutoSize = false,
-                TextAlign = ContentAlignment.MiddleCenter,
-                BackColor = Color.FromArgb(180, Color.LightGray),
-                ForeColor = Color.White,
-                Font = new Font("Segoe UI", 14),
-                Visible = false
-            };
-
-            zoomOverlayLabel.BringToFront();
-            this.Controls.Add(zoomOverlayLabel);
-
-            zoomOverlayTimer = new Timer { Interval = 1000 };
-            zoomOverlayTimer.Tick += (s, e) =>
-            {
-                zoomOverlayLabel.Visible = false;
-                zoomOverlayTimer.Stop();
-            };
+            overlayHelper = new OverlayHelper(this);
         }
         private void ApplyZoom(float zoom)
         {
@@ -632,7 +816,6 @@ namespace KpiApplication.Controls
                 dgvIEPPH.Appearance.GroupFooter.Font = zoomedFont;
                 dgvIEPPH.Appearance.Preview.Font = zoomedFont;
 
-                // Thay đổi chiều cao dòng (tùy theo font size)
                 dgvIEPPH.RowHeight = (int)(22 * zoom);
             }
             finally
@@ -654,30 +837,11 @@ namespace KpiApplication.Controls
                 if (Math.Abs(newZoom - currentZoomFactor) > 0.01f)
                 {
                     ApplyZoom(newZoom);
-                    ShowZoomOverlay((int)(newZoom * 100));
+                    overlayHelper.Show($"Zoom: {(int)(newZoom * 100)}%");
                     currentZoomFactor = newZoom;
                 }
             }
         }
-        private void ShowZoomOverlay(int zoomPercent)
-        {
-            if (zoomOverlayLabel == null) return;
-
-            zoomOverlayLabel.Text = $"Zoom: {zoomPercent}%";
-            zoomOverlayLabel.Size = new Size(200, 60);
-
-            // Canh giữa form
-            zoomOverlayLabel.Location = new Point(
-                (this.Width - zoomOverlayLabel.Width) / 2,
-                (this.Height - zoomOverlayLabel.Height) / 2
-            );
-
-            zoomOverlayLabel.Visible = true;
-            zoomOverlayLabel.BringToFront();
-            zoomOverlayTimer.Stop();
-            zoomOverlayTimer.Start();
-        }
-
         private void dgvIEPPH_ShowingPopupEditForm(object sender, ShowingPopupEditFormEventArgs e)
         {
             // Lấy form popup edit
@@ -697,49 +861,115 @@ namespace KpiApplication.Controls
 
         private void dgvIEPPH_KeyDown(object sender, KeyEventArgs e)
         {
-            bool isDelete = e.KeyCode == Keys.Delete;
+            var view = sender as GridView;
+            if (view == null) return;
+
+            if (HandleDeleteKey(e, view))
+                return;
+
+            if (HandleFindShortcut(e))
+                return;
+        }
+
+        private bool HandleDeleteKey(KeyEventArgs e, GridView view)
+        {
+            bool isDeleteKey = e.KeyCode == Keys.Delete;
             bool isCtrlMinus = e.Control && e.KeyCode == Keys.OemMinus;
 
-            if (isDelete || isCtrlMinus)
+            if (!(isDeleteKey || isCtrlMinus)) return false;
+
+            int rowHandle = view.FocusedRowHandle;
+
+            if (rowHandle < 0 || view.IsNewItemRow(rowHandle)) return false;
+
+            string focusedColumn = view.FocusedColumn?.FieldName;
+            if (string.IsNullOrEmpty(focusedColumn)) return false;
+
+            if (focusedColumn == "ArticleName" || focusedColumn == "ModelName")
             {
-                GridView view = sender as GridView;
-                int rowHandle = view.FocusedRowHandle;
+                return HandleDeleteArticle(view, rowHandle);
+            }
+            else
+            {
+                return HandleDeleteOtherColumn(view, focusedColumn, rowHandle);
+            }
+        }
 
-                if (rowHandle >= 0 && !view.IsNewItemRow(rowHandle))
-                {
-                    string focusedColumn = view.FocusedColumn?.FieldName;
-                    if (focusedColumn != null)
-                    {
-                        int focusedIndex = Array.IndexOf(desiredColumnOrder, focusedColumn);
-                        int statusIndex = Array.IndexOf(desiredColumnOrder, "DataStatus");
+        private bool HandleDeleteArticle(GridView view, int rowHandle)
+        {
+            // Xác nhận xóa
+            DialogResult confirm = MessageBoxHelper.ShowConfirm(
+                Lang.ConfirmDeleteArticle,
+                Lang.Confirm
+            );
+            if (confirm != DialogResult.Yes) return true;
 
-                        if (focusedIndex >= statusIndex)
-                        {
-                            var confirm = MessageBoxHelper.ShowConfirm(
-                                "Are you sure you want to delete this row?",
-                                "Confirmation"
-                            );
+            // Lấy dòng hiện tại
+            var targetData = view.GetRow(rowHandle) as IETotal_Model;
+            if (targetData == null) return true;
 
-                            if (confirm == DialogResult.Yes)
-                            {
-                                view.DeleteRow(rowHandle);
-                            }
-                        }
-                        else
-                        {
-                            MessageBoxHelper.ShowWarning(
-                                "❌ You are not allowed to delete from this column.\nPlease select a cell from 'DataStatus' column or later."
-                            );
-                        }
-                    }
-                }
+            // Gọi DAL để xóa mềm
+            bool deleted = iePPHData_DAL.SoftDeleteArticle(targetData.ArticleID, Common.Global.CurrentEmployee.Username);
+            if (!deleted)
+            {
+                MessageBoxHelper.ShowError(Lang.DeleteFailed);
+                return true;
             }
 
+            // Ghi log người dùng
+            UserLogHelper.Log(
+                action: "Soft Delete",
+                table: "Articles",
+                targetID: targetData.ArticleID,
+                description: $"Soft deleted data of Artilce = {targetData.ArticleName}"
+            );
+
+            // Xoá toàn bộ dòng có cùng ArticleID khỏi danh sách
+            var filteredList = ieTotalList
+                .Where(x => x.ArticleID != targetData.ArticleID)
+                .ToList();
+
+            ieTotalList = new BindingList<IETotal_Model>(filteredList);
+            gridControl1.DataSource = ieTotalList;
+
+            // Thông báo thành công
+            MessageBoxHelper.ShowInfo(Lang.DeletedSuccess);
+            return true;
+        }
+        private bool HandleDeleteOtherColumn(GridView view, string focusedColumn, int rowHandle)
+        {
+            int focusedIndex = Array.IndexOf(desiredColumnOrder, focusedColumn);
+            int statusIndex = Array.IndexOf(desiredColumnOrder, "Status");
+
+            if (focusedIndex < statusIndex)
+            {
+                MessageBoxHelper.ShowWarning(Lang.CannotDeleteFromThisColumn);
+                return true;
+            }
+
+            DialogResult confirm = MessageBoxHelper.ShowConfirm(
+                Lang.ConfirmDelete,
+                Lang.Confirm
+            );
+
+            if (confirm == DialogResult.Yes)
+            {
+                view.DeleteRow(rowHandle);
+            }
+
+            return true;
+        }
+
+        private bool HandleFindShortcut(KeyEventArgs e)
+        {
             if (e.Control && e.KeyCode == Keys.F)
             {
                 dgvIEPPH.ShowFindPanel();
+                dgvIEPPH.Focus();
                 e.Handled = true;
+                return true;
             }
+            return false;
         }
 
         private void dgvIEPPH_RowDeleted(object sender, DevExpress.Data.RowDeletedEventArgs e)
@@ -748,12 +978,25 @@ namespace KpiApplication.Controls
             {
                 if (e.Row is IETotal_Model deletedRow)
                 {
-                    IEPPHData_DAL.DeletePPH(deletedRow.ArticleID, deletedRow.ProcessID, deletedRow.TypeID);
+                    string currentUser = Common.Global.CurrentEmployee?.Username ?? "Unknown";
+
+                    iePPHData_DAL.DeletePPH(
+                        deletedRow.ArticleID,
+                        deletedRow.ProcessID,
+                        deletedRow.TypeID
+                    );
+
+                    UserLogHelper.Log(
+                        action: "Delete",
+                        table: "ArticleProcessTypeData",
+                        targetID: deletedRow.ArticleID,
+                        description: $"Deleted data of Article: {deletedRow.ArticleName}, Process: {deletedRow.Process}, Type: {deletedRow.TypeName}"
+                    );
                 }
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError("❌ Error while deleting row", ex);
+                MessageBoxHelper.ShowError(Lang.ErrorWhileDeletingRow, ex);
             }
         }
         public void ShowFind()
@@ -771,6 +1014,11 @@ namespace KpiApplication.Controls
                 dgvIEPPH.Focus();
                 e.Handled = true;
             }
+        }
+
+        private void dgvIEPPH_EditFormPrepared(object sender, EditFormPreparedEventArgs e)
+        {
+            EditFormLocalizer.LocalizeButtons(e.Panel, Lang.Update, Lang.Cancel);
         }
     }
 }

@@ -47,10 +47,10 @@
             // gridControl1
             // 
             this.gridControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridControl1.Location = new System.Drawing.Point(0, 25);
+            this.gridControl1.Location = new System.Drawing.Point(0, 24);
             this.gridControl1.MainView = this.dgvPPHData;
             this.gridControl1.Name = "gridControl1";
-            this.gridControl1.Size = new System.Drawing.Size(1049, 633);
+            this.gridControl1.Size = new System.Drawing.Size(1049, 634);
             this.gridControl1.TabIndex = 0;
             this.gridControl1.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.dgvPPHData});
@@ -93,22 +93,20 @@
             // 
             this.btnExport.Caption = "Export";
             this.btnExport.Id = 1;
-            this.btnExport.ImageOptions.Image = global::KpiApplication.Properties.Resources.converttorange_16x161;
+            this.btnExport.ImageOptions.Image = global::KpiApplication.Properties.Resources.excel__1_;
             this.btnExport.ImageOptions.LargeImage = global::KpiApplication.Properties.Resources.converttorange_32x321;
             this.btnExport.Name = "btnExport";
             this.btnExport.PaintStyle = DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph;
-            this.btnExport.Size = new System.Drawing.Size(100, 25);
             this.btnExport.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnExport_ItemClick);
             // 
             // btnRefresh
             // 
             this.btnRefresh.Caption = "Refresh";
             this.btnRefresh.Id = 2;
-            this.btnRefresh.ImageOptions.Image = global::KpiApplication.Properties.Resources.refresh_16x16;
+            this.btnRefresh.ImageOptions.Image = global::KpiApplication.Properties.Resources.rotate__1_;
             this.btnRefresh.ImageOptions.LargeImage = global::KpiApplication.Properties.Resources.refresh_32x32;
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.PaintStyle = DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph;
-            this.btnRefresh.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnRefresh_ItemClick);
             // 
             // barDockControlTop
             // 
@@ -116,7 +114,7 @@
             this.barDockControlTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.barDockControlTop.Location = new System.Drawing.Point(0, 0);
             this.barDockControlTop.Manager = this.barManager1;
-            this.barDockControlTop.Size = new System.Drawing.Size(1049, 25);
+            this.barDockControlTop.Size = new System.Drawing.Size(1049, 24);
             // 
             // barDockControlBottom
             // 
@@ -130,17 +128,17 @@
             // 
             this.barDockControlLeft.CausesValidation = false;
             this.barDockControlLeft.Dock = System.Windows.Forms.DockStyle.Left;
-            this.barDockControlLeft.Location = new System.Drawing.Point(0, 25);
+            this.barDockControlLeft.Location = new System.Drawing.Point(0, 24);
             this.barDockControlLeft.Manager = this.barManager1;
-            this.barDockControlLeft.Size = new System.Drawing.Size(0, 633);
+            this.barDockControlLeft.Size = new System.Drawing.Size(0, 634);
             // 
             // barDockControlRight
             // 
             this.barDockControlRight.CausesValidation = false;
             this.barDockControlRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.barDockControlRight.Location = new System.Drawing.Point(1049, 25);
+            this.barDockControlRight.Location = new System.Drawing.Point(1049, 24);
             this.barDockControlRight.Manager = this.barManager1;
-            this.barDockControlRight.Size = new System.Drawing.Size(0, 633);
+            this.barDockControlRight.Size = new System.Drawing.Size(0, 634);
             // 
             // ucViewPPHData
             // 
@@ -153,7 +151,6 @@
             this.Controls.Add(this.barDockControlTop);
             this.Name = "ucViewPPHData";
             this.Size = new System.Drawing.Size(1049, 658);
-            this.Load += new System.EventHandler(this.ucViewPPHData_Load);
             ((System.ComponentModel.ISupportInitialize)(this.gridControl1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPPHData)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.barManager1)).EndInit();

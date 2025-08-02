@@ -2,174 +2,135 @@
 using DevExpress.XtraBars;
 using DevExpress.XtraBars.Navigation;
 using DevExpress.XtraEditors;
+using DevExpress.XtraSplashScreen;
 using KpiApplication.Common;
 using KpiApplication.Controls;
 using KpiApplication.DataAccess;
+using KpiApplication.Forms;
+using KpiApplication.Services;
 using KpiApplication.Utils;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace KpiApplication
 {
-    public partial class MainView : DevExpress.XtraBars.FluentDesignSystem.FluentDesignForm
+    public partial class MainView : DevExpress.XtraBars.FluentDesignSystem.FluentDesignForm, ILoadingService
     {
         private AccordionControlElement previousSelectedElement;
         private BarButtonItem btnLogOut;
         private readonly Account_DAL account_DAL;
-        private ucWorkingTime ucWorkingTime;
-        private ucBonusDocument ucBonusDocument;
-        private ucViewBonusDocuments ucViewBonusDocuments;
-        private ucPPHData ucPPHData;
+        private readonly UserControlServices _ucManager;
 
+        private readonly (AccordionControlElement Element, Type ControlType, string LangText)[] _menuItems;
 
         public MainView()
         {
             InitializeComponent();
+            account_DAL = new Account_DAL();
+            _ucManager = new UserControlServices(navigationFrame);
+
+            LangHelper.ApplyCulture();
             InitializeLogOutButton();
             this.KeyPreview = true;
-            account_DAL = new Account_DAL();
-            accordionControl1.ElementClick += AccordionControl1_ElementClick;
-            UserLookAndFeel.Default.StyleChanged += (s, e) =>
+
+            _menuItems = new (AccordionControlElement, Type, string)[]
             {
-                string skin = UserLookAndFeel.Default.SkinName;
-                SaveLastSkinName(skin);
+                (btnWorkingTime, typeof(ucWorkingTime), Lang.WorkingTime),
+                (btnPPHData, typeof(ucPPHData), Lang.SearchIEPPH),
+                (btnViewPPHData, typeof(ucViewPPHData), Lang.ViewIEPPH),
+                (btnViewData, typeof(ucViewData), Lang.ViewDailyData),
+                (btnWeeklyPlan, typeof(ucWeeklyPlan), Lang.WeeklyPlan),
+                (btnAccountManage, typeof(ucAccountManage), Lang.AccountManagement),
+                (btnViewTCT, typeof(ucViewTCTData), Lang.ViewTCTData),
+                (btnTCT, typeof(ucTCTData), Lang.TCTData),
+                (btnBonus, typeof(ucBonusDocument), Lang.BonusDocument),
+                (btnViewBonusDocuments, typeof(ucViewBonusDocuments), Lang.ViewBonusDocuments),
+                (btnCIDocument, typeof(ucCIDocument), "CI Document")
             };
+
+            InitMenuItems();
+
+            accordionControl1.ElementClick += AccordionControl1_ElementClick;
+            UserLookAndFeel.Default.StyleChanged += (s, e) => SaveLastSkinName(UserLookAndFeel.Default.SkinName);
             previousSelectedElement = accordionControl1.SelectedElement;
         }
-
-        void SaveLastSkinName(string skinName)
+        public async Task ShowLoadingAsync(string caption, string description, Func<Task> loadAction)
         {
-            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            var settings = config.AppSettings.Settings;
+            try
+            {
+                SplashScreenManager.ShowForm(this, typeof(CustomWaitForm), true, true, false);
+                SplashScreenManager.Default.SetWaitFormCaption(caption);
+                SplashScreenManager.Default.SetWaitFormDescription(description);
 
-            if (settings["LastSkinName"] == null)
-                settings.Add("LastSkinName", skinName);
-            else
-                settings["LastSkinName"].Value = skinName;
-
-            config.Save(ConfigurationSaveMode.Modified);
-            ConfigurationManager.RefreshSection("appSettings");
+                await loadAction();
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError("Loading failed", ex);
+            }
+            finally
+            {
+                if (SplashScreenManager.Default.IsSplashFormVisible)
+                    SplashScreenManager.CloseForm();
+            }
         }
+
+        private void InitMenuItems()
+        {
+            foreach (var (element, type, text) in _menuItems)
+            {
+                element.Tag = type;
+                element.Text = text;
+            }
+
+            accordion1.Text = Lang.SharedData;
+            accordion2.Text = Lang.PC;
+            accordion3.Text = Lang.ME;
+            accordion4.Text = Lang.Management;
+        }
+
         private void InitializeLogOutButton()
         {
-            // Tạo nút Log out
-            btnLogOut = new BarButtonItem();
-            btnLogOut.Caption = "Log out";
+            btnLogOut = new BarButtonItem
+            {
+                Caption = Lang.Logout,
+                ImageOptions = { Image = Properties.Resources.logout }
+            };
             btnLogOut.ItemClick += BtnLogOut_ItemClick;
-
-            // Thêm nút Log out vào barSubItem1
             barSubItem1.AddItem(btnLogOut);
         }
 
         private void BtnLogOut_ItemClick(object sender, ItemClickEventArgs e)
         {
-            DialogResult result = XtraMessageBox.Show("Are you sure you want to log out?", "Confirm Log out", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result == DialogResult.Yes)
+            if (XtraMessageBox.Show(Lang.ConfirmLogout, Lang.Confirm, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                this.Hide();
-
-                Login loginForm = new Login();
+                Hide();
+                var loginForm = new Login();
                 loginForm.Show();
-
-                // Đóng form chính khi form đăng nhập được đóng
-                loginForm.FormClosed += (s, args) => this.Close();
+                loginForm.FormClosed += (s, args) => Close();
             }
         }
 
-        private void btnWorkingTime_Click(object sender, EventArgs e)
+        private async void AccordionControl1_ElementClick(object sender, ElementClickEventArgs e)
         {
-            ShowUserControl<ucWorkingTime>("Enter Working Time");
-        }
+            HighlightSelectedItem(e.Element);
 
-        private void btnPPHData_Click(object sender, EventArgs e)
-        {
-            ShowUserControl<ucPPHData>("Search IE PPH");
-        }
-
-        private void btnViewPPHData_Click(object sender, EventArgs e)
-        {
-            ShowUserControl<ucViewPPHData>("View IE PPH");
-        }
-
-        private void btnViewData_Click(object sender, EventArgs e)
-        {
-            ShowUserControl<ucViewData>("View Daily KPI Data");
-        }
-
-        private void btnWeekly_Click(object sender, EventArgs e)
-        {
-            ShowUserControl<ucWeeklyPlan>("Weekly Production Plan");
-        }
-        private void btnAccountManage_Click(object sender, EventArgs e)
-        {
-            ShowUserControl<ucAccountManage>("Account Management");
-        }
-        private void btnTCT_Click(object sender, EventArgs e)
-        {
-            ShowUserControl<ucTCTData>("TCT Data");
-        }
-        private void btnBonus_Click(object sender, EventArgs e)
-        {
-            ShowUserControl<ucBonusDocument>("Bonus Document");
-        }
-        private void btnViewBonusDocuments_Click(object sender, EventArgs e)
-        {
-            ShowUserControl<ucViewBonusDocuments>("View Bonus Documents");
-        }
-
-        private void btnViewTCT_Click(object sender, EventArgs e)
-        {
-            ShowUserControl<ucViewTCTData>("View TCT Data");
-        }
-
-        private Dictionary<Type, UserControl> _userControls = new Dictionary<Type, UserControl>();
-
-        private void ShowUserControl<T>(string status) where T : UserControl, new()
-        {
-            if (!_userControls.TryGetValue(typeof(T), out UserControl userControl))
+            if (e.Element.Tag is Type controlType && typeof(UserControl).IsAssignableFrom(controlType))
             {
-                userControl = new T
-                {
-                    Dock = DockStyle.Fill
-                };
-
-                _userControls[typeof(T)] = userControl;
-                pnlControl.Controls.Add(userControl);
-
-                if (typeof(T) == typeof(ucWorkingTime))
-                    ucWorkingTime = userControl as ucWorkingTime;
-
-                if (typeof(T) == typeof(ucPPHData))
-                    ucPPHData = userControl as ucPPHData;
-
-                if (typeof(T) == typeof(ucBonusDocument))
-                    ucBonusDocument = userControl as ucBonusDocument;
-
-                if (typeof(T) == typeof(ucViewBonusDocuments))
-                    ucViewBonusDocuments = userControl as ucViewBonusDocuments;
-            }
-
-            foreach (Control ctrl in pnlControl.Controls)
-            {
-                ctrl.Visible = ctrl == userControl;
+                await _ucManager.ShowAsync(controlType, this);
             }
         }
-    
+
         private void HighlightSelectedItem(AccordionControlElement selectedElement)
         {
-            if (selectedElement.Style != ElementStyle.Item)
+            if (selectedElement.Style != ElementStyle.Item || previousSelectedElement == selectedElement)
                 return;
 
-            if (previousSelectedElement != null)
-            {
-                ResetElementAppearance(previousSelectedElement);
-            }
-
+            ResetElementAppearance(previousSelectedElement);
             SetElementAppearance(selectedElement);
-
             previousSelectedElement = selectedElement;
         }
 
@@ -182,23 +143,18 @@ namespace KpiApplication
 
         private void ResetElementAppearance(AccordionControlElement element)
         {
+            if (element == null) return;
             element.Appearance.Normal.BackColor = System.Drawing.Color.Transparent;
             element.Appearance.Normal.ForeColor = System.Drawing.Color.Empty;
             element.Appearance.Normal.Font = new System.Drawing.Font(element.Appearance.Normal.Font, System.Drawing.FontStyle.Regular);
         }
 
-        private void AccordionControl1_ElementClick(object sender, ElementClickEventArgs e)
-        {
-            HighlightSelectedItem(e.Element);
-        }
-
         private void MainView_Load(object sender, EventArgs e)
         {
             var emp = Global.CurrentEmployee;
-
             if (emp == null)
             {
-                XtraMessageBox.Show("Không tìm thấy thông tin người dùng!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxHelper.ShowError(Lang.UserNotFound);
                 return;
             }
 
@@ -218,6 +174,7 @@ namespace KpiApplication
                 btnTCT.Enabled = false;
             }
         }
+
         private void ApplyGuestRestrictions()
         {
             btnWorkingTime.Enabled = false;
@@ -227,63 +184,52 @@ namespace KpiApplication
             btnWeeklyPlan.Enabled = false;
             btnBonus.Enabled = false;
             btnTCT.Enabled = false;
-
-            this.Text += " [Read Only]";
+            this.Text += $" - [{Lang.ReadOnly}]";
         }
 
         private void MainView_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (ucWorkingTime != null && ucWorkingTime.HasUnsavedChanges)
+            if (_ucManager.Get<ucWorkingTime>()?.HasUnsavedChanges == true)
             {
-                var result = XtraMessageBox.Show(
-                    "You have unsaved changes. Do you want to exit without saving?",
-                    "Warning",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
-
+                var result = XtraMessageBox.Show(Lang.UnsavedChangesWarning, Lang.Warning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result == DialogResult.No)
                 {
                     e.Cancel = true;
                 }
             }
         }
+
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            var wt = _ucManager.Get<ucWorkingTime>();
+            var pph = _ucManager.Get<ucPPHData>();
+
             switch (keyData)
             {
                 case Keys.Control | Keys.S:
-                    if (ucWorkingTime != null && ucWorkingTime.Visible)
+                    if (wt?.Visible == true)
                     {
-                        _ = RunSafeAsync(ucWorkingTime.SaveModifiedData);
+                        _ = RunSafeAsync(wt.SaveModifiedData);
                         return true;
                     }
                     break;
 
                 case Keys.Control | Keys.F:
-                    if (ucPPHData != null && ucPPHData.Visible)
+                    if (pph?.Visible == true)
                     {
-                        ucPPHData.ShowFind();
+                        pph.ShowFind();
                         return true;
                     }
                     break;
 
                 case Keys.F5:
-                    if (ucBonusDocument != null && ucBonusDocument.Visible)
-                    {
-                        ucBonusDocument.PerformRefresh();
-                        return true;
-                    }
-
-                    if (ucViewBonusDocuments != null && ucViewBonusDocuments.Visible)
-                    {
-                        ucViewBonusDocuments.PerformRefresh();
-                        return true;
-                    }
-                    break;
+                    _ = ShowLoadingAsync("Refreshing...", string.Empty, ReloadCurrentUserControlAsync);
+                    return true;
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
         private async Task RunSafeAsync(Func<Task> asyncMethod)
         {
             try
@@ -292,29 +238,52 @@ namespace KpiApplication
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError("Unexpected error occurred", ex);
+                MessageBoxHelper.ShowError(Lang.UnexpectedError, ex);
             }
         }
+
         private void accordionControl1_SelectedElementChanged(object sender, SelectedElementChangedEventArgs e)
         {
-            if (ucWorkingTime != null && ucWorkingTime.HasUnsavedChanges)
+            var wt = _ucManager.Get<ucWorkingTime>();
+            if (wt?.HasUnsavedChanges == true)
             {
-                var result = XtraMessageBox.Show(
-                    "You have unsaved changes. Do you want to exit without saving?",
-                    "Warning",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
-
+                var result = XtraMessageBox.Show(Lang.UnsavedChangesWarning, Lang.Notification, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result == DialogResult.No)
                 {
-                    if (previousSelectedElement != null)
-                        accordionControl1.SelectedElement = previousSelectedElement;
-
+                    accordionControl1.SelectedElement = previousSelectedElement;
                     return;
                 }
             }
-
             previousSelectedElement = e.Element;
+        }
+
+        private void SaveLastSkinName(string skinName)
+        {
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var settings = config.AppSettings.Settings;
+
+            if (settings["LastSkinName"] == null)
+                settings.Add("LastSkinName", skinName);
+            else
+                settings["LastSkinName"].Value = skinName;
+
+            config.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection("appSettings");
+        }
+        private async Task ReloadCurrentUserControlAsync()
+        {
+            var currentControl = navigationFrame.SelectedPage?
+                .Controls.OfType<ISupportLoadAsync>().FirstOrDefault();
+
+            if (currentControl != null)
+            {
+                await currentControl.LoadDataAsync();
+            }
+        }
+
+        private async void btnRefresh_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            await ShowLoadingAsync("Refreshing...", string.Empty, ReloadCurrentUserControlAsync);
         }
     }
 }

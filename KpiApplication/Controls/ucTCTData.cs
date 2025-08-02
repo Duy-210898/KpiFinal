@@ -1,124 +1,236 @@
 ﻿using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
+using DevExpress.XtraGrid.Columns;
+using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
+using KpiApplication.Common;
 using KpiApplication.DataAccess;
 using KpiApplication.Excel;
+using KpiApplication.Forms;
 using KpiApplication.Models;
+using KpiApplication.Services;
 using KpiApplication.Utils;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
 namespace KpiApplication.Controls
 {
-    public partial class ucTCTData : XtraUserControl
+    public partial class ucTCTData : XtraUserControl, ISupportLoadAsync
     {
-        private List<TCTData_Model> tctData_Models = new List<TCTData_Model>();
-        private List<TCTData_Pivoted> pivotedDataOriginal;
+        private BindingList<TCTData_Model> tctData_Models = new BindingList<TCTData_Model>();
+        private BindingList<TCTData_Pivoted> pivotedDataOriginal;
+
+        private List<TCTData_Pivoted> pivotedDataSnapshot;
+
+        private Dictionary<string, TCTData_Pivoted> snapshotLookup;
+        private HashSet<string> modelTypeKeySet = new HashSet<string>();
 
         public ucTCTData()
         {
             InitializeComponent();
+            ApplyLocalizedText();
+        }
+        private void ApplyLocalizedText()
+        {
+            btnExport.Caption = Lang.Export;
+            btnImport.Caption = Lang.Import;
         }
 
-        private void LoadDataToGrid(List<TCTData_Pivoted> data)
+        private void LoadDataToGrid(BindingList<TCTData_Pivoted> data, bool editable)
         {
             gridControl.DataSource = data;
-
-            GridViewHelper.ApplyDefaultFormatting(dgvTCT);
-            GridViewHelper.EnableWordWrapForGridView(dgvTCT);
-            GridViewHelper.AdjustGridColumnWidthsAndRowHeight(dgvTCT);
-            GridViewHelper.EnableCopyFunctionality(dgvTCT);
-
-            dgvTCT.BestFitColumns();
+            TCTGridHelper.ApplyGridSettings(dgvTCT, editable);
+            TCTGridHelper.SetCaptions(dgvTCT);
+            TCTGridHelper.AutoAdjustColumnWidths(dgvTCT);
         }
-        private async Task LoadDataAsync()
+        public async Task LoadDataAsync()
         {
-            await AsyncLoaderHelper.LoadDataWithSplashAsync(
-                this,
-                () => TCT_DAL.GetAllTCTData(),
-                result =>
-                {
-                    tctData_Models = result;
-                    var pivotedData = PivoteHelper.PivotTCTData(tctData_Models);
-                    pivotedDataOriginal = pivotedData.Select(x => x.Clone()).ToList();
-                    LoadDataToGrid(pivotedData);
-                    SetupColumnComboBox("Type", new[] {
-    "Production Trial",
-    "First Production",
-    "Mass Production"
-});
+            try
+            {
+                UseWaitCursor = true;
 
-                    ConfigureGridAfterDataBinding();
-                },
-                "Loading..."
-            );
+                var result = await Task.Run(() => TCTService.GetAllTCTData());
+
+                tctData_Models = new BindingList<TCTData_Model>(result);
+
+                var pivotedData = TCTService.Pivot(result);
+                (pivotedDataOriginal, pivotedDataSnapshot) = TCTService.CreatePivotSnapshot(pivotedData);
+
+                modelTypeKeySet = TCTService.BuildModelTypeKeySet(pivotedDataSnapshot);
+                snapshotLookup = TCTService.BuildSnapshotLookup(pivotedDataSnapshot);
+
+                LoadDataToGrid(pivotedDataOriginal, true);
+
+                SetupColumnComboBox("Type", new[]
+                {
+            "Production Trial", "First Production", "Mass Production"
+        });
+
+                ConfigureGridAfterDataBinding();
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError($"{Lang.LoadDataFailed}", ex);
+            }
+            finally
+            {
+                UseWaitCursor = false;
+            }
         }
+        private void dgvTCT_RowUpdated(object sender, RowObjectEventArgs e)
+        {
+            if (!(e.Row is TCTData_Pivoted updatedRow)) return;
+
+            if (!IsRowValid(updatedRow))
+            {
+                MessageBoxHelper.ShowWarning("ModelName và Type là bắt buộc.");
+                return;
+            }
+
+            HandleInsertOrUpdate(updatedRow);
+        }
+
+        private bool IsRowValid(TCTData_Pivoted row)
+        {
+            return !(string.IsNullOrWhiteSpace(row.ModelName) || string.IsNullOrWhiteSpace(row.Type));
+        }
+
+        private void HandleInsertOrUpdate(TCTData_Pivoted updatedRow)
+        {
+            string updatedBy = Global.CurrentEmployee.Username;
+            string newKey = TCTService.MakeKey(updatedRow.ModelName, updatedRow.Type);
+            string oldKey = TCTService.MakeKey(updatedRow.OriginalModelName, updatedRow.OriginalType);
+
+            bool isNewRow = !modelTypeKeySet.Contains(newKey);
+            var oldRow = TCTService.GetSnapshotRow(snapshotLookup, updatedRow.OriginalModelName, updatedRow.OriginalType);
+
+            if (isNewRow || oldRow == null)
+            {
+                InsertRowAsync(updatedRow, updatedBy);
+                modelTypeKeySet.Add(newKey);
+            }
+            else if (TCTService.HasTCTChanged(oldRow, updatedRow))
+            {
+                UpdateRowAsync(updatedRow, oldRow, updatedBy);
+                TCTService.UpdateSnapshotRow(snapshotLookup, pivotedDataSnapshot, updatedRow);
+
+                if (oldKey != newKey)
+                {
+                    modelTypeKeySet.Remove(oldKey);
+                    modelTypeKeySet.Add(newKey);
+                }
+            }
+
+            updatedRow.OriginalModelName = updatedRow.ModelName;
+            updatedRow.OriginalType = updatedRow.Type;
+        }
+        private void InsertRowAsync(TCTData_Pivoted row, string updatedBy)
+        {
+            Task.Run(() =>
+            {
+                try
+                {
+                    TCTService.Insert(row, updatedBy);
+                    Invoke((MethodInvoker)(() =>
+                    {
+                        if (!pivotedDataOriginal.Any(x => x.ModelName == row.ModelName && x.Type == row.Type))
+                            pivotedDataOriginal.Add(row.Clone());
+
+                        dgvTCT.RefreshData();
+                        MessageBoxHelper.ShowInfo(Lang.Inserted);
+                    }));
+                }
+                catch (Exception ex)
+                {
+                    Invoke((MethodInvoker)(() => MessageBoxHelper.ShowError(Lang.InsertArticleFailed, ex)));
+                }
+            });
+        }
+        private void UpdateRowAsync(TCTData_Pivoted newRow, TCTData_Pivoted oldRow, string updatedBy)
+        {
+            Task.Run(() =>
+            {
+                try
+                {
+                    TCTService.Update(newRow, oldRow, updatedBy, out bool changed);
+                    if (!changed) return;
+
+                    Invoke((MethodInvoker)(() =>
+                    {
+                        dgvTCT.RefreshData();
+                        MessageBoxHelper.ShowInfo(Lang.UpdateSuccess);
+                    }));
+                }
+                catch (Exception ex)
+                {
+                    Invoke((MethodInvoker)(() => MessageBoxHelper.ShowError(Lang.UpdateFailed, ex)));
+                }
+            });
+        }
+
         private void btnExport_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
             using (SaveFileDialog saveDialog = new SaveFileDialog())
             {
                 saveDialog.Filter = "Excel File (*.xlsx)|*.xlsx";
-                saveDialog.Title = "Xuất TCT Data ra Excel";
-                saveDialog.FileName = $"TCTData_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+                saveDialog.Title = Lang.ExportTCTTitle;
+                saveDialog.FileName = $"TCTData_{DateTime.Now:yyyyMMdd}.xlsx";
 
                 if (saveDialog.ShowDialog() == DialogResult.OK)
                 {
                     try
                     {
-                        // 1. Lưu dữ liệu hiện tại
-                        var originalData = gridControl.DataSource as List<TCTData_Pivoted>;
+                        var originalData = (gridControl.DataSource as IEnumerable<TCTData_Pivoted>)?.ToList();
 
-                        // 2. Lọc dữ liệu không hợp lệ
                         var filteredData = originalData
-                            .Where(x => !IsAllFieldsNull(x))
+                            .Where(x => !TCTService.IsAllFieldsNull(x))
                             .ToList();
 
-                        // 3. Gán dữ liệu đã lọc vào lưới
                         gridControl.DataSource = filteredData;
 
-                        // 4. Xuất file Excel
                         dgvTCT.ExportToXlsx(saveDialog.FileName);
 
-                        // 5. Khôi phục lại dữ liệu gốc sau khi xuất
                         gridControl.DataSource = originalData;
 
-                        XtraMessageBox.Show("✅ Xuất Excel thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBoxHelper.ShowInfo(Lang.ExportSuccess);
                     }
                     catch (Exception ex)
                     {
-                        XtraMessageBox.Show($"❌ Lỗi khi xuất Excel: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxHelper.ShowError(Lang.ExportFailed, ex);
                     }
                 }
             }
         }
 
-        private bool IsAllFieldsNull(TCTData_Pivoted item)
-        {
-            return string.IsNullOrWhiteSpace(item.Type)
-                && item.Cutting == null
-                && item.Stitching == null
-                && item.Assembly == null
-                && item.StockFitting == null;
-        }
-
-        private async void ucTCTData_Load(object sender, EventArgs e)
-        {
-            await LoadDataAsync();
-        }
         private void SetupColumnComboBox(string columnName, string[] items)
         {
             var col = dgvTCT.Columns[columnName];
             if (col == null) return;
 
+            string comboName = $"combo_{columnName}";
+            var existing = gridControl.RepositoryItems.Cast<RepositoryItem>()
+                .FirstOrDefault(r => r.Name == comboName);
+
+            if (existing != null)
+            {
+                col.ColumnEdit = existing;
+                return;
+            }
+
             var combo = new RepositoryItemComboBox
             {
+                Name = comboName,
                 TextEditStyle = TextEditStyles.DisableTextEditor
             };
-            combo.Items.Clear();
             combo.Items.AddRange(items);
 
             gridControl.RepositoryItems.Add(combo);
@@ -130,13 +242,48 @@ namespace KpiApplication.Controls
 
         private void ConfigureGridAfterDataBinding()
         {
-            this.dgvTCT.BestFitColumns();
             ColumnsReadOnlyInEditForm();
             GridViewHelper.EnableCopyFunctionality((GridView)this.dgvTCT);
+            GridViewHelper.HideColumns(dgvTCT,
+                "OriginalModelName", "OriginalType");
+
+            GridViewHelper.SetColumnCaptions(dgvTCT, new Dictionary<string, string>
+            {
+                ["Type"] = Lang.Type,
+                ["Cutting"] = Lang.Cutting,
+                ["Stitching"] = Lang.Stitching,
+                ["Assembly"] = Lang.Assembly,
+                ["StockFitting"] = Lang.StockFitting,
+                ["TotalTCT"] = Lang.TotalTCT,
+                ["LastUpdatedAt"] = Lang.LastUpdatedAt,
+                ["Notes"] = Lang.Notes
+            });
+
+
+            foreach (GridColumn column in dgvTCT.Columns)
+            {
+                if (column.FieldName != "Notes")
+                    column.BestFit();
+            }
+
+            // Tính tổng chiều rộng
+            int totalColumnWidth = dgvTCT.Columns
+                .Where(c => c.Visible)
+                .Sum(c => c.Width);
+
+            int viewWidth = dgvTCT.ViewRect.Width - SystemInformation.VerticalScrollBarWidth;
+            int remaining = viewWidth - totalColumnWidth;
+
+            if (remaining > 0)
+            {
+                var stretchColumn = dgvTCT.Columns["Notes"];
+                if (stretchColumn != null)
+                    stretchColumn.Width += remaining;
+            }
         }
         private void ColumnsReadOnlyInEditForm()
         {
-            string[] readOnlyColumns = { "TotalTCT", "TotalTCT", "LastUpdatedAt" };
+            string[] readOnlyColumns = { "TotalTCT", "LastUpdatedAt" };
 
             foreach (var colName in readOnlyColumns)
             {
@@ -152,146 +299,85 @@ namespace KpiApplication.Controls
 
         private async void btnImport_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-            using (OpenFileDialog openDialog = new OpenFileDialog())
+            using (var openDialog = new OpenFileDialog())
             {
                 openDialog.Filter = "Excel Files|*.xlsx;*.xls";
 
-                if (openDialog.ShowDialog() == DialogResult.OK)
+                if (openDialog.ShowDialog() != DialogResult.OK)
+                    return;
+
+                string filePath = openDialog.FileName;
+                List<string> errors = new List<string>();
+                List<TCTImport_Model> unpivotedList = new List<TCTImport_Model>();
+
+                try
                 {
-                    string filePath = openDialog.FileName;
+                    // Lấy danh sách sheet
+                    List<string> sheetNames = null;
+                    using (var package = new ExcelPackage(new FileInfo(filePath)))
+                    {
+                        sheetNames = package.Workbook.Worksheets.Select(ws => ws.Name).ToList();
+                    }
+
+                    // Hiển thị form chọn sheet
+                    string selectedSheet = null;
+                    using (var form = new SheetSelectionForm(sheetNames))
+                    {
+                        if (form.ShowDialog() != DialogResult.OK || string.IsNullOrEmpty(form.SelectedSheet))
+                            return;
+
+                        selectedSheet = form.SelectedSheet;
+                    }
+
+                    int updated = 0, inserted = 0;
 
                     await AsyncLoaderHelper.LoadDataWithSplashAsync(
                         this,
                         () => Task.Run(() =>
                         {
-                            List<string> errors;
-                            var tctItems = ExcelImporter.ReadTCTItemsFromExcel(filePath, out errors);
-
-                            var unpivotedList = new List<TCTImport_Model>();
+                            var tctItems = ExcelImporter.ReadTCTItemsFromExcel(filePath, selectedSheet, out errors);
 
                             foreach (var item in tctItems)
                             {
-                                if (item.Cutting.HasValue)
-                                    unpivotedList.Add(new TCTImport_Model { ModelName = item.ModelName, Type = item.Type, Process = "Cutting", TCT = item.Cutting });
+                                if (item == null || string.IsNullOrWhiteSpace(item.ModelName))
+                                    continue;
 
-                                if (item.Stitching.HasValue)
-                                    unpivotedList.Add(new TCTImport_Model { ModelName = item.ModelName, Type = item.Type, Process = "Stitching", TCT = item.Stitching });
-
-                                if (item.Assembly.HasValue)
-                                    unpivotedList.Add(new TCTImport_Model { ModelName = item.ModelName, Type = item.Type, Process = "Assembly", TCT = item.Assembly });
-
-                                if (item.Stockfitting.HasValue)
-                                    unpivotedList.Add(new TCTImport_Model { ModelName = item.ModelName, Type = item.Type, Process = "Stock Fitting", TCT = item.Stockfitting });
+                                TCTService.AddIfHasValue(unpivotedList, item.ModelName, item.Type, "Cutting", item.Cutting);
+                                TCTService.AddIfHasValue(unpivotedList, item.ModelName, item.Type, "Stitching", item.Stitching);
+                                TCTService.AddIfHasValue(unpivotedList, item.ModelName, item.Type, "Assembly", item.Assembly);
+                                TCTService.AddIfHasValue(unpivotedList, item.ModelName, item.Type, "Stock Fitting", item.Stockfitting);
                             }
 
-                            TCT_DAL.SaveTCTImportList(unpivotedList);
+                            if (unpivotedList.Count == 0)
+                                throw new Exception(Lang.NoValidTCTDataFound);
 
-                            Invoke((Action)(() =>
-                            {
-                                string message = "Lưu dữ liệu thành công!";
-                                if (errors.Count > 0)
-                                    message += $"\n⚠️ Có {errors.Count} lỗi dữ liệu bị bỏ qua.";
-
-                                XtraMessageBox.Show(message, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            }));
+                            string currentUser = Common.Global.CurrentEmployee.Username;
+                            var result = TCT_DAL.SaveTCTImportList(unpivotedList, currentUser);
+                            updated = result.updated;
+                            inserted = result.inserted;
                         }),
-                        "Importing..."
+                        Lang.Importing
                     );
+
+                    // Thông báo kết quả
+                    var sb = new StringBuilder();
+                    sb.AppendLine($"✅ {Lang.ImportSuccess}");
+                    sb.AppendLine($"📌 {Lang.Updated}: {updated} {Lang.Rows}.");
+                    sb.AppendLine($"🆕 {Lang.Inserted}: {inserted} {Lang.Rows}.");
+
+                    if (errors.Count > 0)
+                    {
+                        sb.AppendLine($"\n⚠️ {Lang.SkippedRows}: {errors.Count}");
+                        sb.AppendLine($"\n🔍 {Lang.ErrorDetails}:");
+                        sb.AppendLine(string.Join("\n• ", errors.Take(10)));
+                    }
+                    MessageBoxHelper.ShowInfo(sb.ToString());
+                }
+                catch (Exception ex)
+                {
+                    MessageBoxHelper.ShowError(Lang.ImportFailed, ex);
                 }
             }
-        }
-
-        private void dgvTCT_RowUpdated(object sender, DevExpress.XtraGrid.Views.Base.RowObjectEventArgs e)
-        {
-            if (e.Row is TCTData_Pivoted updatedRow)
-            {
-                var view = sender as GridView;
-                if (view == null) return;
-
-                var oldRow = pivotedDataOriginal.FirstOrDefault(x =>
-                    x.ModelName == updatedRow.ModelName && x.Type == updatedRow.Type);
-
-                if (oldRow == null) return;
-                string updatedBy = Common.Global.CurrentEmployee.Username;
-                var updatedModels = new List<TCTData_Model>();
-
-                void AddIfChanged(string processName, double? oldValue, double? newValue)
-                {
-                    if (oldValue != newValue)
-                    {
-                        updatedModels.Add(new TCTData_Model
-                        {
-                            ModelName = updatedRow.ModelName,
-                            Type = updatedRow.Type,
-                            Process = processName,
-                            TCTValue = newValue,
-                            LastUpdatedAt = DateTime.Now,
-                            Notes = updatedRow.Notes
-                        });
-                    }
-                }
-
-                AddIfChanged("Cutting", oldRow.Cutting, updatedRow.Cutting);
-                AddIfChanged("Stitching", oldRow.Stitching, updatedRow.Stitching);
-                AddIfChanged("Assembly", oldRow.Assembly, updatedRow.Assembly);
-                AddIfChanged("Stock Fitting", oldRow.StockFitting, updatedRow.StockFitting);
-
-                if ((updatedRow.Notes ?? "") != (oldRow.Notes ?? "") && updatedModels.Count == 0)
-                {
-                    updatedModels.Add(new TCTData_Model
-                    {
-                        ModelName = updatedRow.ModelName,
-                        Type = updatedRow.Type,
-                        Process = "Cutting", 
-                        TCTValue = oldRow.Cutting,
-                        LastUpdatedAt = DateTime.Now,
-                        Notes = updatedRow.Notes
-                    });
-                }
-
-                if (updatedModels.Count == 0) return;
-
-                Task.Run(() =>
-                {
-                    try
-                    {
-                        foreach (var item in updatedModels)
-                        {
-                            TCT_DAL.InsertOrUpdateTCT(item, updatedBy);
-                        }
-
-                        Invoke(new Action(() =>
-                        {
-                            updatedRow.LastUpdatedAt = updatedModels.Max(x => x.LastUpdatedAt);
-                            dgvTCT.RefreshData();
-
-                            var original = pivotedDataOriginal.First(x =>
-                                x.ModelName == updatedRow.ModelName && x.Type == updatedRow.Type);
-
-                            original.Cutting = updatedRow.Cutting;
-                            original.Stitching = updatedRow.Stitching;
-                            original.Assembly = updatedRow.Assembly;
-                            original.StockFitting = updatedRow.StockFitting;
-                            original.Notes = updatedRow.Notes;
-                            original.LastUpdatedAt = updatedRow.LastUpdatedAt;
-
-                            XtraMessageBox.Show("Cập nhật TCT thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }));
-                    }
-                    catch (Exception ex)
-                    {
-                        Invoke(new Action(() =>
-                        {
-                            XtraMessageBox.Show("Lỗi khi cập nhật TCT: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }));
-                    }
-                });
-            }
-        }
-
-        private async void btnRefresh_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
-        {
-            await LoadDataAsync();
         }
 
         private void dgvTCT_KeyDown(object sender, KeyEventArgs e)
@@ -301,13 +387,12 @@ namespace KpiApplication.Controls
                 GridView view = sender as GridView;
                 int rowHandle = view.FocusedRowHandle;
 
-                if (rowHandle >= 0 && !view.IsNewItemRow(rowHandle))
+                if (view.IsNewItemRow(rowHandle)) return;
+
+                var confirm = MessageBoxHelper.ShowConfirm(Lang.ConfirmDelete);
+                if (confirm == DialogResult.Yes)
                 {
-                    var confirm = XtraMessageBox.Show("Bạn có chắc muốn xóa dòng này?", "Xác nhận", MessageBoxButtons.YesNo);
-                    if (confirm == DialogResult.Yes)
-                    {
-                        view.DeleteRow(rowHandle);
-                    }
+                    view.DeleteRow(rowHandle);
                 }
             }
         }
@@ -322,7 +407,7 @@ namespace KpiApplication.Controls
             }
             catch (Exception ex)
             {
-                XtraMessageBox.Show("❌ Lỗi khi xóa dòng: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                XtraMessageBox.Show($"{Lang.Error} {Lang.DeleteFailed}: {ex.Message}", Lang.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

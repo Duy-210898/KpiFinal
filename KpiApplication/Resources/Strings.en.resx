@@ -1,0 +1,699 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccountDisabled" xml:space="preserve">
+    <value>Account has been disabled.</value>
+  </data>
+  <data name="AccountManagement" xml:space="preserve">
+    <value>Account Management</value>
+  </data>
+  <data name="AddNewFile" xml:space="preserve">
+    <value>Add New File</value>
+  </data>
+  <data name="AdjustOperator" xml:space="preserve">
+    <value>Adjust Operator</value>
+  </data>
+  <data name="AllProcess" xml:space="preserve">
+    <value>All Processes</value>
+  </data>
+  <data name="ArticleName" xml:space="preserve">
+    <value>Article No.</value>
+  </data>
+  <data name="Assembly" xml:space="preserve">
+    <value>Assembly</value>
+  </data>
+  <data name="BonusDocument" xml:space="preserve">
+    <value>Bonus Document</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Change Password</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Are you sure you want to delete this?</value>
+  </data>
+  <data name="ConfirmDelete_Message" xml:space="preserve">
+    <value>Are you sure you want to delete file “{0}” from model “{1}”?</value>
+  </data>
+  <data name="ConfirmDelete_Title" xml:space="preserve">
+    <value>Confirm Deletion...</value>
+  </data>
+  <data name="ConfirmIncludeTCT" xml:space="preserve">
+    <value>Include TCT column in export?</value>
+  </data>
+  <data name="ConfirmLogout" xml:space="preserve">
+    <value>Are you sure you want to log out?</value>
+  </data>
+  <data name="CreatedAt" xml:space="preserve">
+    <value>Created At</value>
+  </data>
+  <data name="CreatedBy" xml:space="preserve">
+    <value>Created By</value>
+  </data>
+  <data name="Cutting" xml:space="preserve">
+    <value>Cutting</value>
+  </data>
+  <data name="DataStatus" xml:space="preserve">
+    <value>Data Status</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Delete Failed</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ErrorDetails" xml:space="preserve">
+    <value>Error Details</value>
+  </data>
+  <data name="ErrorLoadingProcessList" xml:space="preserve">
+    <value>Error loading process list.</value>
+  </data>
+  <data name="ErrorWhileDeletingRow" xml:space="preserve">
+    <value>❌ Error occurred while deleting row.</value>
+  </data>
+  <data name="ErrorWhileSavingDocument" xml:space="preserve">
+    <value>Error occurred while saving document.</value>
+  </data>
+  <data name="Error_MissingDependencies" xml:space="preserve">
+    <value>❌ Missing required dependencies.</value>
+  </data>
+  <data name="Error_UpdateArticleProcess" xml:space="preserve">
+    <value>Unable to update process/type data for ArticleID = {0}.</value>
+  </data>
+  <data name="Error_UpdateModelNameFailed" xml:space="preserve">
+    <value>❌ Failed to update model name.</value>
+  </data>
+  <data name="Error_UpdateOutsourcing" xml:space="preserve">
+    <value>Unable to update outsourcing info for ArticleID = {0}.</value>
+  </data>
+  <data name="Error_UpdatePCIncharge" xml:space="preserve">
+    <value>Unable to update person in charge for ArticleID = {0}.</value>
+  </data>
+  <data name="Error_UpdateTCT" xml:space="preserve">
+    <value>Unable to update TCT data for ArticleID = {0}.</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="ExportCompleted" xml:space="preserve">
+    <value>✅ Excel export completed.</value>
+  </data>
+  <data name="ExportError" xml:space="preserve">
+    <value>Error occurred during export.</value>
+  </data>
+  <data name="ExportExcelTitle" xml:space="preserve">
+    <value>Export to Excel</value>
+  </data>
+  <data name="ExportFailed" xml:space="preserve">
+    <value>Export failed.</value>
+  </data>
+  <data name="ExportIEReportFile" xml:space="preserve">
+    <value>IE Report</value>
+  </data>
+  <data name="ExportInsufficientData" xml:space="preserve">
+    <value>Insufficient data to export.</value>
+  </data>
+  <data name="ExportOutputPerLineReportFile" xml:space="preserve">
+    <value>Output per Line Report</value>
+  </data>
+  <data name="ExportShoesKPIReportFile" xml:space="preserve">
+    <value>Shoes KPI Report</value>
+  </data>
+  <data name="ExportSlidesKPIReportFile" xml:space="preserve">
+    <value>Slides KPI Report</value>
+  </data>
+  <data name="ExportSuccess" xml:space="preserve">
+    <value>Export Successful</value>
+  </data>
+  <data name="ExportTCTTitle" xml:space="preserve">
+    <value>Export TCT Data to Excel</value>
+  </data>
+  <data name="Export_UnableToExportTryReorder" xml:space="preserve">
+    <value>Unable to export. Please try reordering the data.</value>
+  </data>
+  <data name="Export_ErrorCreatingFolder" xml:space="preserve">
+    <value>Error creating export folder.</value>
+  </data>
+  <data name="Export_ErrorGettingDate" xml:space="preserve">
+    <value>Error retrieving date.</value>
+  </data>
+  <data name="Export_FileNamePrefix" xml:space="preserve">
+    <value>Export_</value>
+  </data>
+  <data name="Export_NoMatchingData" xml:space="preserve">
+    <value>No matching data found.</value>
+  </data>
+  <data name="Export_ScanDateColumnMissing" xml:space="preserve">
+    <value>Scan Date column missing.</value>
+  </data>
+  <data name="FailedToBuildExportData" xml:space="preserve">
+    <value>Failed to build export data.</value>
+  </data>
+  <data name="FailedToCreateExcelFile" xml:space="preserve">
+    <value>Failed to create Excel file.</value>
+  </data>
+  <data name="FailedToCreateReportFolder" xml:space="preserve">
+    <value>Failed to create report folder.</value>
+  </data>
+  <data name="FailedToOpenFile" xml:space="preserve">
+    <value>Failed to open file.</value>
+  </data>
+  <data name="FileAlreadyExists" xml:space="preserve">
+    <value>File already exists.</value>
+  </data>
+  <data name="FileExistsConfirm" xml:space="preserve">
+    <value>File already exists. Overwrite?</value>
+  </data>
+  <data name="FileLockedOrOpened" xml:space="preserve">
+    <value>File is locked or already open.</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>File Name</value>
+  </data>
+  <data name="FileNameCannotBeEmpty" xml:space="preserve">
+    <value>File name cannot be empty.</value>
+  </data>
+  <data name="FileNameExists" xml:space="preserve">
+    <value>File name already exists.</value>
+  </data>
+  <data name="FileSavedSuccessfully" xml:space="preserve">
+    <value>File saved successfully.</value>
+  </data>
+  <data name="FileUpdatedSuccessfully" xml:space="preserve">
+    <value>File updated successfully.</value>
+  </data>
+  <data name="FinalOperator" xml:space="preserve">
+    <value>Final Operator</value>
+  </data>
+  <data name="Guest" xml:space="preserve">
+    <value>Guest</value>
+  </data>
+  <data name="GuestLogin" xml:space="preserve">
+    <value>Login as Guest</value>
+  </data>
+  <data name="IncludeTCTInExport" xml:space="preserve">
+    <value>Include TCT data in export</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ImportFailed" xml:space="preserve">
+    <value>Import Failed</value>
+  </data>
+  <data name="ImportSuccess" xml:space="preserve">
+    <value>Import Successful</value>
+  </data>
+  <data name="Importing" xml:space="preserve">
+    <value>Importing...</value>
+  </data>
+  <data name="ImportingDescription" xml:space="preserve">
+    <value>Please wait, importing data...</value>
+  </data>
+  <data name="ImportingTCTData" xml:space="preserve">
+    <value>Importing TCT data...</value>
+  </data>
+  <data name="Inserted" xml:space="preserve">
+    <value>Inserted</value>
+  </data>
+  <data name="InvalidArticleID" xml:space="preserve">
+    <value>❌ Invalid Article ID.</value>
+  </data>
+  <data name="InvalidFileName" xml:space="preserve">
+    <value>Invalid file name.</value>
+  </data>
+  <data name="InvalidFileNameCharacters" xml:space="preserve">
+    <value>File name contains invalid characters.</value>
+  </data>
+  <data name="InvalidRow" xml:space="preserve">
+    <value>❌ Invalid row detected.</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="LastUpdatedAt" xml:space="preserve">
+    <value>Last Updated At</value>
+  </data>
+  <data name="LoadDataError" xml:space="preserve">
+    <value>❌ Error loading data.</value>
+  </data>
+  <data name="LoadDataFailed" xml:space="preserve">
+    <value>Failed to load data</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="LoadingDescription" xml:space="preserve">
+    <value>Please wait, loading data...</value>
+  </data>
+  <data name="RefreshingDescription" xml:space="preserve">
+    <value>Please wait, refreshing data...</value>
+  </data>
+  <data name="LoadingModelNames" xml:space="preserve">
+    <value>Loading model names...</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="MainTitle" xml:space="preserve">
+    <value>KPI Management System</value>
+  </data>
+  <data name="Management" xml:space="preserve">
+    <value>Management</value>
+  </data>
+  <data name="ME" xml:space="preserve">
+    <value>IE Department</value>
+  </data>
+  <data name="MissingProcessOrTypeID" xml:space="preserve">
+    <value>❌ Missing Process or Type ID.</value>
+  </data>
+  <data name="ModelName" xml:space="preserve">
+    <value>Model Name</value>
+  </data>
+  <data name="NoDataToExport" xml:space="preserve">
+    <value>No data to export.</value>
+  </data>
+  <data name="NoFileSelected" xml:space="preserve">
+    <value>No file selected</value>
+  </data>
+  <data name="NoValidDataToExport" xml:space="preserve">
+    <value>No valid data to export.</value>
+  </data>
+  <data name="NoValidTCTDataFound" xml:space="preserve">
+    <value>No valid TCT data found.</value>
+  </data>
+  <data name="NoteForPC" xml:space="preserve">
+    <value>Note for PC</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="Notification" xml:space="preserve">
+    <value>Notification</value>
+  </data>
+  <data name="OperatorAdjust" xml:space="preserve">
+    <value>Adjust Operator</value>
+  </data>
+  <data name="OutsourcingAssembling" xml:space="preserve">
+    <value>Outsourced Assembly</value>
+  </data>
+  <data name="OutsourcingStitching" xml:space="preserve">
+    <value>Outsourced Stitching</value>
+  </data>
+  <data name="OutsourcingStockFitting" xml:space="preserve">
+    <value>Outsourced Stock Fitting</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="PC" xml:space="preserve">
+    <value>Production Department</value>
+  </data>
+  <data name="PCSend" xml:space="preserve">
+    <value>PC Sent</value>
+  </data>
+  <data name="PersonIncharge" xml:space="preserve">
+    <value>Person in Charge</value>
+  </data>
+  <data name="PleaseEnterUsernameBeforeChangingPassword" xml:space="preserve">
+    <value>Please enter username before changing password!</value>
+  </data>
+  <data name="Process" xml:space="preserve">
+    <value>Process</value>
+  </data>
+  <data name="ProcessIDNotFound" xml:space="preserve">
+    <value>❌ Process ID not found.</value>
+  </data>
+  <data name="ProductionSign" xml:space="preserve">
+    <value>Production Sign</value>
+  </data>
+  <data name="ReadOnly" xml:space="preserve">
+    <value>Read-Only</value>
+  </data>
+  <data name="ReferenceModel" xml:space="preserve">
+    <value>Reference Model</value>
+  </data>
+  <data name="ReferenceOperator" xml:space="preserve">
+    <value>Reference Operator</value>
+  </data>
+  <data name="Refreshing" xml:space="preserve">
+    <value>Refreshing...</value>
+  </data>
+  <data name="RefreshingBonusDocData" xml:space="preserve">
+    <value>Refreshing bonus document data...</value>
+  </data>
+  <data name="RefreshingBonusDocuments" xml:space="preserve">
+    <value>Refreshing bonus documents...</value>
+  </data>
+  <data name="RefreshingData" xml:space="preserve">
+    <value>Refreshing data...</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Remember Account</value>
+  </data>
+  <data name="RenameFailed" xml:space="preserve">
+    <value>Rename Failed.</value>
+  </data>
+  <data name="RenameSuccess" xml:space="preserve">
+    <value>Rename Successful.</value>
+  </data>
+  <data name="ReportExportSuccess" xml:space="preserve">
+    <value>Report exported successfully.</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>Required</value>
+  </data>
+  <data name="RequiredBeforeChangePassword" xml:space="preserve">
+    <value>Please enter username before changing password!</value>
+  </data>
+  <data name="RestartNotice" xml:space="preserve">
+    <value>Application needs to restart after changing language.</value>
+  </data>
+  <data name="Rows" xml:space="preserve">
+    <value>Rows</value>
+  </data>
+  <data name="SaveDataError" xml:space="preserve">
+    <value>❌ Error saving data.</value>
+  </data>
+  <data name="SaveFileFailed" xml:space="preserve">
+    <value>Failed to save file</value>
+  </data>
+  <data name="ScanDateNotFound" xml:space="preserve">
+    <value>Scan date not found.</value>
+  </data>
+  <data name="SelectModel" xml:space="preserve">
+    <value>-- Select Model --</value>
+  </data>
+  <data name="SelectModelFirst" xml:space="preserve">
+    <value>Please select a model first.</value>
+  </data>
+  <data name="SharedData" xml:space="preserve">
+    <value>Shared Data</value>
+  </data>
+  <data name="SheetSelect" xml:space="preserve">
+    <value>Select Worksheet</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="SkippedRows" xml:space="preserve">
+    <value>Skipped Rows</value>
+  </data>
+  <data name="Stitching" xml:space="preserve">
+    <value>Stitching</value>
+  </data>
+  <data name="StockFitting" xml:space="preserve">
+    <value>Stock Fitting</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="SupportedFiles" xml:space="preserve">
+    <value>Only PDF or image files (JPG, PNG, BMP) are supported.</value>
+  </data>
+  <data name="TargetOutput" xml:space="preserve">
+    <value>Target Output</value>
+  </data>
+  <data name="TCTData" xml:space="preserve">
+    <value>TCT Data</value>
+  </data>
+  <data name="TooltipTemplate_FileInfo" xml:space="preserve">
+    <value>📄 File Name: {0}\n🕒 Created: {1:yyyy-MM-dd}\n👤 Created by: {2}</value>
+  </data>
+  <data name="TooltipTemplate_UpdatedInfo" xml:space="preserve">
+    <value>\n✏️ Updated on: {0:yyyy-MM-dd}\n👤 Updated by: {1}</value>
+  </data>
+  <data name="TotalTCT" xml:space="preserve">
+    <value>Total TCT</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="TypeIDNotFound" xml:space="preserve">
+    <value>❌ Type ID not found.</value>
+  </data>
+  <data name="UnexpectedError" xml:space="preserve">
+    <value>An unexpected error occurred.</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="UpdateFailed" xml:space="preserve">
+    <value>Update Failed</value>
+  </data>
+  <data name="UpdateSuccess" xml:space="preserve">
+    <value>Update Successful</value>
+  </data>
+  <data name="Updated" xml:space="preserve">
+    <value>Updated</value>
+  </data>
+  <data name="UpdatedAt" xml:space="preserve">
+    <value>Updated At</value>
+  </data>
+  <data name="UpdatedBy" xml:space="preserve">
+    <value>Updated By</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="UsernameDoesNotExist" xml:space="preserve">
+    <value>Username does not exist.</value>
+  </data>
+  <data name="UsernameNotExists" xml:space="preserve">
+    <value>Username does not exist.</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User not found.</value>
+  </data>
+  <data name="ViewBonusDocuments" xml:space="preserve">
+    <value>View Bonus Documents</value>
+  </data>
+  <data name="ViewDailyData" xml:space="preserve">
+    <value>View Daily Data</value>
+  </data>
+  <data name="ViewIEPPH" xml:space="preserve">
+    <value>View IE PPH</value>
+  </data>
+  <data name="ViewTCTData" xml:space="preserve">
+    <value>View TCT Data</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="WeeklyPlan" xml:space="preserve">
+    <value>Weekly Plan</value>
+  </data>
+  <data name="WorkingTime" xml:space="preserve">
+    <value>Working Time</value>
+  </data>
+  <data name="WrongPassword" xml:space="preserve">
+    <value>Incorrect password.</value>
+  </data>
+  <data name="ZoomPercent" xml:space="preserve">
+    <value>Zoom: {0}%</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>Saving data</value>
+  </data>
+  <data name="AllStatus" xml:space="preserve">
+    <value>All Status</value>
+  </data>
+  <data name="Assigned" xml:space="preserve">
+    <value>Assigned</value>
+  </data>
+  <data name="ChangeTCTReason" xml:space="preserve">
+    <value>Change TCT Reason</value>
+  </data>
+  <data name="Chinese" xml:space="preserve">
+    <value>Chinese</value>
+  </data>
+  <data name="ChooseFile" xml:space="preserve">
+    <value>Choose File</value>
+  </data>
+  <data name="DateRange" xml:space="preserve">
+    <value>Date Range</value>
+  </data>
+  <data name="DepartmentRequired" xml:space="preserve">
+    <value>Department is required.</value>
+  </data>
+  <data name="DownloadTemplate" xml:space="preserve">
+    <value>Download Template</value>
+  </data>
+  <data name="EditTCTData" xml:space="preserve">
+    <value>Edit TCT Data</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="ExportFile" xml:space="preserve">
+    <value>Export File</value>
+  </data>
+  <data name="FileDeleted" xml:space="preserve">
+    <value>File deleted.</value>
+  </data>
+  <data name="FileRenamed" xml:space="preserve">
+    <value>File renamed.</value>
+  </data>
+  <data name="InvalidFileFormat" xml:space="preserve">
+    <value>Invalid file format.</value>
+  </data>
+  <data name="NoTCTSelected" xml:space="preserve">
+    <value>No TCT data selected.</value>
+  </data>
+  <data name="OperationSuccess" xml:space="preserve">
+    <value>Operation completed successfully.</value>
+  </data>
+  <data name="PersonInchargeRequired" xml:space="preserve">
+    <value>Person in charge is required.</value>
+  </data>
+  <data name="StatusRequired" xml:space="preserve">
+    <value>Status is required.</value>
+  </data>
+  <data name="Vietnamese" xml:space="preserve">
+    <value>Vietnamese</value>
+  </data>
+  <data name="ExcelExportOptions" xml:space="preserve">
+    <value>Excel Export Options</value>
+  </data>
+  <data name="SearchIEPPH" xml:space="preserve">
+    <value>IE PPH Management</value>
+  </data>
+  <data name="Plant" xml:space="preserve">
+    <value>Plant</value>
+  </data>
+  <data name="AddNewRowHint" xml:space="preserve">
+    <value>Click here to add new Article</value>
+  </data>
+</root>

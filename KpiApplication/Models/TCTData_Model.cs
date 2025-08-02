@@ -21,6 +21,10 @@ namespace KpiApplication.Models
     {
         public string ModelName { get; set; }
         public string Type { get; set; }
+
+        public string OriginalModelName { get; set; }
+        public string OriginalType { get; set; }
+
         public double? Cutting { get; set; }
         public double? Stitching { get; set; }
         public double? Assembly { get; set; }
@@ -43,12 +47,15 @@ namespace KpiApplication.Models
         }
         public DateTime? LastUpdatedAt { get; set; }
         public string Notes { get; set; }
+
         public TCTData_Pivoted Clone()
         {
             return new TCTData_Pivoted
             {
                 ModelName = this.ModelName,
                 Type = this.Type,
+                OriginalModelName = this.OriginalModelName,
+                OriginalType = this.OriginalType,
                 Cutting = this.Cutting,
                 Stitching = this.Stitching,
                 Assembly = this.Assembly,

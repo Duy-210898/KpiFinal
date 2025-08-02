@@ -5,11 +5,12 @@ using KpiApplication.Utils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace KpiApplication.Controls
 {
-    public partial class ucAccountManage : XtraUserControl
+    public partial class ucAccountManage : XtraUserControl, ISupportLoadAsync
     {
         private readonly Account_DAL account_DAL = new Account_DAL();
 
@@ -17,7 +18,6 @@ namespace KpiApplication.Controls
         {
             InitializeComponent();
             InitUI();
-            this.Load += ucAccountManage_Load;
         }
 
         private void InitUI()
@@ -29,27 +29,22 @@ namespace KpiApplication.Controls
             txtPassword.Properties.PasswordChar = '*';
         }
 
-        private void ucAccountManage_Load(object sender, EventArgs e)
+        public async Task LoadDataAsync()
         {
-            LoadAccountsToGrid();
-        }
-
-        private void LoadAccountsToGrid()
-        {
-            try
+            await Task.Run(() =>
             {
                 var accountList = account_DAL.GetAllAccounts();
                 accountList.ForEach(acc => acc.Password = string.Empty);
-                gridControl1.DataSource = accountList;
-                gridControl1.Visible = true;
 
-                HideSensitiveColumns();
-                SetupDepartmentComboBox();
-            }
-            catch (Exception ex)
-            {
-                ShowError($"Lỗi khi tải danh sách tài khoản: {ex.Message}");
-            }
+                Invoke(new Action(() =>
+                {
+                    gridControl1.DataSource = accountList;
+                    gridControl1.Visible = true;
+
+                    HideSensitiveColumns();
+                    SetupDepartmentComboBox();
+                }));
+            });
         }
 
         private void HideSensitiveColumns()
@@ -122,9 +117,9 @@ namespace KpiApplication.Controls
             gridControl1.Visible = false;
             layoutControl1.Visible = true;
             layoutControl1.BringToFront();
-
             layoutControl1.Location = new Point(3, 35);
         }
+
         private void HideForm()
         {
             layoutControl1.Visible = false;
@@ -152,7 +147,7 @@ namespace KpiApplication.Controls
                 account_DAL.InsertOrUpdateUser(user);
                 XtraMessageBox.Show("✅ Đã lưu tài khoản thành công.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 HideForm();
-                LoadAccountsToGrid();
+                _ = LoadDataAsync(); // Không cần đợi
             }
             catch (Exception ex)
             {
@@ -181,9 +176,9 @@ namespace KpiApplication.Controls
             return true;
         }
 
-        private void btnRefresh_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        private async void btnRefresh_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-            LoadAccountsToGrid();
+            await LoadDataAsync();
         }
 
         private void gridView1_RowUpdated(object sender, DevExpress.XtraGrid.Views.Base.RowObjectEventArgs e)

@@ -144,9 +144,9 @@
             // 
             // listBoxDocuments
             // 
-            this.listBoxDocuments.Location = new System.Drawing.Point(82, 200);
+            this.listBoxDocuments.Location = new System.Drawing.Point(12, 225);
             this.listBoxDocuments.Name = "listBoxDocuments";
-            this.listBoxDocuments.Size = new System.Drawing.Size(240, 269);
+            this.listBoxDocuments.Size = new System.Drawing.Size(310, 244);
             this.listBoxDocuments.StyleController = this.layoutControl1;
             this.listBoxDocuments.TabIndex = 6;
             this.listBoxDocuments.UseDisabledStatePainter = false;
@@ -155,9 +155,9 @@
             // 
             // listBoxArticles
             // 
-            this.listBoxArticles.Location = new System.Drawing.Point(82, 36);
+            this.listBoxArticles.Location = new System.Drawing.Point(12, 52);
             this.listBoxArticles.Name = "listBoxArticles";
-            this.listBoxArticles.Size = new System.Drawing.Size(240, 160);
+            this.listBoxArticles.Size = new System.Drawing.Size(310, 144);
             this.listBoxArticles.StyleController = this.layoutControl1;
             this.listBoxArticles.TabIndex = 5;
             // 
@@ -208,7 +208,8 @@
             this.layoutControlItem2.Location = new System.Drawing.Point(0, 24);
             this.layoutControlItem2.Name = "layoutControlItem2";
             this.layoutControlItem2.Size = new System.Drawing.Size(314, 164);
-            this.layoutControlItem2.Text = " ";
+            this.layoutControlItem2.Text = "Articles List";
+            this.layoutControlItem2.TextLocation = DevExpress.Utils.Locations.Top;
             // 
             // layoutControlItem3
             // 
@@ -217,8 +218,8 @@
             this.layoutControlItem3.Location = new System.Drawing.Point(0, 188);
             this.layoutControlItem3.Name = "layoutControlItem3";
             this.layoutControlItem3.Size = new System.Drawing.Size(314, 273);
-            this.layoutControlItem3.Text = " ";
-            this.layoutControlItem3.TextLocation = DevExpress.Utils.Locations.Left;
+            this.layoutControlItem3.Text = "Bonus File";
+            this.layoutControlItem3.TextLocation = DevExpress.Utils.Locations.Top;
             // 
             // layoutControlItem4
             // 

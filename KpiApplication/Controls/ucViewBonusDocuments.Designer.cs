@@ -34,17 +34,17 @@
             this.btnExportFile = new DevExpress.XtraEditors.SimpleButton();
             this.listBoxDocuments = new DevExpress.XtraEditors.ListBoxControl();
             this.listBoxArticles = new DevExpress.XtraEditors.ListBoxControl();
-            this.lookUpModelName = new DevExpress.XtraEditors.LookUpEdit();
             this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
-            this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
             this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
             this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
             this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
             this.layoutControlItem5 = new DevExpress.XtraLayout.LayoutControlItem();
-            this.pictureViewer = new DevExpress.XtraEditors.PictureEdit();
             this.pdfViewer = new DevExpress.XtraPdfViewer.PdfViewer();
             this.lblFileName = new DevExpress.XtraEditors.LabelControl();
             this.toolTipController1 = new DevExpress.Utils.ToolTipController(this.components);
+            this.lookUpModelName = new DevExpress.XtraEditors.LookUpEdit();
+            this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
+            this.pictureViewer = new DevExpress.XtraEditors.PictureEdit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerControl1.Panel1)).BeginInit();
             this.splitContainerControl1.Panel1.SuspendLayout();
@@ -55,13 +55,13 @@
             this.layoutControl1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listBoxDocuments)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listBoxArticles)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.lookUpModelName.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.lookUpModelName.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureViewer.Properties)).BeginInit();
             this.SuspendLayout();
             // 
@@ -129,17 +129,6 @@
             this.listBoxArticles.StyleController = this.layoutControl1;
             this.listBoxArticles.TabIndex = 5;
             // 
-            // lookUpModelName
-            // 
-            this.lookUpModelName.Location = new System.Drawing.Point(82, 12);
-            this.lookUpModelName.Name = "lookUpModelName";
-            this.lookUpModelName.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-            this.lookUpModelName.Size = new System.Drawing.Size(248, 20);
-            this.lookUpModelName.StyleController = this.layoutControl1;
-            this.lookUpModelName.TabIndex = 4;
-            this.lookUpModelName.EditValueChanged += new System.EventHandler(this.lookUpModelName_EditValueChanged);
-            // 
             // Root
             // 
             this.Root.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
@@ -153,14 +142,6 @@
             this.Root.Name = "Root";
             this.Root.Size = new System.Drawing.Size(342, 623);
             this.Root.TextVisible = false;
-            // 
-            // layoutControlItem1
-            // 
-            this.layoutControlItem1.Control = this.lookUpModelName;
-            this.layoutControlItem1.Location = new System.Drawing.Point(0, 0);
-            this.layoutControlItem1.Name = "layoutControlItem1";
-            this.layoutControlItem1.Size = new System.Drawing.Size(322, 24);
-            this.layoutControlItem1.Text = "Model Name";
             // 
             // emptySpaceItem1
             // 
@@ -194,16 +175,6 @@
             this.layoutControlItem5.Size = new System.Drawing.Size(162, 26);
             this.layoutControlItem5.TextVisible = false;
             // 
-            // pictureViewer
-            // 
-            this.pictureViewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureViewer.Location = new System.Drawing.Point(0, 32);
-            this.pictureViewer.Name = "pictureViewer";
-            this.pictureViewer.Properties.ShowCameraMenuItem = DevExpress.XtraEditors.Controls.CameraMenuItemVisibility.Auto;
-            this.pictureViewer.Size = new System.Drawing.Size(633, 591);
-            this.pictureViewer.TabIndex = 3;
-            this.pictureViewer.Visible = false;
-            // 
             // pdfViewer
             // 
             this.pdfViewer.Appearance.BackColor = System.Drawing.Color.Transparent;
@@ -232,6 +203,35 @@
             this.lblFileName.Size = new System.Drawing.Size(633, 32);
             this.lblFileName.TabIndex = 1;
             // 
+            // lookUpModelName
+            // 
+            this.lookUpModelName.Location = new System.Drawing.Point(82, 12);
+            this.lookUpModelName.Name = "lookUpModelName";
+            this.lookUpModelName.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.lookUpModelName.Size = new System.Drawing.Size(248, 20);
+            this.lookUpModelName.StyleController = this.layoutControl1;
+            this.lookUpModelName.TabIndex = 4;
+            this.lookUpModelName.EditValueChanged += new System.EventHandler(this.lookUpModelName_EditValueChanged);
+            // 
+            // layoutControlItem1
+            // 
+            this.layoutControlItem1.Control = this.lookUpModelName;
+            this.layoutControlItem1.Location = new System.Drawing.Point(0, 0);
+            this.layoutControlItem1.Name = "layoutControlItem1";
+            this.layoutControlItem1.Size = new System.Drawing.Size(322, 24);
+            this.layoutControlItem1.Text = "Model Name";
+            // 
+            // pictureViewer
+            // 
+            this.pictureViewer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureViewer.Location = new System.Drawing.Point(0, 32);
+            this.pictureViewer.Name = "pictureViewer";
+            this.pictureViewer.Properties.ShowCameraMenuItem = DevExpress.XtraEditors.Controls.CameraMenuItemVisibility.Auto;
+            this.pictureViewer.Size = new System.Drawing.Size(633, 591);
+            this.pictureViewer.TabIndex = 3;
+            this.pictureViewer.Visible = false;
+            // 
             // ucViewBonusDocuments
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -249,13 +249,13 @@
             this.layoutControl1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.listBoxDocuments)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listBoxArticles)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.lookUpModelName.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.lookUpModelName.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureViewer.Properties)).EndInit();
             this.ResumeLayout(false);
 

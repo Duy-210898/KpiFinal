@@ -108,6 +108,9 @@ D:\KPI_Application\KpiFinal\KpiApplication\bin\Debug\Kpi Application.exe.manifes
 D:\KPI_Application\KpiFinal\KpiApplication\bin\Debug\Kpi Application.application
 D:\KPI_Application\KpiFinal\KpiApplication\bin\Debug\Kpi Application.exe
 D:\KPI_Application\KpiFinal\KpiApplication\bin\Debug\Kpi Application.pdb
+D:\KPI_Application\KpiFinal\KpiApplication\bin\Debug\en\Kpi Application.resources.dll
+D:\KPI_Application\KpiFinal\KpiApplication\bin\Debug\vi\Kpi Application.resources.dll
+D:\KPI_Application\KpiFinal\KpiApplication\bin\Debug\zh\Kpi Application.resources.dll
 D:\KPI_Application\KpiFinal\KpiApplication\bin\Debug\DevExpress.BonusSkins.v24.2.dll
 D:\KPI_Application\KpiFinal\KpiApplication\bin\Debug\DevExpress.Charts.v24.2.Core.dll
 D:\KPI_Application\KpiFinal\KpiApplication\bin\Debug\DevExpress.Data.Desktop.v24.2.dll
@@ -246,18 +249,25 @@ D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.Controls.ucV
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.Controls.ucWeeklyPlan.resources
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.Controls.ucWorkingTime.resources
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.Forms.CustomWaitForm.resources
+D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.Forms.ExportDirectionForm.resources
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.Forms.frmChangePassword.resources
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.Login.resources
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.MainView.resources
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.Forms.PreviewSaveForm.resources
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.Forms.SheetSelectionForm.resources
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.Properties.Resources.resources
+D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.Resources.Strings.en.resources
+D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.Resources.Strings.vi.resources
+D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.Resources.Strings.zh.resources
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.csproj.GenerateResource.cache
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.csproj.CoreCompileInputs.cache
+D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\en\Kpi Application.resources.dll
+D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\vi\Kpi Application.resources.dll
+D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\zh\Kpi Application.resources.dll
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\Kpi Application.exe.manifest
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\Kpi Application.application
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiAppli.A4444AD1.Up2Date
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\Kpi Application.exe
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\Kpi Application.pdb
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\Kpi Application.exe.licenses
-D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.Forms.ExportDirectionForm.resources
+D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.Controls.ucCIDocument.resources

@@ -20,7 +20,7 @@ public class BonusDocument_Model : INotifyPropertyChanged
             }
         }
     }
-
+    public string DocumentType { get; set; }
     public byte[] PdfData { get; set; }
     public DateTime? CreatedAt { get; set; }
     public int? CreatedBy { get; set; }

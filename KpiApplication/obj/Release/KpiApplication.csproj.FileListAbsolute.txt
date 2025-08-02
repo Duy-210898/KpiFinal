@@ -259,3 +259,12 @@ D:\KPI_Application\KpiFinal\KpiApplication\obj\Release\KpiAppli.A4444AD1.Up2Date
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Release\Kpi Application.exe
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Release\Kpi Application.pdb
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Release\KpiApplication.Forms.ExportDirectionForm.resources
+D:\KPI_Application\KpiFinal\KpiApplication\bin\Release\en\Kpi Application.resources.dll
+D:\KPI_Application\KpiFinal\KpiApplication\bin\Release\vi\Kpi Application.resources.dll
+D:\KPI_Application\KpiFinal\KpiApplication\bin\Release\zh\Kpi Application.resources.dll
+D:\KPI_Application\KpiFinal\KpiApplication\obj\Release\KpiApplication.Resources.Strings.en.resources
+D:\KPI_Application\KpiFinal\KpiApplication\obj\Release\KpiApplication.Resources.Strings.vi.resources
+D:\KPI_Application\KpiFinal\KpiApplication\obj\Release\KpiApplication.Resources.Strings.zh.resources
+D:\KPI_Application\KpiFinal\KpiApplication\obj\Release\en\Kpi Application.resources.dll
+D:\KPI_Application\KpiFinal\KpiApplication\obj\Release\vi\Kpi Application.resources.dll
+D:\KPI_Application\KpiFinal\KpiApplication\obj\Release\zh\Kpi Application.resources.dll

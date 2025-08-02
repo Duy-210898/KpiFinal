@@ -220,36 +220,5 @@ namespace KpiApplication.Models
                 Notes = original.Notes
             };
         }
-        public List<string> GetChangedProperties(IETotal_Model original)
-        { 
-            var changedProperties = new List<string>();
-
-            if (original == null) return changedProperties;
-
-            var properties = typeof(IETotal_Model).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-            foreach (var prop in properties)
-            {
-                // Lọc bỏ các property không cần so sánh (nếu có)
-                if (!prop.CanRead) continue;
-
-                var originalValue = prop.GetValue(original);
-                var currentValue = prop.GetValue(this);
-
-                bool changed;
-                if (originalValue == null && currentValue == null)
-                    changed = false;
-                else if (originalValue == null || currentValue == null)
-                    changed = true;
-                else
-                    changed = !originalValue.Equals(currentValue);
-
-                if (changed)
-                    changedProperties.Add(prop.Name);
-            }
-
-            return changedProperties;
-
-        }
     }
 }

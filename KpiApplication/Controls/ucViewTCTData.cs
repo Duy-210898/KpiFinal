@@ -1,9 +1,10 @@
 ﻿using DevExpress.XtraEditors;
+using KpiApplication.Common;
 using KpiApplication.DataAccess;
 using KpiApplication.Models;
 using KpiApplication.Utils;
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -11,90 +12,88 @@ using System.Windows.Forms;
 
 namespace KpiApplication.Controls
 {
-    public partial class ucViewTCTData : XtraUserControl
+    public partial class ucViewTCTData : XtraUserControl, ISupportLoadAsync
     {
-        private List<TCTData_Model> tctData_Models = new List<TCTData_Model>();
-        private List<TCTData_Pivoted> pivotedDataOriginal;
+        private BindingList<TCTData_Model> tctData_Models = new BindingList<TCTData_Model>();
+        private BindingList<TCTData_Pivoted> pivotedDataOriginal = new BindingList<TCTData_Pivoted>();
 
         public ucViewTCTData()
         {
             InitializeComponent();
+            ApplyLocalizedText();
         }
-
-        private async void ucTCTData_Load(object sender, EventArgs e)
+        private void ApplyLocalizedText()
         {
-            await LoadDataAsync();
+            btnExport.Caption = Lang.Export;
+            btnRefresh.Caption = Lang.Refresh;
         }
 
-        private async void btnRefresh_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        public async Task LoadDataAsync()
         {
-            await LoadDataAsync();
+            try
+            {
+                UseWaitCursor = true;
+
+                var result = await Task.Run(() => TCT_DAL.GetAllTCTData());
+                tctData_Models = new BindingList<TCTData_Model>(result);
+
+                var pivotedData = PivoteHelper.PivotTCTData(tctData_Models.ToList());
+                pivotedDataOriginal = new BindingList<TCTData_Pivoted>(
+                    pivotedData.Select(x => x.Clone()).ToList()
+                );
+
+                LoadDataToGrid(pivotedDataOriginal, true);
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError(Lang.LoadDataFailed, ex);
+            }
+            finally
+            {
+                UseWaitCursor = false;
+            }
         }
-
-        private async Task LoadDataAsync()
-        {
-            await AsyncLoaderHelper.LoadDataWithSplashAsync(
-                this,
-                () => TCT_DAL.GetAllTCTData(),
-                data =>
-                {
-                    tctData_Models = data;
-                    pivotedDataOriginal = PivoteHelper.PivotTCTData(tctData_Models)
-                        .Select(x => x.Clone()).ToList();
-
-                    LoadDataToGrid(pivotedDataOriginal);
-                },
-                "Loading..."
-            );
-        }
-
-        private void LoadDataToGrid(List<TCTData_Pivoted> data)
+        private void LoadDataToGrid(BindingList<TCTData_Pivoted> data, bool editable)
         {
             gridControl.DataSource = data;
-            dgvTCT.OptionsView.EnableAppearanceEvenRow = true;
-            dgvTCT.OptionsView.EnableAppearanceOddRow = true;
-            dgvTCT.OptionsBehavior.Editable = false;
-            GridViewHelper.ApplyDefaultFormatting(dgvTCT);
-            GridViewHelper.EnableWordWrapForGridView(dgvTCT);
-            GridViewHelper.AdjustGridColumnWidthsAndRowHeight(dgvTCT);
-            GridViewHelper.EnableCopyFunctionality(dgvTCT);
-            dgvTCT.BestFitColumns();
+            TCTGridHelper.ApplyGridSettings(dgvTCT, editable);
+            TCTGridHelper.SetCaptions(dgvTCT);
+            TCTGridHelper.AutoAdjustColumnWidths(dgvTCT);
         }
-
         private void btnExport_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
             using (SaveFileDialog saveDialog = new SaveFileDialog())
             {
                 saveDialog.Filter = "Excel File (*.xlsx)|*.xlsx";
-                saveDialog.Title = "Export TCT Data to Excel";
-                saveDialog.FileName = $"TCTData_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+                saveDialog.Title = Lang.ExportTCTTitle;
+                saveDialog.FileName = $"TCTData_{DateTime.Now:yyyyMMdd}.xlsx";
 
-                if (saveDialog.ShowDialog() != DialogResult.OK) return;
-
-                try
+                if (saveDialog.ShowDialog() == DialogResult.OK)
                 {
-                    var originalData = gridControl.DataSource as List<TCTData_Pivoted>;
-                    if (originalData == null) return;
+                    try
+                    {
+                        var originalData = (gridControl.DataSource as BindingList<TCTData_Pivoted>)?.ToList();
 
-                    var filteredData = originalData
-                        .Where(x => !IsAllFieldsNull(x))
-                        .ToList();
+                        var filteredData = originalData
+                            .Where(x => !IsAllFieldsNull(x))
+                            .ToList();
 
-                    gridControl.DataSource = filteredData;
+                        gridControl.DataSource = filteredData;
 
-                    dgvTCT.ExportToXlsx(saveDialog.FileName);
+                        dgvTCT.ExportToXlsx(saveDialog.FileName);
 
-                    // Restore original data after export
-                    gridControl.DataSource = originalData;
+                        gridControl.DataSource = originalData;
 
-                    MessageBoxHelper.ShowInfo("✅ Excel export successful!");
-                }
-                catch (Exception ex)
-                {
-                    MessageBoxHelper.ShowError("❌ Error during Excel export", ex);
+                        MessageBoxHelper.ShowInfo(Lang.ExportSuccess);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBoxHelper.ShowError(Lang.ExportFailed, ex);
+                    }
                 }
             }
         }
+
 
         private bool IsAllFieldsNull(TCTData_Pivoted item) =>
             string.IsNullOrWhiteSpace(item.Type)

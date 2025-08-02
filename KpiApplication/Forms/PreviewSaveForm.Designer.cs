@@ -28,42 +28,46 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
             this.panelControl1 = new DevExpress.XtraEditors.PanelControl();
+            this.pictureViewer = new DevExpress.XtraEditors.PictureEdit();
             this.pdfViewer = new DevExpress.XtraPdfViewer.PdfViewer();
             this.btnCancel = new DevExpress.XtraEditors.SimpleButton();
             this.btnSave = new DevExpress.XtraEditors.SimpleButton();
+            this.txtModelName = new DevExpress.XtraEditors.TextEdit();
+            this.txtFileName = new DevExpress.XtraEditors.TextEdit();
             this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
+            this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
             this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
+            this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
             this.emptySpaceItem2 = new DevExpress.XtraLayout.EmptySpaceItem();
             this.layoutControlItem4 = new DevExpress.XtraLayout.LayoutControlItem();
             this.layoutControlItem5 = new DevExpress.XtraLayout.LayoutControlItem();
             this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
-            this.pictureViewer = new DevExpress.XtraEditors.PictureEdit();
-            this.txtModelName = new DevExpress.XtraEditors.TextEdit();
-            this.txtFileName = new DevExpress.XtraEditors.TextEdit();
-            this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
-            this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
+            this.cbxDocumentType = new DevExpress.XtraEditors.ComboBoxEdit();
+            this.layoutControlItem6 = new DevExpress.XtraLayout.LayoutControlItem();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
             this.layoutControl1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.panelControl1)).BeginInit();
             this.panelControl1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureViewer.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtModelName.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFileName.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureViewer.Properties)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtModelName.Properties)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtFileName.Properties)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.cbxDocumentType.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem6)).BeginInit();
             this.SuspendLayout();
             // 
             // layoutControl1
             // 
+            this.layoutControl1.Controls.Add(this.cbxDocumentType);
             this.layoutControl1.Controls.Add(this.panelControl1);
             this.layoutControl1.Controls.Add(this.btnCancel);
             this.layoutControl1.Controls.Add(this.btnSave);
@@ -86,6 +90,16 @@
             this.panelControl1.Size = new System.Drawing.Size(523, 544);
             this.panelControl1.TabIndex = 9;
             // 
+            // pictureViewer
+            // 
+            this.pictureViewer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureViewer.Location = new System.Drawing.Point(2, 2);
+            this.pictureViewer.Name = "pictureViewer";
+            this.pictureViewer.Properties.ShowCameraMenuItem = DevExpress.XtraEditors.Controls.CameraMenuItemVisibility.Auto;
+            this.pictureViewer.Size = new System.Drawing.Size(519, 540);
+            this.pictureViewer.TabIndex = 1;
+            this.pictureViewer.Visible = false;
+            // 
             // pdfViewer
             // 
             this.pdfViewer.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -97,7 +111,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(113, 86);
+            this.btnCancel.Location = new System.Drawing.Point(113, 110);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light;
             this.btnCancel.Size = new System.Drawing.Size(151, 22);
@@ -108,13 +122,29 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(113, 60);
+            this.btnSave.Location = new System.Drawing.Point(113, 84);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(151, 22);
             this.btnSave.StyleController = this.layoutControl1;
             this.btnSave.TabIndex = 7;
             this.btnSave.Text = "Save";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // txtModelName
+            // 
+            this.txtModelName.Location = new System.Drawing.Point(99, 36);
+            this.txtModelName.Name = "txtModelName";
+            this.txtModelName.Size = new System.Drawing.Size(165, 20);
+            this.txtModelName.StyleController = this.layoutControl1;
+            this.txtModelName.TabIndex = 6;
+            // 
+            // txtFileName
+            // 
+            this.txtFileName.Location = new System.Drawing.Point(99, 12);
+            this.txtFileName.Name = "txtFileName";
+            this.txtFileName.Size = new System.Drawing.Size(165, 20);
+            this.txtFileName.StyleController = this.layoutControl1;
+            this.txtFileName.TabIndex = 4;
             // 
             // Root
             // 
@@ -127,27 +157,44 @@
             this.emptySpaceItem2,
             this.layoutControlItem4,
             this.layoutControlItem5,
-            this.layoutControlItem2});
+            this.layoutControlItem2,
+            this.layoutControlItem6});
             this.Root.Name = "Root";
             this.Root.Size = new System.Drawing.Size(803, 568);
             this.Root.TextVisible = false;
             // 
+            // layoutControlItem1
+            // 
+            this.layoutControlItem1.Control = this.txtFileName;
+            this.layoutControlItem1.Location = new System.Drawing.Point(0, 0);
+            this.layoutControlItem1.Name = "layoutControlItem1";
+            this.layoutControlItem1.Size = new System.Drawing.Size(256, 24);
+            this.layoutControlItem1.Text = "File Name";
+            // 
             // emptySpaceItem1
             // 
-            this.emptySpaceItem1.Location = new System.Drawing.Point(0, 100);
+            this.emptySpaceItem1.Location = new System.Drawing.Point(0, 124);
             this.emptySpaceItem1.Name = "emptySpaceItem1";
-            this.emptySpaceItem1.Size = new System.Drawing.Size(256, 448);
+            this.emptySpaceItem1.Size = new System.Drawing.Size(256, 424);
+            // 
+            // layoutControlItem3
+            // 
+            this.layoutControlItem3.Control = this.txtModelName;
+            this.layoutControlItem3.Location = new System.Drawing.Point(0, 24);
+            this.layoutControlItem3.Name = "layoutControlItem3";
+            this.layoutControlItem3.Size = new System.Drawing.Size(256, 24);
+            this.layoutControlItem3.Text = "Model Name";
             // 
             // emptySpaceItem2
             // 
-            this.emptySpaceItem2.Location = new System.Drawing.Point(0, 48);
+            this.emptySpaceItem2.Location = new System.Drawing.Point(0, 72);
             this.emptySpaceItem2.Name = "emptySpaceItem2";
             this.emptySpaceItem2.Size = new System.Drawing.Size(101, 52);
             // 
             // layoutControlItem4
             // 
             this.layoutControlItem4.Control = this.btnSave;
-            this.layoutControlItem4.Location = new System.Drawing.Point(101, 48);
+            this.layoutControlItem4.Location = new System.Drawing.Point(101, 72);
             this.layoutControlItem4.Name = "layoutControlItem4";
             this.layoutControlItem4.Size = new System.Drawing.Size(155, 26);
             this.layoutControlItem4.TextVisible = false;
@@ -155,7 +202,7 @@
             // layoutControlItem5
             // 
             this.layoutControlItem5.Control = this.btnCancel;
-            this.layoutControlItem5.Location = new System.Drawing.Point(101, 74);
+            this.layoutControlItem5.Location = new System.Drawing.Point(101, 98);
             this.layoutControlItem5.Name = "layoutControlItem5";
             this.layoutControlItem5.Size = new System.Drawing.Size(155, 26);
             this.layoutControlItem5.TextVisible = false;
@@ -168,47 +215,23 @@
             this.layoutControlItem2.Size = new System.Drawing.Size(527, 548);
             this.layoutControlItem2.TextVisible = false;
             // 
-            // pictureViewer
+            // cbxDocumentType
             // 
-            this.pictureViewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureViewer.Location = new System.Drawing.Point(2, 2);
-            this.pictureViewer.Name = "pictureViewer";
-            this.pictureViewer.Properties.ShowCameraMenuItem = DevExpress.XtraEditors.Controls.CameraMenuItemVisibility.Auto;
-            this.pictureViewer.Size = new System.Drawing.Size(519, 540);
-            this.pictureViewer.TabIndex = 1;
-            this.pictureViewer.Visible = false;
+            this.cbxDocumentType.Location = new System.Drawing.Point(99, 60);
+            this.cbxDocumentType.Name = "cbxDocumentType";
+            this.cbxDocumentType.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.cbxDocumentType.Size = new System.Drawing.Size(165, 20);
+            this.cbxDocumentType.StyleController = this.layoutControl1;
+            this.cbxDocumentType.TabIndex = 10;
             // 
-            // txtModelName
+            // layoutControlItem6
             // 
-            this.txtModelName.Location = new System.Drawing.Point(82, 36);
-            this.txtModelName.Name = "txtModelName";
-            this.txtModelName.Size = new System.Drawing.Size(182, 20);
-            this.txtModelName.StyleController = this.layoutControl1;
-            this.txtModelName.TabIndex = 6;
-            // 
-            // txtFileName
-            // 
-            this.txtFileName.Location = new System.Drawing.Point(82, 12);
-            this.txtFileName.Name = "txtFileName";
-            this.txtFileName.Size = new System.Drawing.Size(182, 20);
-            this.txtFileName.StyleController = this.layoutControl1;
-            this.txtFileName.TabIndex = 4;
-            // 
-            // layoutControlItem1
-            // 
-            this.layoutControlItem1.Control = this.txtFileName;
-            this.layoutControlItem1.Location = new System.Drawing.Point(0, 0);
-            this.layoutControlItem1.Name = "layoutControlItem1";
-            this.layoutControlItem1.Size = new System.Drawing.Size(256, 24);
-            this.layoutControlItem1.Text = "File Name";
-            // 
-            // layoutControlItem3
-            // 
-            this.layoutControlItem3.Control = this.txtModelName;
-            this.layoutControlItem3.Location = new System.Drawing.Point(0, 24);
-            this.layoutControlItem3.Name = "layoutControlItem3";
-            this.layoutControlItem3.Size = new System.Drawing.Size(256, 24);
-            this.layoutControlItem3.Text = "Model Name";
+            this.layoutControlItem6.Control = this.cbxDocumentType;
+            this.layoutControlItem6.Location = new System.Drawing.Point(0, 48);
+            this.layoutControlItem6.Name = "layoutControlItem6";
+            this.layoutControlItem6.Size = new System.Drawing.Size(256, 24);
+            this.layoutControlItem6.Text = "Document Type";
             // 
             // PreviewSaveForm
             // 
@@ -225,17 +248,19 @@
             this.layoutControl1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.panelControl1)).EndInit();
             this.panelControl1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureViewer.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtModelName.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFileName.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureViewer.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtModelName.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtFileName.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.cbxDocumentType.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem6)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -258,5 +283,7 @@
         private DevExpress.XtraEditors.PictureEdit pictureViewer;
         private DevExpress.XtraPdfViewer.PdfViewer pdfViewer;
         private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
+        private DevExpress.XtraEditors.ComboBoxEdit cbxDocumentType;
+        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem6;
     }
 }

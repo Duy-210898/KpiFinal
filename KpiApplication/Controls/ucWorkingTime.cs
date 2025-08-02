@@ -1,6 +1,6 @@
 ﻿using DevExpress.XtraBars;
-using DevExpress.XtraEditors;
 using DevExpress.XtraGrid.Views.Grid;
+using KpiApplication.Common;
 using KpiApplication.DataAccess;
 using KpiApplication.Excel;
 using KpiApplication.Models;
@@ -17,7 +17,7 @@ using System.Windows.Forms;
 
 namespace KpiApplication.Controls
 {
-    public partial class ucWorkingTime : DevExpress.XtraEditors.XtraUserControl
+    public partial class ucWorkingTime : DevExpress.XtraEditors.XtraUserControl, ISupportLoadAsync
     {
         private ToolStripMenuItem mergeMenuItem;
         private ToolStripMenuItem unmergeMenuItem;
@@ -33,7 +33,6 @@ namespace KpiApplication.Controls
             InitializeComponent();
 
             dgvWorkingTime.CustomRowFilter += dgvWorkingTime_CustomRowFilter;
-            this.Load += ucWorkingTime_Load;
             dgvWorkingTime.MouseUp += dgvWorkingTime_MouseUp;
             dgvWorkingTime.RowCellStyle += dgvWorkingTime_RowCellStyle;
             dgvWorkingTime.KeyDown += dgvWorkingTime_KeyDown;
@@ -55,19 +54,32 @@ namespace KpiApplication.Controls
         {
             layoutPreview.Visible = false;
         }
-        private async void ucWorkingTime_Load(object sender, EventArgs e)
+
+        public async Task LoadDataAsync()
         {
-            await AsyncLoaderHelper.LoadDataWithSplashAsync(
-                this,
-                FetchData,
-                data =>
-                {
-                    LoadDataToGrid(data);
-                    ConfigureGridAfterDataBinding();
-                },
-                "Loading"
-            );
+            try
+            {
+                UseWaitCursor = true;
+                var data = await Task.Run(() => FetchData());
+
+                LoadDataToGrid(data);
+                ConfigureGridAfterDataBinding();
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError("Load data failed", ex);
+            }
+            finally
+            {
+                UseWaitCursor = false;
+            }
         }
+        //private async void btnRefresh_ItemClick(object sender, ItemClickEventArgs e)
+        //{
+        //    await LoadDataAsync();
+        //    _modifiedDataList.Clear();
+        //}
+
 
         private void mergeToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -259,21 +271,6 @@ namespace KpiApplication.Controls
             GridViewHelper.EnableCopyFunctionality(dgvWorkingTime);
         }
 
-        private async void btnRefresh_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            await AsyncLoaderHelper.LoadDataWithSplashAsync(
-                this,
-                FetchData, 
-                data =>
-                {
-                    LoadDataToGrid(data);        
-                    ConfigureGridAfterDataBinding();
-                },
-                "Loading"
-            );
-
-            _modifiedDataList.Clear();
-        }
         private void LoadDataToGrid(ProductionDataService_Model manager)
         {
             _productionDataService = manager;
@@ -296,9 +293,8 @@ namespace KpiApplication.Controls
                 await AsyncLoaderHelper.LoadDataWithSplashAsync(
                     this,
                     SaveAllDataToDatabase,
-                    (result) => { },
-                    "Loading"
-                );
+                    (result) => { }, 
+                    Lang.Saving);
 
                 MessageBoxHelper.ShowInfo("Data saved successfully!");
                 _modifiedDataList.Clear();
@@ -341,8 +337,8 @@ namespace KpiApplication.Controls
             if (data == null)
                 return;
 
-            string fieldName = e.Column.FieldName;  // Ví dụ: "TotalWorker"
-            object newValue = e.Value;              // Giá trị người dùng vừa nhập
+            string fieldName = e.Column.FieldName;  
+            object newValue = e.Value;           
 
             Debug.WriteLine($"ProductionID: {data.ProductionID} | Field: {fieldName} | NewValue: {newValue}");
 
@@ -430,10 +426,10 @@ namespace KpiApplication.Controls
             }
             else if (field == "WorkingTime")
             {
-                if (!double.TryParse(valueStr, out double wt) || wt <= 0)
+                if (!double.TryParse(valueStr, NumberStyles.Float, CultureInfo.InvariantCulture, out double wt) || wt <= 0)
                 {
                     e.Valid = false;
-                    e.ErrorText = "Only positive decimal numbers are allowed or leave it blank.";
+                    e.ErrorText = "Only positive decimal numbers (e.g., 9.5) are allowed or leave it blank.";
                 }
             }
         }

@@ -1,6 +1,7 @@
 ﻿using DevExpress.LookAndFeel;
 using DevExpress.Skins;
 using DevExpress.XtraEditors;
+using DevExpress.XtraLayout;
 using KpiApplication.Common;
 using KpiApplication.DataAccess;
 using KpiApplication.Forms;
@@ -25,28 +26,55 @@ namespace KpiApplication
             UpdateStyles();
 
             InitializeComponent();
+            LangHelper.ApplyCulture();
+            ApplyLocalizedText();
 
+            // DevExpress Skin
             // DevExpress Skin
             LookAndFeel.UseDefaultLookAndFeel = true;
             LookAndFeel.Style = LookAndFeelStyle.Skin;
 
-            // Mật khẩu dạng ẩn
+            // Cấu hình mật khẩu ẩn
             txtPassword.UseSystemPasswordChar = true;
+            layoutControlItem1.ImageOptions.Image = Properties.Resources.translate;
 
             // Hover label
             LabelHoverHelper.ApplyHoverStyleToAllLabels(this);
 
-            // Chỉ bo góc sau khi form hiển thị (tránh redraw liên tục)
+            cbxLanguage.Properties.Items.Clear();
+            cbxLanguage.Properties.Items.AddRange(new[] { "English", "Tiếng Việt", "中文" });
+
+            // Gán ngôn ngữ đang lưu
+            string currentCulture = Properties.Settings.Default.AppCulture ?? "en";
+            switch (currentCulture)
+            {
+                case "vi":
+                    cbxLanguage.SelectedItem = "Tiếng Việt";
+                    break;
+                case "zh":
+                    cbxLanguage.SelectedItem = "中文";
+                    break;
+                default:
+                    cbxLanguage.SelectedItem = "English";
+                    break;
+            }
+            chkRememberMe.Checked = Properties.Settings.Default.RememberAccount;
+
+            if (Properties.Settings.Default.RememberAccount)
+            {
+                txtUsername.Text = Properties.Settings.Default.SavedUsername;
+                txtPassword.Text = Properties.Settings.Default.SavedPassword;
+            }
+
             this.Shown += (s, e) => SetRoundedRegion(50);
         }
 
-        // ✅ KHÔNG CHỚP NHÁY do redraw control con
         protected override CreateParams CreateParams
         {
             get
             {
                 var cp = base.CreateParams;
-                cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED
+                cp.ExStyle |= 0x02000000; 
                 return cp;
             }
         }
@@ -74,14 +102,14 @@ namespace KpiApplication
 
             if (string.IsNullOrEmpty(username))
             {
-                MessageBoxHelper.ShowError("Please enter your username!");
+                MessageBoxHelper.ShowError(Lang.Username + " " + Lang.Required); 
                 txtUsername.Focus();
                 return;
             }
 
             if (!account_DAL.UserExists(username))
             {
-                MessageBoxHelper.ShowError("Username does not exist!");
+                MessageBoxHelper.ShowError(Lang.UserNotFound);
                 txtPassword.Clear();
                 txtPassword.Focus();
                 return;
@@ -89,7 +117,7 @@ namespace KpiApplication
 
             if (!account_DAL.IsActive(username))
             {
-                MessageBoxHelper.ShowError("The account has been disabled!");
+                MessageBoxHelper.ShowError(Lang.AccountDisabled); 
                 txtPassword.Clear();
                 txtPassword.Focus();
                 return;
@@ -106,10 +134,25 @@ namespace KpiApplication
                 var mainView = new MainView();
                 mainView.FormClosed += (s, args) => Close();
                 mainView.Show();
+                // Nếu chọn nhớ tài khoản thì lưu
+                if (chkRememberMe.Checked)
+                {
+                    Properties.Settings.Default.RememberAccount = true;
+                    Properties.Settings.Default.SavedUsername = username;
+                    Properties.Settings.Default.SavedPassword = password;
+                }
+                else
+                {
+                    Properties.Settings.Default.RememberAccount = false;
+                    Properties.Settings.Default.SavedUsername = "";
+                    Properties.Settings.Default.SavedPassword = "";
+                }
+                Properties.Settings.Default.Save();
+
             }
             else
             {
-                MessageBoxHelper.ShowError("Incorrect password!");
+                MessageBoxHelper.ShowError(Lang.WrongPassword); 
                 txtPassword.Clear();
                 txtPassword.Focus();
             }
@@ -120,7 +163,7 @@ namespace KpiApplication
             Global.Username = "Guest";
             Global.CurrentEmployee = new EmployeeInfo_Model
             {
-                EmployeeName = "Guest User",
+                EmployeeName = Lang.Guest,
                 Department = "N/A"
             };
 
@@ -138,21 +181,21 @@ namespace KpiApplication
         private void lblChangePassword_Click(object sender, EventArgs e)
         {
             string username = txtUsername.Text.Trim();
+
             if (string.IsNullOrEmpty(username))
             {
-                MessageBoxHelper.ShowError("Please enter your username before changing the password!");
+                MessageBoxHelper.ShowError(Lang.Username + " " + Lang.RequiredBeforeChangePassword);
                 return;
             }
 
             if (!account_DAL.UserExists(username))
             {
-                MessageBoxHelper.ShowError("Username does not exist.");
+                MessageBoxHelper.ShowError(Lang.UsernameNotExists);
                 return;
             }
 
             new frmChangePassword(username).ShowDialog();
         }
-
         private void frmLogin_FormClosed(object sender, FormClosedEventArgs e)
         {
             Application.Exit();
@@ -175,21 +218,49 @@ namespace KpiApplication
             TogglePasswordVisibility();
         }
 
-        private void ConfigureHoverAppearance(LabelControl label)
-        {
-            var skin = CommonSkins.GetSkin(UserLookAndFeel.Default);
-            Color hoverColor = Color.Blue;
 
-            if (skin != null && skin["Hyperlink"] != null)
+        private void ApplyLocalizedText()
+        {
+            layoutControlItem1.Text = Lang.Language;
+            Text = Lang.Login;
+            lblUsername.Text = Lang.Username + ":";
+            lblPassword.Text = Lang.Password + ":";
+            btnLogin.Text = Lang.Login;
+            lblShowPassword.Text = Lang.Show;
+            btnGuestLogin.Text = Lang.GuestLogin;
+            btnExit.Text = Lang.Exit;
+            lblChangePassword.Text = Lang.ChangePassword;
+            cbxLanguage.Properties.NullText = Lang.Language;
+            chkRememberMe.Text = Lang.RememberMe;
+        }
+
+
+        private void cbxLanguage_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selectedCulture = "en";
+            string selectedText = cbxLanguage.SelectedItem.ToString();
+
+            switch (selectedText)
             {
-                hoverColor = skin["Hyperlink"].Color.BackColor;
+                case "Tiếng Việt":
+                    selectedCulture = "vi";
+                    break;
+                case "中文":
+                    selectedCulture = "zh";
+                    break;
+                default:
+                    selectedCulture = "en";
+                    break;
             }
 
-            var originalColor = label.ForeColor;
-            label.Cursor = Cursors.Hand;
+            // Lưu cấu hình ngôn ngữ
+            Properties.Settings.Default.AppCulture = selectedCulture;
+            Properties.Settings.Default.Save();
 
-            label.MouseEnter += (s, e) => label.ForeColor = hoverColor;
-            label.MouseLeave += (s, e) => label.ForeColor = originalColor;
+            LangHelper.ApplyCulture();    
+            ApplyLocalizedText();            
+
+            this.Refresh();
         }
     }
 }

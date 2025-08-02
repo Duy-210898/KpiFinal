@@ -1,6 +1,8 @@
 ﻿using DevExpress.Export;
 using DevExpress.Utils;
+using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraEditors.Repository;
+using DevExpress.XtraGrid;
 using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Grid;
 using System;
@@ -21,7 +23,168 @@ namespace KpiApplication.Utils
             "TargetOutputPC", "AdjustOperatorNo", "IEPPHValue", "THTValue", "TargetIE", "OperatorAdjust", "ReferenceOperator",
             "FinalOperator", "TCTValue"
         };
+        public static void StretchRemainingSpace(GridView gridView, string fixedColumnName, int fixedWidth)
+        {
+            gridView.BeginUpdate();
 
+            gridView.OptionsView.ColumnAutoWidth = false;
+
+            // Đặt chiều rộng cố định cho cột cần giữ cứng
+            var fixedCol = gridView.Columns.ColumnByFieldName(fixedColumnName);
+            if (fixedCol != null && fixedCol.Visible)
+                fixedCol.Width = fixedWidth;
+
+            // Các cột khác BestFit
+            foreach (GridColumn col in gridView.Columns)
+            {
+                if (col.Visible && col.FieldName != fixedColumnName)
+                {
+                    col.BestFit();
+                }
+            }
+
+            // Tính tổng chiều rộng hiện tại
+            int totalWidth = gridView.Columns
+                .Where(c => c.Visible)
+                .Sum(c => c.Width);
+
+            int viewWidth = gridView.ViewRect.Width - SystemInformation.VerticalScrollBarWidth;
+            int remaining = viewWidth - totalWidth;
+
+            // Nếu còn dư không gian thì giãn vào fixedColumn
+            if (remaining > 0 && fixedCol != null)
+            {
+                fixedCol.Width += remaining;
+            }
+
+            gridView.EndUpdate();
+        }
+        public static void ConfigureGrid(GridView view, GridControl control, IEnumerable<GridColumn> fixedCols = null, string[] readOnlyColumns = null)
+        {
+            view.OptionsView.AllowCellMerge = true;
+            view.OptionsView.RowAutoHeight = true;
+            view.OptionsView.ColumnAutoWidth = false;
+
+            view.OptionsSelection.MultiSelect = true;
+            view.OptionsSelection.MultiSelectMode = GridMultiSelectMode.RowSelect;
+
+            ApplyDefaultFormatting(view);
+            EnableWordWrapForGridView(view);
+
+            if (fixedCols != null)
+            {
+                foreach (var col in fixedCols)
+                {
+                    col.Fixed = FixedStyle.Left;
+                }
+            }
+
+            if (readOnlyColumns != null)
+            {
+                foreach (string colName in readOnlyColumns)
+                {
+                    var column = view.Columns.ColumnByFieldName(colName);
+                    if (column != null)
+                    {
+                        column.OptionsColumn.AllowEdit = false;
+                        column.OptionsColumn.ReadOnly = true;
+                        column.ColumnEdit = null;
+                    }
+                }
+            }
+
+            EnableCopyFunctionality(view);
+        }
+
+        public static void SetColumnCaptions(GridView view, Dictionary<string, string> captions)
+        {
+            foreach (var kvp in captions)
+            {
+                if (view.Columns[kvp.Key] != null)
+                    view.Columns[kvp.Key].Caption = kvp.Value;
+            }
+        }
+
+        public static void ApplyColumnWidths(GridView view, Dictionary<string, int> fixedWidthColumns)
+        {
+            foreach (GridColumn col in view.Columns)
+            {
+                if (fixedWidthColumns.TryGetValue(col.FieldName, out int width))
+                {
+                    col.Width = width;
+                    col.OptionsColumn.FixedWidth = true;
+                }
+                else
+                {
+                    col.BestFit();
+                }
+            }
+        }
+
+        public static void HideColumns(GridView view, params string[] columnNames)
+        {
+            foreach (var name in columnNames)
+            {
+                var col = view.Columns[name];
+                if (col != null)
+                    col.Visible = false;
+            }
+        }
+
+        public static void ReorderColumns(GridView view, string[] desiredOrder)
+        {
+            int index = 0;
+            foreach (var field in desiredOrder)
+            {
+                var col = view.Columns[field];
+                if (col != null)
+                    col.VisibleIndex = index++;
+            }
+        }
+
+        public static void SetupMemoEditColumn(GridControl gridControl, GridView view, string columnName)
+        {
+            var col = view.Columns[columnName];
+            if (col == null) return;
+
+            var memoEdit = new RepositoryItemMemoEdit
+            {
+                WordWrap = true, 
+                AcceptsReturn = false
+            };
+            gridControl.RepositoryItems.Add(memoEdit);
+            col.ColumnEdit = memoEdit;
+
+            // Căn giữa theo chiều dọc để không bị lệch
+            col.AppearanceCell.TextOptions.VAlignment = DevExpress.Utils.VertAlignment.Center;
+
+            // Đảm bảo GridView hỗ trợ tự động điều chỉnh chiều cao dòng
+            view.OptionsView.RowAutoHeight = true;
+        }
+
+        public static void SetupComboBoxColumn(GridControl gridControl, GridView view, string columnName, IEnumerable<string> items)
+        {
+            var col = view.Columns[columnName];
+            if (col == null) return;
+
+            var combo = new RepositoryItemComboBox
+            {
+                TextEditStyle = TextEditStyles.Standard, 
+                AutoComplete = true                     
+            };
+
+            combo.Items.AddRange(items
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct()
+                .OrderBy(x => x)
+                .ToArray());
+
+            gridControl.RepositoryItems.Add(combo);
+            col.ColumnEdit = combo;
+
+            col.OptionsEditForm.Visible = DevExpress.Utils.DefaultBoolean.True;
+            col.OptionsEditForm.UseEditorColRowSpan = false;
+        }
         public static void ApplyDefaultFormatting(GridView gridView, List<string> editableColumns = null)
         {
             if (gridView == null) return;
@@ -74,7 +237,6 @@ namespace KpiApplication.Utils
             }
         }
 
-
         private static bool IsNumericColumn(string fieldName) => NumericFields.Contains(fieldName);
 
         public static void AdjustGridColumnWidthsAndRowHeight(GridView gridView)
@@ -123,17 +285,6 @@ namespace KpiApplication.Utils
                 }
             };
         }
-        public static void SetColumnCaptions(GridView gridView, Dictionary<string, string> captions)
-        {
-            foreach (var pair in captions)
-            {
-                var column = gridView.Columns.ColumnByFieldName(pair.Key);
-                if (column != null)
-                {
-                    column.Caption = pair.Value;
-                }
-            }
-        }
         public static void SetColumnFixedWidth(GridView gridView, Dictionary<string, int> columnWidths)
         {
             foreach (var pair in columnWidths)
@@ -144,16 +295,6 @@ namespace KpiApplication.Utils
                 column.Width = pair.Value;
                 column.OptionsColumn.FixedWidth = true;
             }
-        }
-
-
-        public static void HideColumns(GridView gridView, params string[] columnNames)
-        {
-            if (gridView == null || columnNames == null) return;
-
-            var nameSet = new HashSet<string>(columnNames);
-            foreach (var col in gridView.Columns.Cast<GridColumn>().Where(c => nameSet.Contains(c.FieldName)))
-                col.Visible = false;
         }
         public static void ZoomGrid(GridView gridView, float zoomFactor)
         {

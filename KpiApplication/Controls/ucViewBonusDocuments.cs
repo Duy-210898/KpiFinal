@@ -1,31 +1,35 @@
 ﻿using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
-using KpiApplication.DataAccess;
+using KpiApplication.Common;
+using KpiApplication.Services;
 using KpiApplication.Utils;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Drawing;
-
 namespace KpiApplication.Controls
 {
-    public partial class ucViewBonusDocuments : XtraUserControl
+    public partial class ucViewBonusDocuments : XtraUserControl, ISupportLoadAsync
     {
-        private readonly BonusDocument_DAL _docDal = new BonusDocument_DAL();
-        private readonly Article_DAL _articleDal = new Article_DAL();
-        private readonly LruCache<int, byte[]> _docCache = new LruCache<int, byte[]>(20, TimeSpan.FromMinutes(10));
-        private readonly LruCache<int, Image> _imageCache = new LruCache<int, Image>(10, TimeSpan.FromMinutes(10));
-
+        private readonly DocumentServices _docService = new DocumentServices();
         private BonusDocument_Model currentViewingDoc;
         private MemoryStream currentStream;
+        private string previousModel;
 
         public ucViewBonusDocuments()
         {
             InitializeComponent();
+            ApplyLocalizedText();
             ConfigureControls();
-            LoadModelNamesToLookup();
+        }
+
+        private void ApplyLocalizedText()
+        {
+            btnExportFile.Text = Lang.ExportFile;
+            lookUpModelName.Properties.NullText = Lang.SelectModel;
+            layoutControlItem1.Text = Lang.ModelName;
         }
 
         private void ConfigureControls()
@@ -35,115 +39,151 @@ namespace KpiApplication.Controls
             pictureViewer.Properties.ZoomAccelerationFactor = 1;
             pictureViewer.Properties.AllowScrollViaMouseDrag = false;
             btnExportFile.Enabled = false;
+            pdfViewer.Visible = false;
         }
+
         protected override void OnVisibleChanged(EventArgs e)
         {
             base.OnVisibleChanged(e);
 
-            if (Visible && !IsDisposed && currentViewingDoc != null)
-            {
-                var data = GetDocumentBytes(currentViewingDoc.Id);
-                if (data != null)
-                {
-                    ViewerResetHelper.ResetViewer(
-                        pdfViewer, pictureViewer, lblFileName,
-                        ref currentStream, ref currentViewingDoc);
-
-                    DocumentViewerHelper.DisplayDocument(
-                        this,
-                        pdfViewer,
-                        pictureViewer,
-                        lblFileName,
-                        currentViewingDoc,
-                        data,
-                        ref currentStream,
-                        _imageCache,
-                        out _);
-                }
-            }
-        }
-
-
-        private byte[] GetDocumentBytes(int docId)
-        {
-            if (_docCache.TryGetValue(docId, out var data))
-                return data;
-
-            var doc = _docDal.GetById(docId);
-            if (doc?.PdfData != null && doc.PdfData.Length > 0)
-            {
-                _docCache.AddOrUpdate(docId, doc.PdfData);
-                return doc.PdfData;
-            }
-
-            return null;
-        }
-
-        private void RefreshDocumentList(string selectedModel = null)
-        {
-            if (string.IsNullOrWhiteSpace(selectedModel))
-                selectedModel = lookUpModelName.EditValue?.ToString();
-
-            if (string.IsNullOrWhiteSpace(selectedModel)) return;
+            if (!Visible || IsDisposed || currentViewingDoc == null || currentStream != null)
+                return;
 
             try
             {
-                ViewerResetHelper.ResetViewer(
-                    pdfViewer, pictureViewer, lblFileName,
-                    ref currentStream, ref currentViewingDoc);
-
-                _docCache.Clear();
-                _imageCache.Clear();
-
-                listBoxDocuments.DataSource = new BindingList<BonusDocument_Model>(
-                    _docDal.GetMetadataByModelName(selectedModel));
-
-                listBoxDocuments.DisplayMember = "FileName";
-
-                listBoxArticles.DataSource = _articleDal.GetByModelName(selectedModel);
-                listBoxArticles.DisplayMember = "ArticleName";
+                ReloadCurrentDocument();
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError("Failed to load data", ex);
+                MessageBoxHelper.ShowError("Lỗi khi hiển thị tài liệu", ex);
             }
         }
-
-        private void LoadModelNamesToLookup()
+        private void ReloadCurrentDocument()
         {
-            _ = AsyncLoaderHelper.LoadDataWithSplashAsync(
+            var data = _docService.GetDocumentBytesWithCache(currentViewingDoc.Id);
+            if (data == null || data.Length == 0) return;
+
+            ResetViewer();
+            DisplaySelectedDocument(currentViewingDoc, data);
+        }
+
+        private void SetUiStateDuringLoading(bool enable)
+        {
+            btnExportFile.Enabled = enable;
+            UseWaitCursor = !enable;
+        }
+
+        private bool DisplaySelectedDocument(BonusDocument_Model doc, byte[] data)
+        {
+            bool success = DocumentViewerHelper.DisplayDocument(
                 this,
-                () => _articleDal.GetModelNameExistFile(),
-                modelNames =>
+                pdfViewer,
+                pictureViewer,
+                lblFileName,
+                doc,
+                data,
+                ref currentStream,
+                _docService.ImageCache,
+                out var errorMessage);
+
+            if (!success && !string.IsNullOrWhiteSpace(errorMessage))
+            {
+                MessageBoxHelper.ShowWarning(errorMessage);
+            }
+
+            return success;
+        }
+
+        private void ResetViewer()
+        {
+            if (pdfViewer == null || pictureViewer == null || lblFileName == null) return;
+
+            // Ẩn control để tránh chớp
+            pdfViewer.Visible = false;
+            pictureViewer.Visible = false;
+
+            ViewerResetHelper.ResetViewer(pdfViewer, pictureViewer, lblFileName, ref currentStream, ref currentViewingDoc);
+            btnExportFile.Enabled = false;
+        }
+
+        private bool RefreshDocumentList(string model = null)
+        {
+            model = model ?? lookUpModelName.EditValue?.ToString();
+            if (string.IsNullOrWhiteSpace(model)) return false;
+
+            try
+            {
+                ResetViewer();
+
+                if (!model.Equals(previousModel, StringComparison.OrdinalIgnoreCase))
                 {
-                    lookUpModelName.Properties.DataSource = modelNames;
-                    lookUpModelName.Properties.NullText = "-- Select Model --";
+                    _docService.ClearCache();
+                }
 
-                    if (listBoxDocuments.ToolTipController == null)
-                    {
-                        listBoxDocuments.ToolTipController = toolTipController1;
-                        listBoxDocuments.ToolTipController.GetActiveObjectInfo += (s, ea) =>
-                        {
-                            var point = listBoxDocuments.PointToClient(Cursor.Position);
-                            int index = listBoxDocuments.IndexFromPoint(point);
+                // Ngắt kết nối sự kiện trước khi gán
+                listBoxDocuments.SelectedIndexChanged -= ListBoxDocuments_SelectedIndexChanged;
 
-                            if (index >= 0 && index < listBoxDocuments.ItemCount &&
-                                listBoxDocuments.GetItem(index) is BonusDocument_Model item)
-                            {
-                                string tooltip = $"📄 File name: {item.FileName}\n🕒 Created at: {item.CreatedAt:yyyy-MM-dd}\n👤 Created by: {item.CreatedByName}";
+                listBoxDocuments.DataSource = new BindingList<BonusDocument_Model>(_docService.GetDocumentsByModel(model));
+                listBoxDocuments.DisplayMember = "FileName";
+                listBoxDocuments.SelectedIndex = -1; // Rõ ràng hơn
 
-                                if (item.UpdatedAt.HasValue && !string.IsNullOrWhiteSpace(item.UpdatedByName))
-                                {
-                                    tooltip += $"\n✏️ Updated at: {item.UpdatedAt:yyyy-MM-dd}\n👤 Updated by: {item.UpdatedByName}";
-                                }
+                listBoxArticles.DataSource = _docService.GetArticlesByModel(model);
+                listBoxArticles.DisplayMember = "ArticleName";
 
-                                ea.Info = new DevExpress.Utils.ToolTipControlInfo(item, tooltip);
-                            }
-                        };
-                    }
-                },
-                caption: "Loading...",
-                description: "Loading model names...");
+                // Gắn lại sự kiện sau khi hoàn tất gán DataSource
+                listBoxDocuments.SelectedIndexChanged += ListBoxDocuments_SelectedIndexChanged;
+
+                previousModel = model;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError(Lang.LoadDataFailed, ex);
+                return false;
+            }
+        }
+        private void SetupTooltipController()
+        {
+            if (listBoxDocuments.ToolTipController != null) return;
+
+            listBoxDocuments.ToolTipController = toolTipController1;
+            listBoxDocuments.ToolTipController.GetActiveObjectInfo += (_, ea) =>
+            {
+                var point = listBoxDocuments.PointToClient(Cursor.Position);
+                int index = listBoxDocuments.IndexFromPoint(point);
+
+                if (index >= 0 && index < listBoxDocuments.ItemCount && listBoxDocuments.GetItem(index) is BonusDocument_Model item)
+                {
+                    string tooltip = DocumentServices.GetDocumentTooltip(item);
+                    ea.Info = new DevExpress.Utils.ToolTipControlInfo(item, tooltip);
+                }
+            };
+        }
+        public async Task LoadDataAsync()
+        {
+            await LoadModelNamesToLookupAsync();
+        }
+
+
+        private async Task LoadModelNamesToLookupAsync()
+        {
+            try
+            {
+                UseWaitCursor = true;
+
+                var modelNames = await Task.Run(() => _docService.GetModelNamesHavingDocuments());
+
+                lookUpModelName.Properties.DataSource = modelNames;
+                SetupTooltipController();
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError(Lang.LoadDataFailed, ex);
+            }
+            finally
+            {
+                UseWaitCursor = false;
+            }
         }
 
         private void lookUpModelName_EditValueChanged(object sender, EventArgs e)
@@ -151,160 +191,107 @@ namespace KpiApplication.Controls
             RefreshDocumentList();
         }
 
+        private async Task<bool> LoadAndDisplayDocument(BonusDocument_Model doc)
+        {
+            var data = await Task.Run(() => _docService.GetDocumentBytesWithCache(doc.Id));
+            if (data == null || data.Length == 0) return false;
+
+            ResetViewer();
+            return DisplaySelectedDocument(doc, data);
+        }
+
         private async void ListBoxDocuments_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listBoxDocuments.SelectedItem is BonusDocument_Model selectedDoc)
+            var selectedObj = listBoxDocuments.SelectedItem;
+            if (listBoxDocuments.SelectedIndex < 0 || !(selectedObj is BonusDocument_Model selectedDoc))
             {
-                btnExportFile.Enabled = false;
+                ResetViewer();
+                return;
+            }
+
+            SetUiStateDuringLoading(false);
+
+            try
+            {
+                bool success = await LoadAndDisplayDocument(selectedDoc);
+                if (success)
+                {
+                    currentViewingDoc = selectedDoc;
+                    btnExportFile.Enabled = true;
+                }
+                else
+                {
+                    currentViewingDoc = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError(Lang.UnexpectedError, ex);
+            }
+            finally
+            {
+                UseWaitCursor = false;
+            }
+        }
+        public async void PerformRefresh()
+        {
+            try
+            {
                 UseWaitCursor = true;
 
-                try
-                {
-                    var data = await Task.Run(() => GetDocumentBytes(selectedDoc.Id));
+                var modelNames = await Task.Run(() => _docService.GetModelNamesHavingDocuments());
 
-                    string errorMessage;
-                    var success = DocumentViewerHelper.DisplayDocument(
-                        this,
-                        pdfViewer,
-                        pictureViewer,
-                        lblFileName,
-                        selectedDoc,
-                        data,
-                        ref currentStream,
-                        _imageCache,
-                        out errorMessage);
+                lookUpModelName.EditValue = null;
 
-                    if (success)
-                    {
-                        currentViewingDoc = selectedDoc;
-                        btnExportFile.Enabled = true;
-                    }
-                    else if (!string.IsNullOrEmpty(errorMessage))
-                    {
-                        MessageBoxHelper.ShowWarning(errorMessage);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBoxHelper.ShowError("Unexpected error", ex);
-                }
-                finally
-                {
-                    UseWaitCursor = false;
-                }
+                ResetViewer();
+                listBoxDocuments.DataSource = null;
+                listBoxArticles.DataSource = null;
+
+                _docService.ClearCache();
+
+                lookUpModelName.Properties.DataSource = modelNames;
+                lookUpModelName.Properties.NullText = Lang.SelectModel;
+
+                SetupTooltipController();
             }
-            else
+            catch (Exception ex)
             {
-                btnExportFile.Enabled = false;
+                MessageBoxHelper.ShowError(Lang.LoadDataFailed, ex);
+            }
+            finally
+            {
+                UseWaitCursor = false;
             }
         }
-        public void PerformRefresh()
-        {
-            _ = AsyncLoaderHelper.LoadDataWithSplashAsync(
-                this,
-                () =>
-                {
-                    // Reset trạng thái và lấy lại model list
-                    var modelNames = _articleDal.GetModelNameExistFile();
-
-                    return modelNames;
-                },
-                modelNames =>
-                {
-                    lookUpModelName.EditValue = null;
-
-                    ViewerResetHelper.ResetViewer(
-                        pdfViewer, pictureViewer, lblFileName,
-                        ref currentStream, ref currentViewingDoc);
-
-                    listBoxDocuments.DataSource = null;
-                    listBoxArticles.DataSource = null;
-
-                    _docCache.Clear();
-                    _imageCache.Clear();
-
-                    btnExportFile.Enabled = false;
-
-                    lookUpModelName.Properties.DataSource = modelNames;
-                    lookUpModelName.Properties.NullText = "-- Select Model --";
-
-                    if (listBoxDocuments.ToolTipController == null)
-                    {
-                        listBoxDocuments.ToolTipController = toolTipController1;
-                        listBoxDocuments.ToolTipController.GetActiveObjectInfo += (s, ea) =>
-                        {
-                            var point = listBoxDocuments.PointToClient(Cursor.Position);
-                            int index = listBoxDocuments.IndexFromPoint(point);
-
-                            if (index >= 0 && index < listBoxDocuments.ItemCount &&
-                                listBoxDocuments.GetItem(index) is BonusDocument_Model item)
-                            {
-                                string tooltip = $"📄 File name: {item.FileName}\n🕒 Created at: {item.CreatedAt:yyyy-MM-dd}\n👤 Created by: {item.CreatedByName}";
-
-                                if (item.UpdatedAt.HasValue && !string.IsNullOrWhiteSpace(item.UpdatedByName))
-                                {
-                                    tooltip += $"\n✏️ Updated at: {item.UpdatedAt:yyyy-MM-dd}\n👤 Updated by: {item.UpdatedByName}";
-                                }
-
-                                ea.Info = new DevExpress.Utils.ToolTipControlInfo(item, tooltip);
-                            }
-                        };
-                    }
-                },
-                caption: "Refreshing...",
-                description: "Refreshing bonus documents...");
-        }
-
-        private void btnExportFile_Click(object sender, EventArgs e)
+        private void ExportCurrentFile()
         {
             if (currentViewingDoc == null || currentStream == null)
             {
-                MessageBoxHelper.ShowWarning("No file is currently selected.");
+                MessageBoxHelper.ShowWarning(Lang.NoFileSelected);
                 return;
             }
 
             using (var sfd = new SaveFileDialog())
             {
-                string ext = Path.GetExtension(currentViewingDoc.FileName)?.ToLowerInvariant();
-                string filter;
-                switch (ext)
-                {
-                    case ".pdf":
-                        filter = "PDF File (*.pdf)|*.pdf";
-                        break;
-                    case ".jpg":
-                        filter = "JPEG Image (*.jpg)|*.jpg";
-                        break;
-                    case ".jpeg":
-                        filter = "JPEG Image (*.jpeg)|*.jpeg";
-                        break;
-                    case ".png":
-                        filter = "PNG Image (*.png)|*.png";
-                        break;
-                    case ".bmp":
-                        filter = "Bitmap Image (*.bmp)|*.bmp";
-                        break;
-                    default:
-                        filter = "All Files (*.*)|*.*";
-                        break;
-                }
-
-                sfd.Filter = filter;
+                string ext = Path.GetExtension(currentViewingDoc.FileName)?.ToLower() ?? string.Empty;
+                sfd.Filter = DocumentServices.FileFilters.TryGetValue(ext, out var filter) ? filter : "All Files (*.*)|*.*";
                 sfd.FileName = currentViewingDoc.FileName;
 
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
                     try
                     {
-                        File.WriteAllBytes(sfd.FileName, currentStream.ToArray());
-                        MessageBoxHelper.ShowInfo("File exported successfully.");
+                        DocumentServices.ExportDocumentToFile(currentStream, sfd.FileName);
+                        MessageBoxHelper.ShowInfo(Lang.ExportSuccess);
                     }
                     catch (Exception ex)
                     {
-                        MessageBoxHelper.ShowError("Failed to save file", ex);
+                        MessageBoxHelper.ShowError(Lang.SaveFileFailed, ex);
                     }
                 }
             }
         }
+
+        private void btnExportFile_Click(object sender, EventArgs e) => ExportCurrentFile();
     }
 }

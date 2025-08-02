@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="Kpi Application.exe" version="1.0.0.37" publicKeyToken="e48012520b621081" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="Kpi Application.exe" version="1.0.0.45" publicKeyToken="e48012520b621081" language="neutral" processorArchitecture="msil" type="win32" />
   <description asmv2:iconFile="kpi.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
@@ -439,14 +439,50 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Kpi Application.exe" size="2509248">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Kpi Application.exe" size="2570176">
       <assemblyIdentity name="Kpi Application" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>nvn5YUIwxzWz2R7QcAwZj+/3BgtZ01QOkLpElV0I7t4=</dsig:DigestValue>
+        <dsig:DigestValue>Wq2i9EYzzTSplRTrOKbLbRf3NQQyJG/TUaILffE+YVI=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="en\Kpi Application.resources.dll" size="15360">
+      <assemblyIdentity name="Kpi Application.resources" version="1.0.0.0" language="en" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>YNYp9fi3w6SwrIbwkSJBx45/ddQSZkarT4tSDhtLW0A=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="vi\Kpi Application.resources.dll" size="14848">
+      <assemblyIdentity name="Kpi Application.resources" version="1.0.0.0" language="vi" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>HkACaggnVTntqYU+enEqC2xQ8PybNbK+CwNA4E8+Nz8=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="zh\Kpi Application.resources.dll" size="14848">
+      <assemblyIdentity name="Kpi Application.resources" version="1.0.0.0" language="zh" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>FF73NjIS5+lOdbXDMy/knzXnWzOKK26QHFPl4MM312k=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -795,13 +831,13 @@
       <dsig:DigestValue>6PiSKM1kT/aaLXIg4MNwYsuLYdkqo2yG+nJFrmIoNDc=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Kpi Application.exe.config" size="1640">
+  <file name="Kpi Application.exe.config" size="3483">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>p7X2xKCGTLAn+nAZQKWsP9I1reQ20dMuK/Z5mH6eWgk=</dsig:DigestValue>
+      <dsig:DigestValue>lO4pkKSY0LeIcOaaP8spPP90CBXTRt8QrOdMK5r/ty4=</dsig:DigestValue>
     </hash>
   </file>
   <file name="kpi.ico" size="14671">
@@ -984,15 +1020,6 @@
       <dsig:DigestValue>zXAYXLM8xTgJKVOPS46oqxPrPeB8SFPxnjX+mmMrkCc=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Resources\kpi.ico" size="14671">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>7nxl49aOeVr1zaePgn2a1FFfZWODDceDJTpVBZeUbY0=</dsig:DigestValue>
-    </hash>
-  </file>
   <file name="Resources\loadfrom_16x16.png" size="925">
     <hash>
       <dsig:Transforms>
@@ -1119,4 +1146,4 @@
       <dsig:DigestValue>McRMR7zTAvFA52X/B8YNjhwPvNnL1sFCBISVmghVb/I=</dsig:DigestValue>
     </hash>
   </file>
-<publisherIdentity name="CN=APACHE\duy20855" issuerKeyHash="1287966bb8b05b1f5b88757af571d2aaea40cde1" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>8blMmLpqzjnLfCu9pvVvJqS1b2rsFLPHYW7iv53zg/M=</DigestValue></Reference></SignedInfo><SignatureValue>TGSpjDQBXmHfB8WNf48/2Ws+LSMfeB1x+A/R6qB+vlYE/qh+jl1RWJI355oyMpQXHvOQHbu0vBvlt/kFcp8OXPbXXcXlBkqTWMGydMjifJT9qjXNWMBiMOwkxcbW88mCGXzKi/MFcvRhTmr4TBkjnb5hvqCnsnqGOv1KrjnEpKA=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>xhN+S5YKeXPPa6uk4ThMqqx4QuWOE6HrQeNUCC0XU/rohMZ624Z8hGc44z9Fivyim+U1KkHz/dQA8k0EvrCBtjFZooI14uWTaiYkMqdXeAGScnkgo2PkI53FK4juiZTzbH7gHgjho7gmtuE6MvkbaYRfHxo3kKQ3R3XUjFArb5U=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="f383f39dbfe26e61c7b314ec6a6fb5a4266ff5a6bd2b7ccb39ce6aba984cb9f1" Description="" Url=""><as:assemblyIdentity name="Kpi Application.exe" version="1.0.0.37" publicKeyToken="e48012520b621081" language="neutral" processorArchitecture="msil" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=APACHE\duy20855</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>vA/SlJX1xagG9sABUt4slord8luBPMXJW7fo+Vy+Jdc=</DigestValue></Reference></SignedInfo><SignatureValue>OotbahG8WpfxgqbQFSKJJsjhtFdtYsuibThUT3/iCAXxkFiEOXW/ZILV3W9LQAPcUGN5FRa5VU0Ial0c86D9itZs9V1Xk4ES7eUVY3iUspCp4CvfaRbEM8KV/291Rf2IKNFc0aora/dMQO8Koguy7SYqrQki4O92K33+tEEthE0=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>xhN+S5YKeXPPa6uk4ThMqqx4QuWOE6HrQeNUCC0XU/rohMZ624Z8hGc44z9Fivyim+U1KkHz/dQA8k0EvrCBtjFZooI14uWTaiYkMqdXeAGScnkgo2PkI53FK4juiZTzbH7gHgjho7gmtuE6MvkbaYRfHxo3kKQ3R3XUjFArb5U=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIB1TCCAT6gAwIBAgIQUipNxSqh7KBFOPZY5TqLvjANBgkqhkiG9w0BAQsFADApMScwJQYDVQQDHh4AQQBQAEEAQwBIAEUAXABkAHUAeQAyADAAOAA1ADUwHhcNMjUwNTI3MDkwOTE5WhcNMjYwNTI3MTUwOTE5WjApMScwJQYDVQQDHh4AQQBQAEEAQwBIAEUAXABkAHUAeQAyADAAOAA1ADUwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAMYTfkuWCnlzz2urpOE4TKqseELljhOh60HjVAgtF1P66ITGetuGfIRnOOM/RYr8opvlNSpB8/3UAPJNBL6wgbYxWaKCNeLlk2omJDKnV3gBknJ5IKNj5COdxSuI7omU82x+4B4I4aO4JrbhOjL5G2mEXx8aN5CkN0d11IxQK2+VAgMBAAEwDQYJKoZIhvcNAQELBQADgYEAw4+CBn7Z8MqN55+Viv90n945wji54UsF/1W2GLY31GnwwV9uNMAMqaEgv4s2kDtLFmWIEFIGtBFnEOryEaH3BAImHto4m/8RawSCQNSgOL3vjc9PknDoGL/OlDhKQ/yXCVx+wqZXQmsO5x7bnvgwM0lLmrGTjFbNqwAKvdWwVG0=</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>
+<publisherIdentity name="CN=APACHE\duy20855" issuerKeyHash="1287966bb8b05b1f5b88757af571d2aaea40cde1" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>6lA9xvyqTn8lpG0lV/mqkGtOlvNzSoq/J/xbESodO7E=</DigestValue></Reference></SignedInfo><SignatureValue>e+0cfpQE3a/NyT8KcXfSlZ8CCEFlH3zfafLbINLgNpLM8wexKX13+KNtaHYJOBWahuXrFxlem1hHT6lzOnOt+idCeVEtT2ig041aJkM4VUs7G9uUt1kSmZjR6rmx6j7zmUOKkgNNuzUqqcvKFMujlKZ0EtlHeI+5w63IgNBaHws=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>xhN+S5YKeXPPa6uk4ThMqqx4QuWOE6HrQeNUCC0XU/rohMZ624Z8hGc44z9Fivyim+U1KkHz/dQA8k0EvrCBtjFZooI14uWTaiYkMqdXeAGScnkgo2PkI53FK4juiZTzbH7gHgjho7gmtuE6MvkbaYRfHxo3kKQ3R3XUjFArb5U=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="b13b1d2a115bfc27bf8a4a73f3964e6b90aaf957256da4257f4eaafcc63d50ea" Description="" Url=""><as:assemblyIdentity name="Kpi Application.exe" version="1.0.0.45" publicKeyToken="e48012520b621081" language="neutral" processorArchitecture="msil" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=APACHE\duy20855</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>FM4TQ8Ip/EZe8KtSS5wcSSfAd1Ujj/a4gg/LnIKEM68=</DigestValue></Reference></SignedInfo><SignatureValue>QANDWS40uItp8vf3YJ+ORMvV8rkyoFJIWToQxWwQaAm54ihZuoK4BpzQDKpr7ld6au6N25DUhil6hvKs5SIM/rgdVunGQbmDlcydWbVQIB+aWjcNu9SLk4fkjTaX5kjK74nxlX09ew1w+suX225I2CUL/Ryu4Oj3tLryIZWTSGA=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>xhN+S5YKeXPPa6uk4ThMqqx4QuWOE6HrQeNUCC0XU/rohMZ624Z8hGc44z9Fivyim+U1KkHz/dQA8k0EvrCBtjFZooI14uWTaiYkMqdXeAGScnkgo2PkI53FK4juiZTzbH7gHgjho7gmtuE6MvkbaYRfHxo3kKQ3R3XUjFArb5U=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIB1TCCAT6gAwIBAgIQUipNxSqh7KBFOPZY5TqLvjANBgkqhkiG9w0BAQsFADApMScwJQYDVQQDHh4AQQBQAEEAQwBIAEUAXABkAHUAeQAyADAAOAA1ADUwHhcNMjUwNTI3MDkwOTE5WhcNMjYwNTI3MTUwOTE5WjApMScwJQYDVQQDHh4AQQBQAEEAQwBIAEUAXABkAHUAeQAyADAAOAA1ADUwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAMYTfkuWCnlzz2urpOE4TKqseELljhOh60HjVAgtF1P66ITGetuGfIRnOOM/RYr8opvlNSpB8/3UAPJNBL6wgbYxWaKCNeLlk2omJDKnV3gBknJ5IKNj5COdxSuI7omU82x+4B4I4aO4JrbhOjL5G2mEXx8aN5CkN0d11IxQK2+VAgMBAAEwDQYJKoZIhvcNAQELBQADgYEAw4+CBn7Z8MqN55+Viv90n945wji54UsF/1W2GLY31GnwwV9uNMAMqaEgv4s2kDtLFmWIEFIGtBFnEOryEaH3BAImHto4m/8RawSCQNSgOL3vjc9PknDoGL/OlDhKQ/yXCVx+wqZXQmsO5x7bnvgwM0lLmrGTjFbNqwAKvdWwVG0=</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>

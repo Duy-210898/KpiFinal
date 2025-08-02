@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using DevExpress.XtraEditors;
+using KpiApplication.Common;
 
 namespace KpiApplication.Forms
 {
@@ -12,6 +13,7 @@ namespace KpiApplication.Forms
         public SheetSelectionForm(List<string> sheetNames)
         {
             InitializeComponent();
+            ApplyLocalizedText();
             sheetNames.Reverse();
             this.KeyPreview = true;
 
@@ -19,6 +21,11 @@ namespace KpiApplication.Forms
             cbxSheet.Properties.Items.AddRange(sheetNames);
             cbxSheet.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
         }
+        private void ApplyLocalizedText()
+        {
+            layoutControlItem1.Text = Lang.SheetSelect;
+        }
+
 
         private void buttonOK_Click(object sender, EventArgs e)
         {

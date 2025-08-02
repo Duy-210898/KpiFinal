@@ -1,4 +1,5 @@
-﻿using KpiApplication.Models;
+﻿using KpiApplication.Excel;
+using KpiApplication.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,45 +13,113 @@ using System.Windows.Media;
 
 namespace KpiApplication.DataAccess
 {
+    public static class LinqExtensions
+    {
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            HashSet<TKey> seenKeys = new HashSet<TKey>();
+            foreach (TSource element in source)
+            {
+                if (seenKeys.Add(keySelector(element)))
+                    yield return element;
+            }
+        }
+    }
+
     public class IEPPHData_DAL
     {
         private static readonly string connectionString = ConfigurationManager.ConnectionStrings["strCon"].ConnectionString;
 
+        public int InsertIfNotExists(List<ExcelImporter.ArticleDto> articles)
+        {
+            if (articles == null || articles.Count == 0)
+                return 0;
+
+            // B1: Lấy danh sách ArticleName đã tồn tại
+            var articleNames = articles.Select(x => x.ArticleName).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            var existingNames = GetExistingArticleNames(articleNames);
+
+            // B2: Lọc danh sách mới chưa tồn tại
+            var newArticles = articles
+                .Where(x => !existingNames.Contains(x.ArticleName, StringComparer.OrdinalIgnoreCase))
+                .DistinctBy(x => x.ArticleName) // loại trùng trong file Excel
+                .ToList();
+
+            if (newArticles.Count == 0)
+                return 0;
+
+            // B3: Insert bằng SqlBulkCopy
+            BulkInsertArticles(newArticles);
+            return newArticles.Count;
+        }
+
+        private HashSet<string> GetExistingArticleNames(List<string> articleNames)
+        {
+            HashSet<string> existing = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            if (articleNames == null || articleNames.Count == 0)
+                return existing;
+
+            // Tách thành các batch 1000 để tránh lỗi nếu quá nhiều tham số
+            const int batchSize = 1000;
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                for (int i = 0; i < articleNames.Count; i += batchSize)
+                {
+                    var batch = articleNames.Skip(i).Take(batchSize).ToList();
+                    string inClause = string.Join(",", batch.Select((_, idx) => $"@p{idx}"));
+                    string query = $"SELECT ArticleName FROM Articles WHERE ArticleName IN ({inClause})";
+
+                    using (var cmd = new SqlCommand(query, conn))
+                    {
+                        for (int j = 0; j < batch.Count; j++)
+                        {
+                            cmd.Parameters.AddWithValue($"@p{j}", batch[j]);
+                        }
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                existing.Add(reader.GetString(0));
+                            }
+                        }
+                    }
+                }
+            }
+
+            return existing;
+        }
+
+        private void BulkInsertArticles(List<ExcelImporter.ArticleDto> articles)
+        {
+            var table = new DataTable();
+            table.Columns.Add("ArticleName", typeof(string));
+            table.Columns.Add("ModelName", typeof(string));
+
+            foreach (var a in articles)
+            {
+                table.Rows.Add(a.ArticleName, a.ModelName);
+            }
+
+            using (var conn = new SqlConnection(connectionString))
+            using (var bulk = new SqlBulkCopy(conn))
+            {
+                bulk.DestinationTableName = "Articles";
+                bulk.ColumnMappings.Add("ArticleName", "ArticleName");
+                bulk.ColumnMappings.Add("ModelName", "ModelName");
+
+                conn.Open();
+                bulk.WriteToServer(table);
+            }
+        }
         #region === Helper Methods ===
 
         private static void AddParameterSafe(SqlCommand cmd, string name, object value)
         {
             cmd.Parameters.AddWithValue(name, value ?? DBNull.Value);
-        }
-        public static void DeletePPH(int articleID, int? processID, int? typeID)
-        {
-            using (var conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
-
-                string sql = @"
-            DELETE FROM ArticleProcessTypeData 
-            WHERE ArticleID = @ArticleID 
-              AND ProcessID = @ProcessID 
-              AND TypeID = @TypeID";
-
-                using (var cmd = new SqlCommand(sql, conn))
-                {
-                    cmd.Parameters.AddWithValue("@ArticleID", articleID);
-
-                    if (processID.HasValue)
-                        cmd.Parameters.AddWithValue("@ProcessID", processID.Value);
-                    else
-                        cmd.Parameters.AddWithValue("@ProcessID", DBNull.Value);
-
-                    if (typeID.HasValue)
-                        cmd.Parameters.AddWithValue("@TypeID", typeID.Value);
-                    else
-                        cmd.Parameters.AddWithValue("@TypeID", DBNull.Value);
-
-                    cmd.ExecuteNonQuery();
-                }
-            }
         }
 
         public List<string> GetProcessList()
@@ -134,6 +203,92 @@ namespace KpiApplication.DataAccess
 
         #endregion
 
+        #region === Delete Methods ===
+        public void DeletePPH(int articleID, int? processID, int? typeID)
+        {
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (var tran = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        string sql = @"
+DELETE FROM ArticleProcessTypeData 
+WHERE ArticleID = @ArticleID 
+  AND (@ProcessID IS NULL OR ProcessID = @ProcessID)
+  AND (@TypeID IS NULL OR TypeID = @TypeID)";
+
+                        using (var cmd = new SqlCommand(sql, conn, tran))
+                        {
+                            cmd.Parameters.AddWithValue("@ArticleID", articleID > 0 ? (object)articleID : DBNull.Value);
+                            cmd.Parameters.AddWithValue("@ProcessID", processID > 0 ? (object)processID : DBNull.Value);
+                            cmd.Parameters.AddWithValue("@TypeID", typeID > 0 ? (object)typeID : DBNull.Value);
+
+                            int affected = cmd.ExecuteNonQuery();
+
+                        }
+
+                        tran.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        tran.Rollback();
+
+                        Debug.WriteLine($"[DeletePPH] ERROR: {ex.Message}");
+                        throw;
+                    }
+                }
+            }
+        }
+        public bool SoftDeleteArticle(int articleID, string currentUser)
+        {
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (var tran = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        // 1. Lấy tên Article để ghi log
+                        string articleName;
+                        using (var cmd = new SqlCommand("SELECT ArticleName FROM Articles WHERE ArticleID = @ArticleID", conn, tran))
+                        {
+                            cmd.Parameters.AddWithValue("@ArticleID", articleID);
+                            var result = cmd.ExecuteScalar();
+                            if (result == null)
+                                throw new Exception("Article not found");
+
+                            articleName = result.ToString();
+                        }
+
+                        // 2. Soft delete Article (cập nhật IsDeleted = 1)
+                        using (var cmd = new SqlCommand(@"
+                    UPDATE Articles
+                    SET IsDeleted = 1,
+                        DeletedBy = @DeletedBy,
+                        DeletedAt = @DeletedAt
+                    WHERE ArticleID = @ArticleID", conn, tran))
+                        {
+                            cmd.Parameters.AddWithValue("@DeletedBy", currentUser);
+                            cmd.Parameters.AddWithValue("@DeletedAt", DateTime.Now);
+                            cmd.Parameters.AddWithValue("@ArticleID", articleID);
+                            cmd.ExecuteNonQuery();
+                        }
+                        tran.Commit();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        tran.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+
+        #endregion
+
         #region === Lookup Methods ===
 
         public int? GetProcessID(string processName)
@@ -184,23 +339,24 @@ namespace KpiApplication.DataAccess
                 return (int)cmd.ExecuteScalar() > 0;
             }
         }
-
-        public bool Exists_ArticleProcessType(int articleID, int processID, int typeID)
+        public bool Exists_ArticleProcessTypeData(int articleID, int? processID, int? typeID)
         {
-            const string sql = @"
-SELECT COUNT(*) FROM ArticleProcessTypeData
-WHERE ArticleID = @ArticleID AND ProcessID = @ProcessID AND TypeID = @TypeID";
+            string query = @"
+        SELECT COUNT(*) 
+        FROM ArticleProcessTypeData 
+        WHERE ArticleID = @ArticleID
+          AND (@ProcessID IS NULL AND ProcessID IS NULL OR ProcessID = @ProcessID)
+          AND (@TypeID IS NULL AND TypeID IS NULL OR TypeID = @TypeID)";
 
-            using (var conn = new SqlConnection(connectionString))
-            using (var cmd = new SqlCommand(sql, conn))
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
             {
-                AddParameterSafe(cmd, "@ArticleID", articleID);
-                AddParameterSafe(cmd, "@ProcessID", processID);
-                AddParameterSafe(cmd, "@TypeID", typeID);
+                cmd.Parameters.AddWithValue("@ArticleID", articleID);
+                cmd.Parameters.AddWithValue("@ProcessID", processID.HasValue ? (object)processID.Value : DBNull.Value);
+                cmd.Parameters.AddWithValue("@TypeID", typeID.HasValue ? (object)typeID.Value : DBNull.Value);
 
                 conn.Open();
-                int count = (int)cmd.ExecuteScalar();
-                return count > 0;
+                return (int)cmd.ExecuteScalar() > 0;
             }
         }
         public bool Exists_TCTData(string modelName, string typeName, string process)
@@ -222,7 +378,7 @@ WHERE ArticleID = @ArticleID AND ProcessID = @ProcessID AND TypeID = @TypeID";
                 return (int)cmd.ExecuteScalar() > 0;
             }
         }
-        public static bool Update_ArticleModelName(int articleId, string newModelName)
+        public bool Update_ArticleModelName(int articleId, string newModelName)
         {
             string query = @"
         UPDATE [Articles]
@@ -292,14 +448,28 @@ WHERE ArticleID = @ArticleID AND ProcessID = @ProcessID AND TypeID = @TypeID";
         #endregion
 
         #region === Insert Methods ===
-
-        public bool Insert_ArticleProcessTypeData(IETotal_Model item)
+        public int? Insert_Article(string articleName, string modelName)
         {
-            // Kiểm tra null trước khi gọi Exists
-            if (!item.ProcessID.HasValue || !item.TypeID.HasValue)
-                return false;
+            const string query = @"
+        INSERT INTO Articles (ArticleName, ModelName, CreatedAt)
+        OUTPUT INSERTED.ArticleID
+        VALUES (@ArticleName, @ModelName, GETDATE())";
 
-            if (Exists_ArticleProcessType(item.ArticleID, item.ProcessID.Value, item.TypeID.Value))
+            using (var conn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.Add("@ArticleName", SqlDbType.NVarChar).Value = articleName.Trim();
+                cmd.Parameters.Add("@ModelName", SqlDbType.NVarChar).Value = modelName.Trim();
+
+                conn.Open();
+                object result = cmd.ExecuteScalar();
+                return result != null ? Convert.ToInt32(result) : (int?)null;
+            }
+        }
+
+        public bool Insert_ArticleProcessTypeData(IETotal_Model item, string createdBy, DateTime? createdAt)
+        {
+            if (!item.ProcessID.HasValue || !item.TypeID.HasValue)
                 return false;
 
             var parameters = new Dictionary<string, object>
@@ -313,6 +483,8 @@ WHERE ArticleID = @ArticleID AND ProcessID = @ProcessID AND TypeID = @TypeID";
                 ["OperatorAdjust"] = item.OperatorAdjust,
                 ["ReferenceOperator"] = item.ReferenceOperator,
                 ["Notes"] = item.Notes,
+                ["CreatedBy"] = createdBy,
+                ["CreatedAt"] = createdAt,
                 ["IsSigned"] = item.IsSigned
             };
 
@@ -340,13 +512,28 @@ WHERE ArticleID = @ArticleID AND ProcessID = @ProcessID AND TypeID = @TypeID";
                 ["GCN_Assembling"] = item.OutsourcingAssemblingBool,
                 ["GCN_StockFitting"] = item.OutsourcingStockFittingBool,
                 ["NoteForPC"] = item.NoteForPC,
-                ["Status"] = item.Status
+                ["DataStatus"] = item.Status
             };
 
             return ExecuteInsert("Article_Outsourcing", parameters);
         }
+        public int? GetArticleIDByName(string articleName)
+        {
+            const string query = "SELECT ArticleID FROM Articles WHERE RTRIM(LTRIM(ArticleName)) = @ArticleName";
+
+            using (var conn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.Add("@ArticleName", SqlDbType.NVarChar).Value = articleName.Trim();
+
+                conn.Open();
+                object result = cmd.ExecuteScalar();
+                return result != null ? Convert.ToInt32(result) : (int?)null;
+            }
+        }
 
         #endregion
+
 
         #region === Update Methods ===
 
@@ -404,10 +591,8 @@ WHERE ArticleID = @ArticleID AND ProcessID = @ProcessID AND TypeID = @TypeID";
 
             try
             {
-                // Bước 1: Lấy dữ liệu TCTData
                 var tctDataList = GetAllTCTData();
 
-                // Tạo dictionary để tra cứu nhanh TCTValue theo (ModelName, Process, Type)
                 var tctDict = tctDataList
                     .GroupBy(t => (
                         Model: t.ModelName?.Trim().ToLowerInvariant() ?? "",
@@ -416,7 +601,7 @@ WHERE ArticleID = @ArticleID AND ProcessID = @ProcessID AND TypeID = @TypeID";
                     ))
                     .ToDictionary(
                         g => g.Key,
-                        g => g.First().TCTValue // Giữ dòng đầu tiên nếu bị trùng
+                        g => g.First().TCTValue 
                     );
 
                 // Ghi log các key trùng (nếu có)
@@ -428,11 +613,6 @@ WHERE ArticleID = @ArticleID AND ProcessID = @ProcessID AND TypeID = @TypeID";
                     ))
                     .Where(g => g.Count() > 1)
                     .ToList();
-
-                foreach (var dup in duplicates)
-                {
-                    Debug.WriteLine($"⚠️ Trùng key TCT: Model='{dup.Key.Model}', Process='{dup.Key.Process}', Type='{dup.Key.Type}', Count={dup.Count()}");
-                }
 
                 using (var conn = new SqlConnection(connectionString))
                 {
@@ -471,7 +651,7 @@ WHERE ArticleID = @ArticleID AND ProcessID = @ProcessID AND TypeID = @TypeID";
                 LEFT JOIN Article_PCIncharge apc 
                     ON a.ArticleID = apc.ArticleID
                 LEFT JOIN Article_Outsourcing ao 
-                    ON a.ArticleID = ao.ArticleID
+                    ON a.ArticleID = ao.ArticleID Where a.IsDeleted = 0
                 ORDER BY a.ArticleName, aptd.ProcessID;
             ";
 
@@ -528,17 +708,9 @@ WHERE ArticleID = @ArticleID AND ProcessID = @ProcessID AND TypeID = @TypeID";
                                 {
                                     data.TCTValue = tctValue;
                                 }
-                                else
-                                {
-                                    // Không có TCT – giữ null, không làm gì
-                                    Debug.WriteLine($"⚠️ Không tìm thấy TCT cho: Model='{key.Model}', Process='{key.Process}', Type='{key.Type}'");
-                                }
-
                                 rowCount++;
                                 ieTotal.Add(data);
                             }
-
-                            Debug.WriteLine($"✅ Tổng số dòng đọc được: {rowCount}");
                         }
                     }
                 }
@@ -631,8 +803,8 @@ WHERE ArticleID = @ArticleID AND ProcessID = @ProcessID AND TypeID = @TypeID";
                 LEFT JOIN ArtType at ON aptd.TypeID = at.TypeID
                 LEFT JOIN Article_PCIncharge apc ON a.ArticleID = apc.ArticleID
                 LEFT JOIN Article_Outsourcing ao ON a.ArticleID = ao.ArticleID
-                WHERE 1 = 1
-            ");
+                Where a.IsDeleted = 0  
+                    ");
 
                     var cmd = new SqlCommand();
                     if (!string.IsNullOrEmpty(modelName))

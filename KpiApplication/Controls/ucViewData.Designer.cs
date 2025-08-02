@@ -32,7 +32,6 @@
             this.barManager1 = new DevExpress.XtraBars.BarManager(this.components);
             this.bar2 = new DevExpress.XtraBars.Bar();
             this.btnExport = new DevExpress.XtraBars.BarSubItem();
-            this.btnRefresh = new DevExpress.XtraBars.BarButtonItem();
             this.barDockControlTop = new DevExpress.XtraBars.BarDockControl();
             this.barDockControlBottom = new DevExpress.XtraBars.BarDockControl();
             this.barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
@@ -65,8 +64,7 @@
             this.barManager1.DockControls.Add(this.barDockControlRight);
             this.barManager1.Form = this;
             this.barManager1.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
-            this.btnExport,
-            this.btnRefresh});
+            this.btnExport});
             this.barManager1.MainMenu = this.bar2;
             this.barManager1.MaxItemId = 4;
             // 
@@ -77,8 +75,7 @@
             this.bar2.DockRow = 0;
             this.bar2.DockStyle = DevExpress.XtraBars.BarDockStyle.Top;
             this.bar2.LinksPersistInfo.AddRange(new DevExpress.XtraBars.LinkPersistInfo[] {
-            new DevExpress.XtraBars.LinkPersistInfo(this.btnExport),
-            new DevExpress.XtraBars.LinkPersistInfo(this.btnRefresh)});
+            new DevExpress.XtraBars.LinkPersistInfo(this.btnExport)});
             this.bar2.OptionsBar.MultiLine = true;
             this.bar2.OptionsBar.UseWholeRow = true;
             this.bar2.Text = "Main menu";
@@ -87,23 +84,11 @@
             // 
             this.btnExport.Caption = "Export";
             this.btnExport.Id = 2;
-            this.btnExport.ImageOptions.Image = global::KpiApplication.Properties.Resources.converttorange_16x16;
+            this.btnExport.ImageOptions.Image = global::KpiApplication.Properties.Resources.excel__1_;
             this.btnExport.ImageOptions.LargeImage = global::KpiApplication.Properties.Resources.converttorange_32x32;
             this.btnExport.Name = "btnExport";
             this.btnExport.PaintStyle = DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph;
             this.btnExport.ShowNavigationHeader = DevExpress.Utils.DefaultBoolean.True;
-            this.btnExport.Size = new System.Drawing.Size(100, 25);
-            // 
-            // btnRefresh
-            // 
-            this.btnRefresh.Caption = "Refresh";
-            this.btnRefresh.Id = 3;
-            this.btnRefresh.ImageOptions.Image = global::KpiApplication.Properties.Resources.refresh_16x161;
-            this.btnRefresh.ImageOptions.LargeImage = global::KpiApplication.Properties.Resources.refresh_32x321;
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.PaintStyle = DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph;
-            this.btnRefresh.Size = new System.Drawing.Size(100, 25);
-            this.btnRefresh.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnRefresh_ItemClick);
             // 
             // barDockControlTop
             // 
@@ -111,7 +96,7 @@
             this.barDockControlTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.barDockControlTop.Location = new System.Drawing.Point(0, 0);
             this.barDockControlTop.Manager = this.barManager1;
-            this.barDockControlTop.Size = new System.Drawing.Size(897, 25);
+            this.barDockControlTop.Size = new System.Drawing.Size(897, 24);
             // 
             // barDockControlBottom
             // 
@@ -125,23 +110,23 @@
             // 
             this.barDockControlLeft.CausesValidation = false;
             this.barDockControlLeft.Dock = System.Windows.Forms.DockStyle.Left;
-            this.barDockControlLeft.Location = new System.Drawing.Point(0, 25);
+            this.barDockControlLeft.Location = new System.Drawing.Point(0, 24);
             this.barDockControlLeft.Manager = this.barManager1;
-            this.barDockControlLeft.Size = new System.Drawing.Size(0, 635);
+            this.barDockControlLeft.Size = new System.Drawing.Size(0, 636);
             // 
             // barDockControlRight
             // 
             this.barDockControlRight.CausesValidation = false;
             this.barDockControlRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.barDockControlRight.Location = new System.Drawing.Point(897, 25);
+            this.barDockControlRight.Location = new System.Drawing.Point(897, 24);
             this.barDockControlRight.Manager = this.barManager1;
-            this.barDockControlRight.Size = new System.Drawing.Size(0, 635);
+            this.barDockControlRight.Size = new System.Drawing.Size(0, 636);
             // 
             // layoutControl1
             // 
             this.layoutControl1.Controls.Add(this.cbxProcess);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.layoutControl1.Location = new System.Drawing.Point(0, 25);
+            this.layoutControl1.Location = new System.Drawing.Point(0, 24);
             this.layoutControl1.Name = "layoutControl1";
             this.layoutControl1.OptionsView.AlwaysScrollActiveControlIntoView = false;
             this.layoutControl1.Root = this.Root;
@@ -189,11 +174,11 @@
             // gridControl1
             // 
             this.gridControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridControl1.Location = new System.Drawing.Point(0, 74);
+            this.gridControl1.Location = new System.Drawing.Point(0, 73);
             this.gridControl1.MainView = this.dgvViewProductionData;
             this.gridControl1.MenuManager = this.barManager1;
             this.gridControl1.Name = "gridControl1";
-            this.gridControl1.Size = new System.Drawing.Size(897, 586);
+            this.gridControl1.Size = new System.Drawing.Size(897, 587);
             this.gridControl1.TabIndex = 5;
             this.gridControl1.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.dgvViewProductionData});
@@ -216,7 +201,6 @@
             this.Controls.Add(this.barDockControlTop);
             this.Name = "ucViewData";
             this.Size = new System.Drawing.Size(897, 660);
-            this.Load += new System.EventHandler(this.ucViewData_Load);
             ((System.ComponentModel.ISupportInitialize)(this.barManager1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
             this.layoutControl1.ResumeLayout(false);
@@ -247,6 +231,5 @@
         private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
         private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
         private DevExpress.XtraBars.BarSubItem btnExport;
-        private DevExpress.XtraBars.BarButtonItem btnRefresh;
     }
 }

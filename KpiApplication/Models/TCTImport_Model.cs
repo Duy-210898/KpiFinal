@@ -18,6 +18,8 @@ namespace KpiApplication.Models
 
     public class TCTImport_Model
     {
+        public int updatedCount { get; set; }
+        public int insertedCount { get; set; }
         public string ModelName { get; set; }
         public string Type { get; set; }
         public string Process { get; set; }

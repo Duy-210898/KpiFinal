@@ -1,467 +1,300 @@
 ﻿using DevExpress.XtraEditors;
 using KpiApplication.Common;
-using KpiApplication.DataAccess;
 using KpiApplication.Forms;
+using KpiApplication.Services;
 using KpiApplication.Utils;
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace KpiApplication.Controls
 {
-    public partial class ucBonusDocument : XtraUserControl
+    public partial class ucBonusDocument : XtraUserControl, ISupportLoadAsync
     {
-        private readonly BonusDocument_DAL _docDal = new BonusDocument_DAL();
-        private readonly Article_DAL _articleDal = new Article_DAL();
+        // -----------------------------
+        // Instance fields
+        // -----------------------------
+        private readonly DocumentServices _docService = new DocumentServices();
         private readonly TextEdit txtInPlaceRename = new TextEdit() { Visible = false };
-        private readonly LruCache<int, byte[]> _docCache = new LruCache<int, byte[]>(20, TimeSpan.FromMinutes(10));
-        private readonly LruCache<int, Image> _imageCache = new LruCache<int, Image>(10, TimeSpan.FromMinutes(10));
-
         private MemoryStream currentStream;
-
-        private string selectedFileName;
-        private byte[] selectedPdfData;
         private BonusDocument_Model currentViewingDoc;
+        private string previousModel;
 
+        // -----------------------------
+        // Constructor
+        // -----------------------------
         public ucBonusDocument()
         {
             InitializeComponent();
-            pictureViewer.Properties.SizeMode = DevExpress.XtraEditors.Controls.PictureSizeMode.Squeeze;
-            pictureViewer.Properties.ShowMenu = false;
-            pictureViewer.Properties.ZoomAccelerationFactor = 1;
-            pictureViewer.Properties.AllowScrollViaMouseDrag = false;
-            listBoxArticles.SelectionMode = SelectionMode.None;
-
-            btnDelete.Enabled = false;
-            btnExportFile.Enabled = false;
-            btnAddNew.Enabled = false;
-            InitControls();
-            LoadModelNamesToLookup();
+            InitializeControls();
+            ApplyLocalizedText();
         }
+
+        // -----------------------------
+        // Public methods
+        // -----------------------------
+
+        public void PerformRefresh() => _ = LoadModels(reset: true);
+        // -----------------------------
+        // Lifecycle overrides
+        // -----------------------------
         protected override void OnVisibleChanged(EventArgs e)
         {
             base.OnVisibleChanged(e);
 
-            if (Visible && !IsDisposed && currentViewingDoc != null)
-            {
-                var data = GetDocumentBytes(currentViewingDoc.Id);
-                if (data != null)
-                {
-                    ViewerResetHelper.ResetViewer(
-                        pdfViewer, pictureViewer, lblFileName,
-                        ref currentStream, ref currentViewingDoc);
+            if (!Visible || IsDisposed || currentViewingDoc == null || currentStream != null)
+                return;
 
-                    DocumentViewerHelper.DisplayDocument(
-                        this,
-                        pdfViewer,
-                        pictureViewer,
-                        lblFileName,
-                        currentViewingDoc,
-                        data,
-                        ref currentStream,
-                        _imageCache,
-                        out _);
-                }
+            try
+            {
+                ReloadCurrentDocument();
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError("Lỗi khi hiển thị tài liệu", ex);
             }
         }
 
 
-        private byte[] GetDocumentBytes(int docId)
+        // -----------------------------
+        // Initialization methods
+        // -----------------------------
+        private void InitializeControls()
         {
-            if (_docCache.TryGetValue(docId, out var data))
-                return data;
+            pictureViewer.Properties.SizeMode = DevExpress.XtraEditors.Controls.PictureSizeMode.Squeeze;
+            pictureViewer.Properties.ShowMenu = false;
+            pictureViewer.Properties.ZoomAccelerationFactor = 1;
+            pictureViewer.Properties.AllowScrollViaMouseDrag = false;
 
-            var doc = _docDal.GetById(docId);
-            if (doc?.PdfData != null && doc.PdfData.Length > 0)
-            {
-                _docCache.AddOrUpdate(docId, doc.PdfData);
-                return doc.PdfData;
-            }
+            listBoxArticles.SelectionMode = SelectionMode.None;
+            btnDelete.Enabled = false;
+            btnExportFile.Enabled = false;
+            btnAddNew.Enabled = false;
 
-            return null;
-        }
-
-        private void InitControls()
-        {
             txtInPlaceRename.KeyDown += TxtInPlaceRename_KeyDown;
             Controls.Add(txtInPlaceRename);
 
             listBoxDocuments.DoubleClick += (s, e) => BeginRenameSelectedItem();
         }
 
-        private void ListBoxDocuments_KeyDown(object sender, KeyEventArgs e)
+        private void ApplyLocalizedText()
         {
-            switch (e.KeyCode)
+            btnExportFile.Text = Lang.Export;
+            btnDelete.Text = Lang.Delete;
+            btnAddNew.Text = Lang.AddNewFile;
+            lookUpModelName.Properties.NullText = Lang.SelectModel;
+            layoutControlItem1.Text = Lang.ModelName;
+            layoutControlItem2.Text = Lang.ArticleList;
+            layoutControlItem3.Text = Lang.BonusFileList;
+        }
+
+        private void SetupTooltipController()
+        {
+            if (listBoxDocuments.ToolTipController != null) return;
+
+            listBoxDocuments.ToolTipController = toolTipController1;
+            listBoxDocuments.ToolTipController.GetActiveObjectInfo += (_, ea) =>
             {
-                case Keys.F2:
-                    BeginRenameSelectedItem();
-                    e.Handled = true;
-                    break;
-                case Keys.Delete:
-                    DeleteSelectedDocument();
-                    e.Handled = true;
-                    break;
+                var point = listBoxDocuments.PointToClient(Cursor.Position);
+                int index = listBoxDocuments.IndexFromPoint(point);
+
+                if (index >= 0 && index < listBoxDocuments.ItemCount && listBoxDocuments.GetItem(index) is BonusDocument_Model item)
+                {
+                    string tooltip = DocumentServices.GetDocumentTooltip(item);
+                    ea.Info = new DevExpress.Utils.ToolTipControlInfo(item, tooltip);
+                }
+            };
+        }
+        public async Task LoadDataAsync()
+        {
+            await LoadModels(reset: true);
+        }
+        private async Task LoadModels(bool reset = false)
+        {
+            try
+            {
+                UseWaitCursor = true;
+
+                var modelNames = await Task.Run(() => _docService.GetModelNames());
+
+                if (reset)
+                {
+                    lookUpModelName.EditValue = null;
+                    ResetViewer();
+                    listBoxDocuments.DataSource = null;
+                    listBoxArticles.DataSource = null;
+                    _docService.ClearCache();
+                    btnAddNew.Enabled = btnDelete.Enabled = btnExportFile.Enabled = false;
+                }
+
+                lookUpModelName.Properties.DataSource = modelNames;
+                SetupTooltipController();
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError(Lang.LoadDataFailed, ex);
+            }
+            finally
+            {
+                UseWaitCursor = false;
             }
         }
 
-        private void TxtInPlaceRename_KeyDown(object sender, KeyEventArgs e)
+
+        private bool RefreshDocumentList(string model = null)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                CommitRename();
-                e.Handled = true;
-            }
-            else if (e.KeyCode == Keys.Escape)
-            {
-                txtInPlaceRename.Visible = false;
-            }
-        }
-
-        private static bool IsValidFileName(string name, out string error)
-        {
-            error = string.Empty;
-
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                error = "File name cannot be empty.";
-                return false;
-            }
-
-            if (name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
-            {
-                error = "File name contains invalid characters: \\ / : * ? \" < > |";
-                return false;
-            }
-
-            return true;
-        }
-
-        private void RefreshDocumentList(string selectedModel = null)
-        {
-            if (string.IsNullOrWhiteSpace(selectedModel))
-                selectedModel = lookUpModelName.EditValue?.ToString();
-
-            if (string.IsNullOrWhiteSpace(selectedModel)) return;
+            if (model == null) model = lookUpModelName.EditValue?.ToString();
+            if (string.IsNullOrWhiteSpace(model)) return false;
 
             try
             {
-                ViewerResetHelper.ResetViewer(
-                    pdfViewer, pictureViewer, lblFileName,
-                    ref currentStream, ref currentViewingDoc);
-
+                ResetViewer();
                 btnAddNew.Enabled = true;
-                _docCache.Clear();
+                if (!model.Equals(previousModel, StringComparison.OrdinalIgnoreCase))
+                {
+                    _docService.ClearCache();
+                }
+                // Ngắt kết nối sự kiện trước khi gán
+                listBoxDocuments.SelectedIndexChanged -= ListBoxDocuments_SelectedIndexChanged;
 
-                listBoxDocuments.DataSource = new BindingList<BonusDocument_Model>(
-                    _docDal.GetMetadataByModelName(selectedModel));
-
+                listBoxDocuments.DataSource = new BindingList<BonusDocument_Model>(_docService.GetDocumentsByModel(model));
                 listBoxDocuments.DisplayMember = "FileName";
+                listBoxDocuments.SelectedIndex = -1; // Rõ ràng hơn
 
-                listBoxArticles.DataSource = _articleDal.GetByModelName(selectedModel);
+                listBoxArticles.DataSource = _docService.GetArticlesByModel(model);
                 listBoxArticles.DisplayMember = "ArticleName";
+
+                // Gắn lại sự kiện sau khi hoàn tất gán DataSource
+                listBoxDocuments.SelectedIndexChanged += ListBoxDocuments_SelectedIndexChanged;
+                return true;
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError("Failed to load data", ex);
+                MessageBoxHelper.ShowError(Lang.LoadDataFailed, ex);
+                return false;
             }
         }
-        private void CommitRename()
+        private void ResetViewer()
         {
-            txtInPlaceRename.Visible = false;
-
-            var selectedDoc = txtInPlaceRename.Tag as BonusDocument_Model;
-            if (selectedDoc == null) return;
-
-            string inputName = txtInPlaceRename.Text.Trim();
-            string extension = Path.GetExtension(selectedDoc.FileName);
-            string newFileName = inputName + extension;
-
-            string error;
-            if (!IsValidFileName(inputName, out error))
-            {
-                MessageBoxHelper.ShowWarning(error);
-                return;
-            }
-
-            if (newFileName.Equals(selectedDoc.FileName, StringComparison.OrdinalIgnoreCase)) return;
-
-            if (_docDal.Exists(selectedDoc.ModelName, newFileName))
-            {
-                MessageBoxHelper.ShowWarning("File name already exists. Please choose a different name.");
-                return;
-            }
-
-            try
-            {
-                _docDal.RenameFileNameById(selectedDoc.Id, newFileName, DateTime.Now, Global.CurrentEmployee?.UserID ?? 1);
-                selectedDoc.FileName = newFileName;
-                RefreshDocumentList(selectedDoc.ModelName);
-                MessageBoxHelper.ShowInfo("File renamed successfully.");
-            }
-            catch (Exception ex)
-            {
-                MessageBoxHelper.ShowError("Rename failed", ex);
-            }
+            if (pdfViewer == null || pictureViewer == null || lblFileName == null) return;
+            ViewerResetHelper.ResetViewer(pdfViewer, pictureViewer, lblFileName, ref currentStream, ref currentViewingDoc);
         }
-
+        // -----------------------------
+        // Rename logic
+        // -----------------------------
         private void BeginRenameSelectedItem()
         {
-            var selectedDoc = listBoxDocuments.SelectedItem as BonusDocument_Model;
-            if (selectedDoc == null) return;
-
+            var doc = listBoxDocuments.SelectedItem as BonusDocument_Model;
+            if (doc == null) return;
             var bounds = listBoxDocuments.GetItemRectangle(listBoxDocuments.SelectedIndex);
-
-            txtInPlaceRename.SetBounds(
-                listBoxDocuments.Left + bounds.Left,
-                listBoxDocuments.Top + bounds.Top,
-                bounds.Width,
-                bounds.Height);
-
-            txtInPlaceRename.Text = Path.GetFileNameWithoutExtension(selectedDoc.FileName);
-            txtInPlaceRename.Tag = selectedDoc;
+            txtInPlaceRename.SetBounds(listBoxDocuments.Left + bounds.Left, listBoxDocuments.Top + bounds.Top, bounds.Width, bounds.Height);
+            txtInPlaceRename.Text = Path.GetFileNameWithoutExtension(doc.FileName);
+            txtInPlaceRename.Tag = doc;
             txtInPlaceRename.Visible = true;
             txtInPlaceRename.BringToFront();
             txtInPlaceRename.Focus();
             txtInPlaceRename.SelectAll();
         }
 
-        private void LoadModelNamesToLookup()
+        private void CommitRename()
         {
-            _ = AsyncLoaderHelper.LoadDataWithSplashAsync(
-                this,
-                () => _articleDal.GetDistinctModelNames(),
-                modelNames =>
-                {
-                    lookUpModelName.Properties.DataSource = modelNames;
-                    lookUpModelName.Properties.NullText = "-- Select Model --";
+            txtInPlaceRename.Visible = false;
+            var selectedDoc = txtInPlaceRename.Tag as BonusDocument_Model;
+            if (selectedDoc == null) return;
 
-                    if (listBoxDocuments.ToolTipController == null)
-                    {
-                        listBoxDocuments.ToolTipController = toolTipController1;
-                        listBoxDocuments.ToolTipController.GetActiveObjectInfo += (s, ea) =>
-                        {
-                            var point = listBoxDocuments.PointToClient(Cursor.Position);
-                            int index = listBoxDocuments.IndexFromPoint(point);
-
-                            if (index >= 0 && index < listBoxDocuments.ItemCount &&
-                                listBoxDocuments.GetItem(index) is BonusDocument_Model item)
-                            {
-                                string tooltip = $"📄 File name: {item.FileName}\n🕒 Created at: {item.CreatedAt:yyyy-MM-dd}\n👤 Created by: {item.CreatedByName}";
-
-                                if (item.UpdatedAt.HasValue && !string.IsNullOrWhiteSpace(item.UpdatedByName))
-                                {
-                                    tooltip += $"\n✏️ Updated at: {item.UpdatedAt:yyyy-MM-dd}\n👤 Updated by: {item.UpdatedByName}";
-                                }
-
-                                ea.Info = new DevExpress.Utils.ToolTipControlInfo(item, tooltip);
-                            }
-                        };
-                    }
-                },
-                caption: "Loading...",
-                description: "Loading model names...");
-        }
-
-        private void lookUpModelName_EditValueChanged(object sender, EventArgs e)
-        {
-            string model = lookUpModelName.EditValue?.ToString();
-            if (!string.IsNullOrEmpty(model))
+            string inputName = txtInPlaceRename.Text.Trim();
+            if (!DocumentServices.IsValidFileName(inputName, out var error))
             {
-                RefreshDocumentList(model);
-            }
-        }
-
-        private async void ListBoxDocuments_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (listBoxDocuments.SelectedItem is BonusDocument_Model selectedDoc)
-            {
-                btnExportFile.Enabled = false;
-                btnDelete.Enabled = false;
-
-                UseWaitCursor = true;
-
-                await Task.Run(() =>
-                {
-                    var data = GetDocumentBytes(selectedDoc.Id);
-
-                    string errorMessage;
-                    var success = DocumentViewerHelper.DisplayDocument(
-                        this,
-                        pdfViewer,
-                        pictureViewer,
-                        lblFileName,
-                        selectedDoc,
-                        data,
-                        ref currentStream,
-                        _imageCache,
-                        out errorMessage);
-
-                    Invoke(new Action(() =>
-                    {
-                        UseWaitCursor = false;
-
-                        if (success)
-                        {
-                            currentViewingDoc = selectedDoc;
-                            btnExportFile.Enabled = true;
-                            btnDelete.Enabled = true;
-                        }
-                        else if (!string.IsNullOrEmpty(errorMessage))
-                        {
-                            MessageBoxHelper.ShowWarning(errorMessage);
-                        }
-                    }));
-                });
-            }
-            else
-            {
-                btnExportFile.Enabled = false;
-                btnDelete.Enabled = false;
-            }
-        }
-
-        private void btnAddNew_Click(object sender, EventArgs e)
-        {
-            string modelName = lookUpModelName.EditValue?.ToString();
-
-            if (string.IsNullOrWhiteSpace(modelName))
-            {
-                MessageBoxHelper.ShowWarning("Please select a model before choosing a file.");
+                MessageBoxHelper.ShowWarning(error);
                 return;
             }
 
-            using (var ofd = new OpenFileDialog
+            string extension = Path.GetExtension(selectedDoc.FileName);
+            string newFileName = inputName + extension;
+
+            if (newFileName.Equals(selectedDoc.FileName, StringComparison.OrdinalIgnoreCase)) return;
+            if (_docService.DocumentExists(selectedDoc.ModelName, newFileName))
             {
-                Filter = "Supported Files|*.pdf;*.jpg;*.jpeg;*.png;*.bmp"
-            })
-            {
-                if (ofd.ShowDialog() != DialogResult.OK) return;
-
-                try
-                {
-                    selectedPdfData = File.ReadAllBytes(ofd.FileName);
-                    selectedFileName = Path.GetFileName(ofd.FileName);
-
-                    using (var preview = new PreviewSaveForm(selectedPdfData, selectedFileName, modelName))
-                    {
-                        preview.ShowDialog();
-
-                        if (preview.IsConfirmed && !string.IsNullOrWhiteSpace(preview.FileName))
-                        {
-                            selectedPdfData = preview.FinalFileData;  
-                            selectedFileName = preview.FileName;
-                            SaveDocument(modelName, selectedFileName, selectedPdfData);
-                        }
-                        else if (string.IsNullOrWhiteSpace(preview.FileName))
-                        {
-                            MessageBoxHelper.ShowWarning("File name cannot be empty.");
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBoxHelper.ShowError("Failed to open file", ex);
-                }
+                MessageBoxHelper.ShowWarning(Lang.FileNameExists);
+                return;
             }
-        }
-        private void SaveDocument(string modelName, string fileName, byte[] pdfData)
-        {
+
             try
             {
-                var doc = new BonusDocument_Model
-                {
-                    ModelName = modelName,
-                    FileName = fileName,
-                    PdfData = pdfData,
-                    CreatedBy = Global.CurrentEmployee?.UserID ?? 1
-                };
-
-                if (_docDal.Exists(modelName, fileName))
-                {
-                    var existing = _docDal.GetMetadataByModelName(modelName)?.FirstOrDefault(x => x.FileName == fileName);
-                    if (existing != null)
-                    {
-                        doc.Id = existing.Id;
-                        doc.UpdatedAt = DateTime.Now;
-                        doc.UpdatedBy = Global.CurrentEmployee?.UserID ?? 1;
-                        _docDal.Update(doc);
-                        MessageBoxHelper.ShowInfo("File updated successfully.");
-                    }
-                }
-                else
-                {
-                    _docDal.Insert(doc);
-                    MessageBoxHelper.ShowInfo("File saved successfully.");
-                }
-
-                selectedPdfData = null;
-                selectedFileName = null;
-
-                RefreshDocumentList(modelName);
+                _docService.RenameDocument(selectedDoc, newFileName, Global.CurrentEmployee?.UserID ?? 1);
+                selectedDoc.FileName = newFileName;
+                RefreshDocumentList(selectedDoc.ModelName);
+                MessageBoxHelper.ShowInfo(Lang.RenameSuccess);
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError("Error while saving document", ex);
+                MessageBoxHelper.ShowError(Lang.RenameFailed, ex);
             }
         }
-        public void PerformRefresh()
+
+        // -----------------------------
+        // File operations
+        // -----------------------------
+        private bool TrySelectFile(out string fileName, out byte[] data)
         {
-            _ = AsyncLoaderHelper.LoadDataWithSplashAsync(
-                this,
-                () =>
+            fileName = null;
+            data = null;
+
+            using (var ofd = new OpenFileDialog
+            {
+                Filter = $"{Lang.SupportedFiles}|*.pdf;*.jpg;*.jpeg;*.png;*.bmp",
+                Title = Lang.SelectFile,
+                CheckFileExists = true,
+                Multiselect = false
+            })
+            {
+                if (ofd.ShowDialog() != DialogResult.OK)
+                    return false;
+
+                try
                 {
-                    return _articleDal.GetDistinctModelNames();
-                },
-                modelNames =>
-                {
-                    lookUpModelName.EditValue = null;
-
-                    ViewerResetHelper.ResetViewer(
-                        pdfViewer, pictureViewer, lblFileName,
-                        ref currentStream, ref currentViewingDoc);
-
-                    listBoxDocuments.DataSource = null;
-                    listBoxArticles.DataSource = null;
-
-                    _docCache.Clear();
-                    _imageCache.Clear();
-
-                    btnAddNew.Enabled = false;
-                    btnDelete.Enabled = false;
-                    btnExportFile.Enabled = false;
-
-                    lookUpModelName.Properties.DataSource = modelNames;
-                    lookUpModelName.Properties.NullText = "-- Select Model --";
-
-                    if (listBoxDocuments.ToolTipController == null)
+                    string selectedPath = ofd.FileName;
+                    if (!File.Exists(selectedPath))
                     {
-                        listBoxDocuments.ToolTipController = toolTipController1;
-                        listBoxDocuments.ToolTipController.GetActiveObjectInfo += (s, ea) =>
-                        {
-                            var point = listBoxDocuments.PointToClient(Cursor.Position);
-                            int index = listBoxDocuments.IndexFromPoint(point);
-
-                            if (index >= 0 && index < listBoxDocuments.ItemCount &&
-                                listBoxDocuments.GetItem(index) is BonusDocument_Model item)
-                            {
-                                string tooltip = $"📄 File name: {item.FileName}\n🕒 Created at: {item.CreatedAt:yyyy-MM-dd}\n👤 Created by: {item.CreatedByName}";
-
-                                if (item.UpdatedAt.HasValue && !string.IsNullOrWhiteSpace(item.UpdatedByName))
-                                {
-                                    tooltip += $"\n✏️ Updated at: {item.UpdatedAt:yyyy-MM-dd}\n👤 Updated by: {item.UpdatedByName}";
-                                }
-
-                                ea.Info = new DevExpress.Utils.ToolTipControlInfo(item, tooltip);
-                            }
-                        };
+                        MessageBoxHelper.ShowWarning(Lang.FileNotFound);
+                        return false;
                     }
-                },
-                caption: "Refreshing...",
-                description: "Refreshing bonus document data...");
+
+                    data = File.ReadAllBytes(selectedPath);
+                    fileName = Path.GetFileName(selectedPath);
+                    return true;
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    MessageBoxHelper.ShowError(Lang.AccessDeniedToFile, ex);
+                }
+                catch (IOException ex)
+                {
+                    MessageBoxHelper.ShowError(Lang.FileReadError, ex);
+                }
+                catch (Exception ex)
+                {
+                    MessageBoxHelper.ShowError(Lang.FailedToOpenFile, ex);
+                }
+
+                return false;
+            }
+        }
+
+        private void SaveDocument(string modelName, string fileName, string documentType, byte[] pdfData)
+        {
+            try
+            {
+                _docService.SaveOrUpdateDocument(modelName, fileName, documentType, pdfData, Global.CurrentEmployee?.UserID ?? 1);
+                RefreshDocumentList(modelName);
+                MessageBoxHelper.ShowInfo(Lang.FileSavedSuccessfully);
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError(Lang.ErrorWhileSavingDocument, ex);
+            }
         }
 
         private void DeleteSelectedDocument()
@@ -470,90 +303,185 @@ namespace KpiApplication.Controls
             if (selectedDoc == null) return;
 
             var confirm = MessageBoxHelper.ShowConfirm(
-                $"Are you sure you want to delete file '{selectedDoc.FileName}' from model '{selectedDoc.ModelName}'?",
-                "Confirm Delete");
+                string.Format(Lang.ConfirmDelete_Message, selectedDoc.FileName, selectedDoc.ModelName),
+                Lang.ConfirmDelete_Title);
 
             if (confirm != DialogResult.Yes) return;
 
             try
             {
-                _docDal.Delete(selectedDoc.Id);
-                _docCache.Remove(selectedDoc.Id);
+                _docService.DeleteDocument(selectedDoc.Id);
+                _docService.RemoveDocumentFromCache(selectedDoc.Id);
 
-                MessageBoxHelper.ShowInfo("File deleted successfully.");
-
-                if (currentViewingDoc != null && currentViewingDoc.Id == selectedDoc.Id)
+                if (currentViewingDoc?.Id == selectedDoc.Id)
                 {
-                    ViewerResetHelper.ResetViewer(
-                        pdfViewer, pictureViewer, lblFileName,
-                        ref currentStream, ref currentViewingDoc);
+                    ResetViewer();
+                    currentViewingDoc = null;
                 }
 
+                MessageBoxHelper.ShowInfo(Lang.DeletedSuccess);
                 RefreshDocumentList(selectedDoc.ModelName);
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError("Failed to delete file", ex);
+                MessageBoxHelper.ShowError(Lang.DeleteFailed, ex);
             }
         }
 
-        private void btnDelete_Click(object sender, EventArgs e) => DeleteSelectedDocument();
-
-        private void btnExportFile_Click(object sender, EventArgs e)
+        private Task<byte[]> LoadDocumentDataAsync(int docId)
         {
-            ExportCurrentFile();
+            return Task.Run(() => _docService.GetDocumentBytesWithCache(docId));
         }
+
         private void ExportCurrentFile()
         {
             if (currentViewingDoc == null || currentStream == null)
             {
-                MessageBoxHelper.ShowWarning("No file is currently selected.");
+                MessageBoxHelper.ShowWarning(Lang.NoFileSelected);
                 return;
             }
 
             using (var sfd = new SaveFileDialog())
             {
                 string ext = Path.GetExtension(currentViewingDoc.FileName)?.ToLower() ?? ".pdf";
-                string filter;
-
-                switch (ext)
-                {
-                    case ".pdf":
-                        filter = "PDF File (*.pdf)|*.pdf";
-                        break;
-                    case ".jpg":
-                        filter = "JPEG Image (*.jpg)|*.jpg";
-                        break;
-                    case ".jpeg":
-                        filter = "JPEG Image (*.jpeg)|*.jpeg";
-                        break;
-                    case ".png":
-                        filter = "PNG Image (*.png)|*.png";
-                        break;
-                    case ".bmp":
-                        filter = "Bitmap Image (*.bmp)|*.bmp";
-                        break;
-                    default:
-                        filter = "All Files (*.*)|*.*";
-                        break;
-                }
-
-                sfd.Filter = filter;
+                sfd.Filter = DocumentServices.FileFilters.TryGetValue(ext, out var filter) ? filter : "All Files (*.*)|*.*";
                 sfd.FileName = currentViewingDoc.FileName;
 
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
                     try
                     {
-                        File.WriteAllBytes(sfd.FileName, currentStream.ToArray());
-                        MessageBoxHelper.ShowInfo("File exported successfully.");
+                        DocumentServices.ExportDocumentToFile(currentStream, sfd.FileName);
+                        MessageBoxHelper.ShowInfo(Lang.ExportSuccess);
                     }
                     catch (Exception ex)
                     {
-                        MessageBoxHelper.ShowError("Failed to save file", ex);
+                        MessageBoxHelper.ShowError(Lang.SaveFileFailed, ex);
                     }
                 }
             }
         }
+        /// <summary>
+        /// Other Methods
+        /// </summary>
+        /// 
+        private void ReloadCurrentDocument()
+        {
+            var data = _docService.GetDocumentBytesWithCache(currentViewingDoc.Id);
+            if (data == null || data.Length == 0) return;
+
+            ResetViewer();
+
+            if (!DisplaySelectedDocument(currentViewingDoc, data))
+            {
+                return;
+            }
+        }
+        private void SetUiStateDuringLoading(bool enable)
+        {
+            btnExportFile.Enabled = enable;
+            btnDelete.Enabled = enable;
+            UseWaitCursor = !enable;
+        }
+        private bool DisplaySelectedDocument(BonusDocument_Model doc, byte[] data)
+        {
+            bool success = DocumentViewerHelper.DisplayDocument(
+                this,
+                pdfViewer,
+                pictureViewer,
+                lblFileName,
+                doc,
+                data,
+                ref currentStream,
+                _docService.ImageCache,
+                out var errorMessage);
+
+            if (!success && !string.IsNullOrWhiteSpace(errorMessage))
+            {
+                MessageBoxHelper.ShowWarning(errorMessage);
+            }
+
+            return success;
+        }
+
+
+
+        // -----------------------------
+        // Event handlers
+        // -----------------------------
+        private void ListBoxDocuments_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.F2: BeginRenameSelectedItem(); e.Handled = true; break;
+                case Keys.Delete: DeleteSelectedDocument(); e.Handled = true; break;
+            }
+        }
+
+        private void TxtInPlaceRename_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter) { CommitRename(); e.Handled = true; }
+            else if (e.KeyCode == Keys.Escape) txtInPlaceRename.Visible = false;
+        }         
+
+        private async void ListBoxDocuments_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selectedDoc = listBoxDocuments.SelectedItem as BonusDocument_Model;
+            if (selectedDoc == null || currentViewingDoc?.Id == selectedDoc.Id)
+                return;
+
+            SetUiStateDuringLoading(false);
+
+            try
+            {
+                var data = await LoadDocumentDataAsync(selectedDoc.Id);
+
+                if (DisplaySelectedDocument(selectedDoc, data))
+                {
+                    currentViewingDoc = selectedDoc;
+                    SetUiStateDuringLoading(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError("Lỗi khi tải tài liệu", ex);
+            }
+            finally
+            {
+                UseWaitCursor = false;
+            }
+        }
+        private void lookUpModelName_EditValueChanged(object sender, EventArgs e)
+        {
+            var model = lookUpModelName.EditValue?.ToString();
+            if (string.IsNullOrWhiteSpace(model) || model.Equals(previousModel, StringComparison.OrdinalIgnoreCase))
+                return;
+
+            if (RefreshDocumentList(model))
+                previousModel = model;
+        }
+        private void btnAddNew_Click(object sender, EventArgs e)
+        {
+            string modelName = lookUpModelName.EditValue?.ToString();
+            if (string.IsNullOrWhiteSpace(modelName))
+            {
+                MessageBoxHelper.ShowWarning(Lang.SelectModelFirst);
+                return;
+            }
+
+            if (!TrySelectFile(out string fileName, out byte[] data)) return;
+
+            using (var preview = new PreviewSaveForm(data, fileName, modelName))
+            {
+                preview.ShowDialog();
+                if (preview.IsConfirmed && !string.IsNullOrWhiteSpace(preview.FileName))
+                {
+                    SaveDocument(modelName, preview.FileName, preview.DocumentType, preview.FinalFileData);
+                }
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e) => DeleteSelectedDocument();
+        private void btnExportFile_Click(object sender, EventArgs e) => ExportCurrentFile();
     }
 }

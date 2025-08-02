@@ -1,24 +1,24 @@
 ﻿using DevExpress.Utils;
-using DevExpress.XtraGrid;
 using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Grid;
+using KpiApplication.Common;
 using KpiApplication.DataAccess;
-using KpiApplication.Excel;
 using KpiApplication.Models;
+using KpiApplication.Excel;
+using KpiApplication.Services;
 using KpiApplication.Utils;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System;
 
 namespace KpiApplication.Controls
 {
-    public partial class ucViewPPHData : DevExpress.XtraEditors.XtraUserControl
+    public partial class ucViewPPHData : DevExpress.XtraEditors.XtraUserControl, ISupportLoadAsync
     {
         private BindingList<IEPPHDataForUser_Model> iepphDataList;
         private readonly IEPPHData_DAL iePPHData_DAL = new IEPPHData_DAL();
@@ -26,29 +26,37 @@ namespace KpiApplication.Controls
         public ucViewPPHData()
         {
             InitializeComponent();
+            ApplyLocalizedText();
             dgvPPHData.CellMerge += dgvPPHData_CellMerge;
         }
 
-        private async void ucViewPPHData_Load(object sender, EventArgs e)
+        private void ApplyLocalizedText()
         {
-            await LoadDataAsync("Loading...");
+            btnExport.Caption = Lang.Export;
+            btnRefresh.Caption = Lang.Refresh;
         }
 
         private async void btnRefresh_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-            await LoadDataAsync("Refreshing data...");
+            await LoadDataAsync();
         }
 
-        /// <summary>
-        /// Tải dữ liệu và cấu hình lại GridView
-        /// </summary>
-        private async Task LoadDataAsync(string splashMessage)
+        public async Task LoadDataAsync()
         {
-            await AsyncLoaderHelper.LoadDataWithSplashAsync(
-                this,
-                FetchData,
-                ConfigureGridView,
-                splashMessage);
+            try
+            {
+                UseWaitCursor = true;
+                var data = await Task.Run(FetchData);
+                ConfigureGridView(data);
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError(Lang.LoadDataFailed, ex);
+            }
+            finally
+            {
+                UseWaitCursor = false;
+            }
         }
 
         private BindingList<IEPPHDataForUser_Model> FetchData()
@@ -59,17 +67,15 @@ namespace KpiApplication.Controls
             iepphDataList = data;
             gridControl1.DataSource = iepphDataList;
 
-            // Cấu hình cơ bản của GridView
             dgvPPHData.OptionsBehavior.Editable = false;
             dgvPPHData.OptionsView.AllowCellMerge = true;
+            dgvPPHData.OptionsView.RowAutoHeight = true;
+            dgvPPHData.OptionsView.ColumnAutoWidth = false;
 
-            // Sử dụng GridViewHelper chuẩn hóa hiển thị
             GridViewHelper.ApplyDefaultFormatting(dgvPPHData);
             GridViewHelper.EnableWordWrapForGridView(dgvPPHData);
-            GridViewHelper.AdjustGridColumnWidthsAndRowHeight(dgvPPHData);
             GridViewHelper.EnableCopyFunctionality(dgvPPHData);
 
-            // Ẩn các cột không cần hiển thị
             GridViewHelper.HideColumns(dgvPPHData,
                 "OutsourcingStitchingBool",
                 "OutsourcingAssemblingBool",
@@ -78,25 +84,55 @@ namespace KpiApplication.Controls
                 "OutsourcingAssembling",
                 "OutsourcingStockFitting");
 
-            // Đặt lại caption
             GridViewHelper.SetColumnCaptions(dgvPPHData, new Dictionary<string, string>
             {
                 ["IEPPHValue"] = "IE PPH",
-                ["IsSigned"] = "Production Sign",
-                ["AdjustOperatorNo"] = "Adjust\nOperator",
-                ["TargetOutputPC"] = "Target\nOutput",
-                ["StageName"] = "Process",
+                ["ArticleName"] = Lang.ArticleName,
+                ["IsSigned"] = Lang.ProductionSign,
+                ["DataStatus"] = Lang.DataStatus,
+                ["NoteForPC"] = Lang.NoteForPC,
+                ["Process"] = Lang.Process,
+                ["ModelName"] = Lang.ModelName,
+                ["PCSend"] = Lang.PCSend,
+                ["AdjustOperatorNo"] = Lang.AdjustOperator,
+                ["TargetOutputPC"] = Lang.TargetOutput,
+                ["StageName"] = Lang.Process,
                 ["THTValue"] = "THT",
-                ["TypeName"] = "Type",
-                ["PersonIncharge"] = "Person\nIncharge"
+                ["TypeName"] = Lang.Type,
+                ["PersonIncharge"] = Lang.PersonIncharge
             });
 
-            // Đặt độ rộng cố định nếu cần
-            GridViewHelper.SetColumnFixedWidth(dgvPPHData, new Dictionary<string, int>
+            var fixedWidths = new Dictionary<string, int>
             {
                 ["NoteForPC"] = 220,
                 ["ModelName"] = 220
-            });
+            };
+
+            foreach (GridColumn column in dgvPPHData.Columns)
+            {
+                if (fixedWidths.TryGetValue(column.FieldName, out int fixedWidth))
+                {
+                    column.Width = fixedWidth;
+                }
+                else
+                {
+                    column.BestFit();
+                }
+            }
+
+            int totalWidth = dgvPPHData.Columns
+                .Where(c => c.Visible)
+                .Sum(c => c.Width);
+
+            int gridViewWidth = dgvPPHData.ViewRect.Width - SystemInformation.VerticalScrollBarWidth;
+            int remaining = gridViewWidth - totalWidth;
+
+            if (remaining > 0)
+            {
+                var stretchColumn = dgvPPHData.Columns["NoteForPC"];
+                if (stretchColumn != null)
+                    stretchColumn.Width += remaining;
+            }
         }
 
         private void dgvPPHData_CellMerge(object sender, CellMergeEventArgs e)
@@ -128,11 +164,17 @@ namespace KpiApplication.Controls
         {
             if (iepphDataList == null || iepphDataList.Count == 0)
             {
-                MessageBoxHelper.ShowInfo("No data to export.");
+                MessageBoxHelper.ShowInfo(Lang.NoDataToExport);
                 return;
             }
 
-            var result = MessageBoxHelper.ShowConfirm("Do you want to include the TCT column in the export?", "Excel Export Options");
+            var result = MessageBoxHelper.ShowConfirmYesNoCancel(
+                Lang.IncludeTCTInExport,
+                Lang.ExcelExportOptions);
+
+            if (result == DialogResult.Cancel)
+                return;
+
             bool includeTCT = (result == DialogResult.Yes);
 
             using (var saveDialog = new SaveFileDialog())
@@ -156,34 +198,27 @@ namespace KpiApplication.Controls
                     count++;
                 }
 
-                await AsyncLoaderHelper.LoadDataWithSplashAsync(
-                    this,
-                    () =>
+                await Task.Run(() =>
+                {
+                    var convertedData = iepphDataList.Select(item => new IETotal_Model
                     {
-                        var convertedData = iepphDataList
-                            .Select(item => new IETotal_Model
-                            {
-                                ArticleName = item.ArticleName,
-                                ModelName = item.ModelName,
-                                Process = item.Process,
-                                IEPPHValue = item.IEPPHValue,
-                                THTValue = item.THTValue,
-                                TargetOutputPC = item.TargetOutputPC,
-                                AdjustOperatorNo = item.AdjustOperatorNo,
-                                IsSigned = item.IsSigned,
-                                TypeName = item.TypeName,
-                                PersonIncharge = item.PersonIncharge,
-                                NoteForPC = item.NoteForPC
-                            }).ToList();
+                        ArticleName = item.ArticleName,
+                        ModelName = item.ModelName,
+                        Process = item.Process,
+                        IEPPHValue = item.IEPPHValue,
+                        THTValue = item.THTValue,
+                        TargetOutputPC = item.TargetOutputPC,
+                        AdjustOperatorNo = item.AdjustOperatorNo,
+                        IsSigned = item.IsSigned,
+                        TypeName = item.TypeName,
+                        PersonIncharge = item.PersonIncharge,
+                        NoteForPC = item.NoteForPC
+                    }).ToList();
 
-                        ExcelExporter.ExportIETotalPivoted(convertedData, filePath, includeTCT);
-                        return true;
-                    },
-                    _ => { },
-                    "Exporting..."
-                );
+                    ExcelExporter.ExportIETotalPivoted(convertedData, filePath, includeTCT);
+                });
 
-                MessageBoxHelper.ShowInfo("Excel export completed successfully!");
+                MessageBoxHelper.ShowInfo(Lang.ExcelExportSuccess);
 
                 try
                 {
@@ -191,7 +226,7 @@ namespace KpiApplication.Controls
                 }
                 catch
                 {
-                    MessageBoxHelper.ShowError("Cannot open exported file.");
+                    MessageBoxHelper.ShowError(Lang.CannotOpenExportedFile);
                 }
             }
         }

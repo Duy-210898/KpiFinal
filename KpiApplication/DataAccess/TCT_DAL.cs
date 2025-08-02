@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
+using System.Linq;
+using System.Diagnostics;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+using System.ComponentModel;
 
 namespace KpiApplication.DataAccess
 {
@@ -11,35 +15,36 @@ namespace KpiApplication.DataAccess
     {
         private static readonly string connectionString = ConfigurationManager.ConnectionStrings["strCon"].ConnectionString;
 
-        public static void SaveTCTImportList(List<TCTImport_Model> list)
+        public static (int updated, int inserted) SaveTCTImportList(List<TCTImport_Model> list, string updatedBy)
         {
-            if (list == null || list.Count == 0) return;
+            if (list == null || list.Count == 0) return (0, 0);
 
             using (var conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-
                 using (var tran = conn.BeginTransaction())
                 {
                     try
                     {
+                        // Tạo bảng tạm
                         using (var cmd = conn.CreateCommand())
                         {
                             cmd.Transaction = tran;
                             cmd.CommandText = @"
-                        IF OBJECT_ID('tempdb..#TempTCTData') IS NOT NULL
-                            DROP TABLE #TempTCTData;
+IF OBJECT_ID('tempdb..#TempTCTData') IS NOT NULL
+    DROP TABLE #TempTCTData;
 
-                        CREATE TABLE #TempTCTData (
-                            ModelName NVARCHAR(200),
-                            TypeName NVARCHAR(200),
-                            Process NVARCHAR(200),
-                            TCTValue FLOAT,
-                            Notes NVARCHAR(MAX)
-                        );";
+CREATE TABLE #TempTCTData (
+    ModelName NVARCHAR(200),
+    TypeName NVARCHAR(200),
+    Process NVARCHAR(200),
+    TCTValue FLOAT,
+    Notes NVARCHAR(MAX)
+);";
                             cmd.ExecuteNonQuery();
                         }
 
+                        // Đổ dữ liệu vào bảng tạm
                         var table = new DataTable();
                         table.Columns.Add("ModelName", typeof(string));
                         table.Columns.Add("TypeName", typeof(string));
@@ -47,7 +52,22 @@ namespace KpiApplication.DataAccess
                         table.Columns.Add("TCTValue", typeof(double));
                         table.Columns.Add("Notes", typeof(string));
 
-                        foreach (var item in list)
+                        var distinctList = list
+                            .GroupBy(x => new { x.ModelName, x.Process })
+                            .Select(g =>
+                            {
+                                var lastItem = g.Last();
+                                return new TCTImport_Model
+                                {
+                                    ModelName = g.Key.ModelName,
+                                    Process = g.Key.Process,
+                                    Type = lastItem.Type,
+                                    TCT = lastItem.TCT,
+                                    Notes = lastItem.Notes
+                                };
+                            }).ToList();
+
+                        foreach (var item in distinctList)
                         {
                             table.Rows.Add(
                                 item.ModelName ?? (object)DBNull.Value,
@@ -69,25 +89,47 @@ namespace KpiApplication.DataAccess
                             bulkCopy.WriteToServer(table);
                         }
 
+                        int updatedCount = 0;
+                        int insertedCount = 0;
+
                         using (var cmd = conn.CreateCommand())
                         {
                             cmd.Transaction = tran;
                             cmd.CommandText = @"
-                        INSERT INTO TCTData (ModelName, TypeName, Process, TCTValue, Notes)
-                        SELECT t.ModelName, t.TypeName, t.Process, t.TCTValue, t.Notes
-                        FROM #TempTCTData t
-                        WHERE NOT EXISTS (
-                            SELECT 1 FROM TCTData d 
-                            WHERE d.ModelName = t.ModelName 
-                              AND d.TypeName = t.TypeName
-                              AND d.Process = t.Process
-                        );";
-                            cmd.ExecuteNonQuery();
+UPDATE T
+SET 
+    T.TypeName = S.TypeName,
+    T.TCTValue = S.TCTValue,
+    T.Notes = S.Notes,
+    T.UpdatedAt = GETDATE(),
+    T.UpdatedBy = @UpdatedBy
+FROM TCTData T
+INNER JOIN #TempTCTData S
+    ON T.ModelName = S.ModelName AND T.Process = S.Process;";
+                            cmd.Parameters.AddWithValue("@UpdatedBy", updatedBy);
+                            updatedCount = cmd.ExecuteNonQuery();
+                        }
+
+                        using (var cmd = conn.CreateCommand())
+                        {
+                            cmd.Transaction = tran;
+                            cmd.CommandText = @"
+INSERT INTO TCTData (ModelName, TypeName, Process, TCTValue, Notes, CreatedBy, CreatedAt)
+SELECT 
+    S.ModelName, S.TypeName, S.Process, S.TCTValue, S.Notes, @UpdatedBy, GETDATE()
+FROM #TempTCTData S
+WHERE NOT EXISTS (
+    SELECT 1 FROM TCTData T
+    WHERE T.ModelName = S.ModelName AND T.Process = S.Process
+);";
+                            cmd.Parameters.AddWithValue("@UpdatedBy", updatedBy);
+                            insertedCount = cmd.ExecuteNonQuery();
                         }
 
                         tran.Commit();
+                        return (updatedCount, insertedCount);
                     }
-                    catch (Exception)
+                    catch
                     {
                         tran.Rollback();
                         throw;
@@ -95,51 +137,94 @@ namespace KpiApplication.DataAccess
                 }
             }
         }
-
         public static void InsertOrUpdateTCT(TCTData_Model data, string updatedBy)
         {
             using (var conn = new SqlConnection(connectionString))
             {
                 conn.Open();
 
-                string checkSql = @"
-            SELECT COUNT(*) FROM TCTData
-            WHERE ModelName = @ModelName AND TypeName = @TypeName AND Process = @Process";
+                bool recordExists;
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                SELECT COUNT(*) 
+                FROM TCTData 
+                WHERE RTRIM(ModelName) = RTRIM(@ModelName)
+                  AND RTRIM(TypeName) = RTRIM(@TypeName)
+                  AND RTRIM(Process) = RTRIM(@Process)";
+                    cmd.Parameters.AddWithValue("@ModelName", (data.ModelName ?? "").Trim());
+                    cmd.Parameters.AddWithValue("@TypeName", (data.Type ?? "").Trim());
+                    cmd.Parameters.AddWithValue("@Process", (data.Process ?? "").Trim());
 
-                string updateSql = @"
-            UPDATE TCTData
-            SET TCTValue = @TCTValue, UpdatedAt = @UpdatedAt, UpdatedBy = @UpdatedBy, Notes = @Notes
-            WHERE ModelName = @ModelName AND TypeName = @TypeName AND Process = @Process";
+                    recordExists = (int)cmd.ExecuteScalar() > 0;
+                }
 
-                string insertSql = @"
-            INSERT INTO TCTData (ModelName, TypeName, Process, TCTValue, Notes, CreatedBy)
-            VALUES (@ModelName, @TypeName, @Process, @TCTValue, @Notes, @CreatedBy)";
+                string sql;
+                if (data.Process == "NotesOnly")
+                {
+                    sql = @"
+                UPDATE TCTData
+                SET Notes = @Notes,
+                    UpdatedBy = @UpdatedBy,
+                    UpdatedAt = @UpdatedAt
+                WHERE RTRIM(ModelName) = RTRIM(@ModelName)
+                  AND RTRIM(TypeName) = RTRIM(@TypeName)";
+                }
+                else if (recordExists)
+                {
+                    sql = @"
+                UPDATE TCTData
+                SET TCTValue = @TCTValue,
+                    Notes = @Notes,
+                    UpdatedBy = @UpdatedBy,
+                    UpdatedAt = @UpdatedAt
+                WHERE RTRIM(ModelName) = RTRIM(@ModelName)
+                  AND RTRIM(TypeName) = RTRIM(@TypeName)
+                  AND RTRIM(Process) = RTRIM(@Process)";
+                }
+                else
+                {
+                    sql = @"
+                INSERT INTO TCTData
+                (ModelName, TypeName, Process, TCTValue, Notes, CreatedBy, CreatedAt, UpdatedBy, UpdatedAt)
+                VALUES
+                (@ModelName, @TypeName, @Process, @TCTValue, @Notes, @CreatedBy, @CreatedAt, @UpdatedBy, @UpdatedAt)";
+                }
 
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = checkSql;
-                    cmd.Parameters.AddWithValue("@ModelName", data.ModelName);
-                    cmd.Parameters.AddWithValue("@TypeName", data.Type);
-                    cmd.Parameters.AddWithValue("@Process", data.Process);
+                    cmd.CommandText = sql;
+                    DateTime now = data.LastUpdatedAt ?? DateTime.Now;
 
-                    int exists = (int)cmd.ExecuteScalar();
-                    cmd.Parameters.Clear();
-
-                    if (exists > 0)
-                        cmd.CommandText = updateSql;
-                    else
-                        cmd.CommandText = insertSql;
-
-                    cmd.Parameters.AddWithValue("@ModelName", data.ModelName);
-                    cmd.Parameters.AddWithValue("@TypeName", data.Type);
-                    cmd.Parameters.AddWithValue("@Process", data.Process);
-                    cmd.Parameters.AddWithValue("@TCTValue", data.TCTValue ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@ModelName", data.ModelName ?? "");
+                    cmd.Parameters.AddWithValue("@TypeName", data.Type ?? "");
+                    cmd.Parameters.AddWithValue("@Process", data.Process ?? "");
+                    cmd.Parameters.AddWithValue("@TCTValue", data.TCTValue != null ? (object)data.TCTValue : DBNull.Value);
                     cmd.Parameters.AddWithValue("@Notes", data.Notes ?? (object)DBNull.Value);
-                    cmd.Parameters.AddWithValue("@UpdatedAt", data.LastUpdatedAt ?? DateTime.Now);
                     cmd.Parameters.AddWithValue("@UpdatedBy", updatedBy);
-                    cmd.Parameters.AddWithValue("@CreatedBy", updatedBy);
+                    cmd.Parameters.AddWithValue("@UpdatedAt", now);
 
+                    if (!recordExists && data.Process != "NotesOnly")
+                    {
+                        cmd.Parameters.AddWithValue("@CreatedBy", updatedBy);
+                        cmd.Parameters.AddWithValue("@CreatedAt", now);
+                    }
+
+                    Debug.WriteLine($"[DAL] {(recordExists ? "Update" : "Insert")} {data.ModelName} - {data.Type} - {data.Process}");
                     cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        public static bool ModelExists(string modelName)
+        {
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string sql = "SELECT COUNT(*) FROM TCTData WHERE ModelName = @ModelName";
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ModelName", modelName);
+                    return (int)cmd.ExecuteScalar() > 0;
                 }
             }
         }
@@ -149,13 +234,32 @@ namespace KpiApplication.DataAccess
             using (var conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                string query = @"DELETE FROM TCTData WHERE ModelName = @ModelName AND TypeName = @TypeName";
-                using (var cmd = new SqlCommand(query, conn))
+
+                string query;
+                SqlCommand cmd;
+
+                if (string.IsNullOrWhiteSpace(typeName))
                 {
-                    cmd.Parameters.AddWithValue("@ModelName", modelName);
-                    cmd.Parameters.AddWithValue("@TypeName", typeName);
-                    cmd.ExecuteNonQuery();
+                    // Nếu typeName rỗng thì so sánh với IS NULL hoặc ''
+                    query = @"
+                DELETE FROM TCTData 
+                WHERE RTRIM(LTRIM(ModelName)) = RTRIM(LTRIM(@ModelName)) 
+                  AND (TypeName IS NULL OR RTRIM(LTRIM(TypeName)) = '')";
+                    cmd = new SqlCommand(query, conn);
                 }
+                else
+                {
+                    query = @"
+                DELETE FROM TCTData 
+                WHERE RTRIM(LTRIM(ModelName)) = RTRIM(LTRIM(@ModelName)) 
+                  AND RTRIM(LTRIM(TypeName)) = RTRIM(LTRIM(@TypeName))";
+                    cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@TypeName", typeName);
+                }
+
+                cmd.Parameters.AddWithValue("@ModelName", modelName);
+                int rows = cmd.ExecuteNonQuery();
+                Debug.WriteLine($"[DeleteTCT] Xóa {rows} dòng với ModelName='{modelName}', TypeName='{typeName}'");
             }
         }
 
@@ -195,6 +299,42 @@ namespace KpiApplication.DataAccess
             }
 
             return list;
+        }
+        public static int InsertMissingModelNames(List<string> modelNames, string createdBy)
+        {
+            if (modelNames == null || modelNames.Count == 0)
+                return 0;
+
+            int insertedCount = 0;
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                foreach (var model in modelNames)
+                {
+                    if (string.IsNullOrWhiteSpace(model))
+                        continue;
+
+                    string sql = @"
+IF NOT EXISTS (SELECT 1 FROM TCTData WHERE RTRIM(ModelName) = RTRIM(@ModelName))
+BEGIN
+    INSERT INTO TCTData (ModelName, CreatedBy, CreatedAt)
+    VALUES (@ModelName, @CreatedBy, GETDATE())
+END";
+
+                    using (var cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@ModelName", model);
+                        cmd.Parameters.AddWithValue("@CreatedBy", createdBy);
+                        int result = cmd.ExecuteNonQuery(); 
+                        if (result > 0)
+                            insertedCount++;
+                    }
+                }
+            }
+
+            return insertedCount;
         }
     }
 }

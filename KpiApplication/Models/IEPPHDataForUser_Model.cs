@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KpiApplication.Common;
+using System;
 
 namespace KpiApplication.Models
 {
@@ -19,6 +20,7 @@ namespace KpiApplication.Models
         public string OutsourcingStockFitting => OutsourcingStockFittingBool ? "YES" : "";
 
         public string DataStatus { get; set; }
+
         public string Process { get; set; }
         public int? TargetOutputPC { get; set; }
         public int? AdjustOperatorNo { get; set; }

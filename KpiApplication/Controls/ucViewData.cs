@@ -20,7 +20,7 @@ using System.Windows.Forms;
 
 namespace KpiApplication.Controls
 {
-    public partial class ucViewData : DevExpress.XtraEditors.XtraUserControl
+    public partial class ucViewData : XtraUserControl, ISupportLoadAsync
     {
         private readonly ProductionData_DAL productionData_DAL = new ProductionData_DAL();
 
@@ -29,25 +29,39 @@ namespace KpiApplication.Controls
         public ucViewData()
         {
             InitializeComponent();
+            ApplyLocalizedText();
             AddItemsToBarMenu();
             dgvViewProductionData.RowCellStyle += dgvViewProductionData_RowCellStyle;
         }
+        private void ApplyLocalizedText()
+        {
+            btnExport.Caption = Lang.Export;
+            layoutControlItem1.Text = Lang.Process;
+        }
+
         private List<ProductionData_Model> FetchData()
         {
             return productionData_DAL.GetAllData();
         }
-        private async void ucViewData_Load(object sender, EventArgs e)
+        public async Task LoadDataAsync()
         {
-            await AsyncLoaderHelper.LoadDataWithSplashAsync(
-                this,
-                FetchData,
-                data =>
-                {
-                    LoadDataToGrid(data);
-                    ConfigureGridAfterDataBinding();
-                },
-                "Loading"
-            );
+            try
+            {
+                UseWaitCursor = true;
+
+                var data = await Task.Run(() => FetchData());
+
+                LoadDataToGrid(data);
+                ConfigureGridAfterDataBinding();
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError(Lang.LoadDataFailed, ex);
+            }
+            finally
+            {
+                UseWaitCursor = false;
+            }
         }
 
         private void ConfigureGridAfterDataBinding()
@@ -73,11 +87,27 @@ namespace KpiApplication.Controls
                 "ProductionID", "IsMerged", "PPHFallsBelowReasons",
                 "IsVisible", "MergeGroupID", "LargestOutput", "Target", "OperatorAdjust");
 
-            GridViewHelper.SetColumnCaptions(dgvViewProductionData, new Dictionary<string, string>
-    {
-        { "IEPPH", "IE PPH" },
-        { "TypeName", "Stage" }
-    });
+            GridViewHelper.SetColumnCaptions(dgvViewProductionData, GetCaptions());
+        }
+        private Dictionary<string, string> GetCaptions()
+        {
+            return new Dictionary<string, string>
+            {
+                ["ScanDate"] = Lang.ScanDate,
+                ["Factory"] = Lang.Factory,
+                ["Plant"] = Lang.Plant,
+                ["LineName"] = Lang.LineName,
+                ["ModelName"] = Lang.ModelName,
+                ["Quantity"] = Lang.Quantity,
+                ["TargetOutputPC"] = Lang.TargetOutput,
+                ["TotalWorker"] = Lang.TotalWorker,
+                ["WorkingTime"] = Lang.WorkingTime,
+                ["TotalWorkingHours"] = Lang.TotalWorkingHours,
+                ["IEPPH"] = "IE PPH",
+                ["Stage"] = Lang.Type, 
+                ["PPHRate"] = Lang.PPHRate,
+                ["ActualPPH"] = Lang.ActutalPPH
+            };
         }
 
         private void LoadDataToGrid(List<ProductionData_Model> data)
@@ -98,32 +128,46 @@ namespace KpiApplication.Controls
 
         private void AddItemsToBarMenu()
         {
-            BarButtonItem btnReportExport = new BarButtonItem();
-            btnReportExport.Caption = "Export IE report file";
-            btnReportExport.Id = 1;
+            var btnReportExport = new BarButtonItem
+            {
+                Caption = Lang.ExportIEReportFile,
+                Id = 1,
+                ImageOptions = { Image = Properties.Resources.export }
+            };
 
-            BarButtonItem btnShoesKPIExport = new BarButtonItem();
-            btnShoesKPIExport.Caption = "Export Shoes KPI report file";
-            btnShoesKPIExport.Id = 2;
+            var btnShoesKPIExport = new BarButtonItem
+            {
+                Caption = Lang.ExportShoesKPIReportFile,
+                Id = 2,
+                ImageOptions = { Image = Properties.Resources.export }
+            };
 
-            BarButtonItem btnSlidesKPIExport = new BarButtonItem();
-            btnSlidesKPIExport.Caption = "Export Slide KPI report file";
-            btnSlidesKPIExport.Id = 3;
+            var btnSlidesKPIExport = new BarButtonItem
+            {
+                Caption = Lang.ExportSlidesKPIReportFile,
+                Id = 3,
+                ImageOptions = { Image = Properties.Resources.export }
+            };
 
-            BarButtonItem btnOutputPerLineExport = new BarButtonItem();
-            btnOutputPerLineExport.Caption = "Export Output Per Line report file";
-            btnOutputPerLineExport.Id = 4;
+            var btnOutputPerLineExport = new BarButtonItem
+            {
+                Caption = Lang.ExportOutputPerLineReportFile,
+                Id = 4,
+                ImageOptions = { Image = Properties.Resources.export }
+            };
 
-            btnExport.LinksPersistInfo.Add(new LinkPersistInfo(btnReportExport));
-            btnExport.LinksPersistInfo.Add(new LinkPersistInfo(btnShoesKPIExport));
-            btnExport.LinksPersistInfo.Add(new LinkPersistInfo(btnSlidesKPIExport));
-            btnExport.LinksPersistInfo.Add(new LinkPersistInfo(btnOutputPerLineExport));
+            btnExport.LinksPersistInfo.AddRange(new[]
+            {
+        new LinkPersistInfo(btnReportExport),
+        new LinkPersistInfo(btnShoesKPIExport),
+        new LinkPersistInfo(btnSlidesKPIExport),
+        new LinkPersistInfo(btnOutputPerLineExport)
+    });
 
             btnReportExport.ItemClick += btnReportExport_ItemClick;
             btnShoesKPIExport.ItemClick += btnShoesKPIExport_ItemClick;
             btnSlidesKPIExport.ItemClick += btnSlidesKPIExport_ItemClick;
             btnOutputPerLineExport.ItemClick += btnOutputPerLineExport_ItemClick;
-
         }
 
         private ExportOrientation ShowExportDirectionDialog()
@@ -142,7 +186,7 @@ namespace KpiApplication.Controls
             var view = dgvViewProductionData as GridView;
             if (view == null || view.RowCount == 0)
             {
-                MessageBoxHelper.ShowWarning("No data available to export.");
+                MessageBoxHelper.ShowWarning(Lang.NoDataToExport);
                 return;
             }
 
@@ -150,13 +194,13 @@ namespace KpiApplication.Controls
 
             if (dataTable == null || dataTable.Columns.Count <= 2)
             {
-                MessageBoxHelper.ShowWarning("Insufficient data for export. Please review the data layout.");
+                MessageBoxHelper.ShowWarning(Lang.ExportInsufficientData);
                 return;
             }
 
             if (!dataTable.Columns.Contains("ScanDate"))
             {
-                MessageBoxHelper.ShowError("The 'ScanDate' column was not found in the data.");
+                MessageBoxHelper.ShowError(Lang.ScanDateNotFound);
                 return;
             }
 
@@ -164,7 +208,6 @@ namespace KpiApplication.Controls
             string directionLabel = direction == ExportOrientation.Horizontal ? "Horizontal" : "Vertical";
             string fileNamePattern = $"PPH_Report_{directionLabel}_*.xlsx";
 
-            // Search for an existing file
             string existingFile = Directory.Exists(folderPath)
                 ? Directory.GetFiles(folderPath, fileNamePattern)
                           .OrderByDescending(f => File.GetCreationTime(f))
@@ -172,16 +215,10 @@ namespace KpiApplication.Controls
                 : null;
 
             string filePath;
-
             if (existingFile != null)
             {
-                var overwrite = XtraMessageBox.Show(
-                    $"A file already exists:\n{Path.GetFileName(existingFile)}\nDo you want to overwrite it?",
-                    "File Exists",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                filePath = overwrite == DialogResult.Yes
+                bool overwrite = MessageBoxHelper.ConfirmFileOverwrite(Path.GetFileName(existingFile));
+                filePath = overwrite
                     ? existingFile
                     : Path.Combine(folderPath, $"PPH_Report_{directionLabel}_1.xlsx");
             }
@@ -189,6 +226,7 @@ namespace KpiApplication.Controls
             {
                 filePath = Path.Combine(folderPath, $"PPH_Report_{directionLabel}.xlsx");
             }
+
             try
             {
                 if (!Directory.Exists(folderPath))
@@ -196,7 +234,7 @@ namespace KpiApplication.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError("Failed to create the report folder.", ex);
+                MessageBoxHelper.ShowError(Lang.FailedToCreateReportFolder, ex);
                 return;
             }
 
@@ -208,13 +246,13 @@ namespace KpiApplication.Controls
                 }
                 catch (Exception ex)
                 {
-                    MessageBoxHelper.ShowError("Failed to create a new Excel file.", ex);
+                    MessageBoxHelper.ShowError(Lang.FailedToCreateExcelFile, ex);
                     return;
                 }
             }
             else if (IsFileLocked(filePath))
             {
-                MessageBoxHelper.ShowError("The file is currently open or locked by another process. Please close it and try again.");
+                MessageBoxHelper.ShowError(Lang.FileLockedOrOpened);
                 return;
             }
 
@@ -227,24 +265,20 @@ namespace KpiApplication.Controls
                         await Task.Run(() =>
                         {
                             if (direction == ExportOrientation.Horizontal)
-                            {
                                 ExportByHorizontal(dataTable, filePath);
-                            }
                             else
-                            {
                                 ExportByVertical(dataTable, filePath);
-                            }
                         });
                     },
-                    "Exporting report data...",
+                    Lang.Export,
                     null,
                     true);
 
-                MessageBoxHelper.ShowInfo($"Report exported successfully.\nFile saved at:\n{filePath}");
+                MessageBoxHelper.ShowInfo(string.Format(Lang.ReportExportSuccess, filePath));
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError("An error occurred during export.", ex);
+                MessageBoxHelper.ShowError(Lang.ExportError, ex);
             }
         }
         private void ExportDataForProcess(DataTable table, string processName, string sheetName, DateTime scanDate, string filePath)
@@ -273,11 +307,11 @@ namespace KpiApplication.Controls
 
             foreach (var scanDate in distinctScanDates)
             {
-                ExportDataForProcess(dataTable, "Stitching", "Stitching", scanDate, filePath);
+                ExportDataForProcess(dataTable, Lang.Stitching, "Stitching", scanDate, filePath);
 
                 var assemblingRows = dataTable.AsEnumerable()
                     .Where(row =>
-                        ((row.Field<string>("Process") == "Assembling" &&
+                        ((row.Field<string>("Process") == Lang.Assembly &&
                           DateTime.TryParse(row["ScanDate"].ToString(), out var date) &&
                           date.Date == scanDate) ||
                          row.Field<string>("LineName") == "ET06"))
@@ -294,7 +328,7 @@ namespace KpiApplication.Controls
         private void ExportByVertical(DataTable dataTable, string filePath)
         {
             var stitchingRows = dataTable.AsEnumerable()
-                .Where(row => row.Field<string>("Process") == "Stitching");
+                .Where(row => row.Field<string>("Process") == Lang.Stitching);
 
             if (stitchingRows.Any())
             {
@@ -303,7 +337,7 @@ namespace KpiApplication.Controls
             }
 
             var assemblingRows = dataTable.AsEnumerable()
-                .Where(row => row.Field<string>("Process") == "Assembling" || row.Field<string>("LineName") == "ET06");
+                .Where(row => row.Field<string>("Process") == Lang.Assembly || row.Field<string>("LineName") == "ET06");
 
             if (assemblingRows.Any())
             {
@@ -380,25 +414,25 @@ namespace KpiApplication.Controls
             var view = dgvViewProductionData as GridView;
             if (view == null || view.RowCount == 0)
             {
-                MessageBoxHelper.ShowWarning("No data available to export.");
+                MessageBoxHelper.ShowWarning(Lang.NoDataToExport);
                 return;
             }
 
-            DataTable dataTable = GetFilteredDataTableFromGridView(view);
+            DataTable rawTable = GetFilteredDataTableFromGridView(view);
             DataTable exportTable;
 
             try
             {
-                exportTable = BuildOutputPerLineSummary(dataTable);
+                exportTable = BuildOutputPerLineSummary(rawTable);
                 if (exportTable == null || exportTable.Rows.Count == 0)
                 {
-                    MessageBoxHelper.ShowWarning("No valid data found to export.");
+                    MessageBoxHelper.ShowWarning(Lang.NoValidDataToExport);
                     return;
                 }
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError("Error while building export data", ex);
+                MessageBoxHelper.ShowError(Lang.FailedToBuildExportData, ex);
                 return;
             }
 
@@ -412,8 +446,20 @@ namespace KpiApplication.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError("Failed to create output folder", ex);
+                MessageBoxHelper.ShowError(Lang.FailedToCreateReportFolder, ex);
                 return;
+            }
+
+            if (File.Exists(filePath))
+            {
+                var result = XtraMessageBox.Show(
+                    string.Format(Lang.FileAlreadyExists, filePath),
+                    Lang.Confirm,
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+                if (result != DialogResult.Yes) return;
             }
 
             try
@@ -424,20 +470,19 @@ namespace KpiApplication.Controls
                     {
                         await Task.Run(() =>
                         {
-                            ExcelExporter.ExportSimpleDataTableToExcel(exportTable, filePath, "OutputPerLine");
+                            ExcelExporter.ExportSimpleDataTableToExcel(exportTable, filePath, Lang.OutputPerLineSheetName);
                         });
                     },
-                    "Exporting..."
+                    Lang.Export
                 );
 
-                MessageBoxHelper.ShowInfo("Output Per Line exported successfully!");
+                MessageBoxHelper.ShowInfo(string.Format(Lang.ExportSuccess, filePath));
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError("Error exporting Output Per Line", ex);
+                MessageBoxHelper.ShowError(Lang.ExportError, ex);
             }
         }
-
 
         private DataTable BuildOutputPerLineSummary(DataTable sourceTable)
         {
@@ -483,12 +528,12 @@ namespace KpiApplication.Controls
         }
         private async void btnShoesKPIExport_ItemClick(object sender, ItemClickEventArgs e)
         {
-            await ExportKPIDataAsync("Shoes", new[] { "Cutting", "Stitching", "Assembling", "Stock Fitting" }, false);
+            await ExportKPIDataAsync("Shoes", new[] { Lang.Cutting, Lang.Stitching, Lang.Assembly, Lang.StockFitting }, false);
         }
 
         private async void btnSlidesKPIExport_ItemClick(object sender, ItemClickEventArgs e)
         {
-            await ExportKPIDataAsync("Slide", new[] { "Cutting", "Stitching", "Assembling", "Stock Fitting" }, true);
+            await ExportKPIDataAsync("Slide", new[] { Lang.Cutting, Lang.Stitching, Lang.Assembly, Lang.StockFitting }, true);
         }
 
         private async Task ExportKPIDataAsync(string reportType, string[] processFilter, bool includeIsSlides)
@@ -496,20 +541,20 @@ namespace KpiApplication.Controls
             var view = dgvViewProductionData as GridView;
             if (view == null || view.RowCount == 0)
             {
-                MessageBoxHelper.ShowWarning("No data available to export.");
+                MessageBoxHelper.ShowWarning(Lang.NoDataToExport); // ❗ Thêm key này
                 return;
             }
 
             DataTable dataTable = GetFilteredDataTableFromGridView(view);
             if (dataTable == null || dataTable.Columns.Count <= 2)
             {
-                MessageBoxHelper.ShowWarning("Unable to export data, please try reordering the data.");
+                MessageBoxHelper.ShowWarning(Lang.Export_UnableToExportTryReorder); // ❗ Thêm key này
                 return;
             }
 
             if (!dataTable.Columns.Contains("ScanDate"))
             {
-                MessageBoxHelper.ShowError("ScanDate column not found in the data.");
+                MessageBoxHelper.ShowError(Lang.Export_ScanDateColumnMissing); // ❗ Thêm key này
                 return;
             }
 
@@ -525,7 +570,7 @@ namespace KpiApplication.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError("An error occurred while retrieving the date", ex);
+                MessageBoxHelper.ShowError(Lang.Export_ErrorGettingDate, ex); // ❗ Thêm key này
                 return;
             }
 
@@ -536,7 +581,7 @@ namespace KpiApplication.Controls
 
             if (!filtered.Any())
             {
-                MessageBoxHelper.ShowWarning("No matching data available to export.");
+                MessageBoxHelper.ShowWarning(Lang.Export_NoMatchingData); // ❗ Thêm key này
                 return;
             }
 
@@ -555,14 +600,14 @@ namespace KpiApplication.Controls
                     }
                     catch (Exception ex)
                     {
-                        MessageBoxHelper.ShowError("An error occurred while creating the report folder", ex);
+                        MessageBoxHelper.ShowError(Lang.Export_ErrorCreatingFolder, ex); // ❗ Thêm key này
                         return;
                     }
                 }
 
                 saveFileDialog.InitialDirectory = folderPath;
                 saveFileDialog.Filter = "Excel files (*.xlsx)|*.xlsx";
-                saveFileDialog.FileName = $"KPI Report-{reportType}-{formattedDate}.xlsx";
+                saveFileDialog.FileName = $"{Lang.Export_FileNamePrefix}-{reportType}-{formattedDate}.xlsx"; // ❗ Thêm key này
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -579,14 +624,14 @@ namespace KpiApplication.Controls
                                     ExcelExporter.ExportKPIDataToExcel(filteredTable, fileName);
                                 });
                             },
-                            "Exporting..."
+                            Lang.Export
                         );
 
-                        MessageBoxHelper.ShowInfo("Report data exported successfully!");
+                        MessageBoxHelper.ShowInfo(Lang.ExportSuccess); // ❗ Thêm key này
                     }
                     catch (Exception ex)
                     {
-                        MessageBoxHelper.ShowError("An error occurred while exporting report data", ex);
+                        MessageBoxHelper.ShowError(Lang.ExportError, ex); // ❗ Thêm key này
                     }
                 }
             }
@@ -621,7 +666,7 @@ namespace KpiApplication.Controls
                 if (productionDataList == null || productionDataList.Count == 0)
                 {
                     cbxProcess.Properties.Items.Clear();
-                    cbxProcess.Properties.Items.Add("-- All Process --");
+                    cbxProcess.Properties.Items.Add(Lang.AllProcess);
                     cbxProcess.SelectedIndex = 0;
                     return;
                 }
@@ -634,7 +679,7 @@ namespace KpiApplication.Controls
                     .ToList();
 
                 // Insert "All Process" at the top
-                processList.Insert(0, "-- All Process --");
+                processList.Insert(0, Lang.AllProcess);
 
                 // Update ComboBox items
                 cbxProcess.Properties.Items.Clear();
@@ -646,7 +691,7 @@ namespace KpiApplication.Controls
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError("An error occurred while loading the Process list", ex);
+                MessageBoxHelper.ShowError(Lang.ErrorLoadingProcessList, ex);
             }
         }
 
@@ -763,7 +808,7 @@ namespace KpiApplication.Controls
             {
                 string selectedValue = comboBox.EditValue.ToString();
 
-                if (selectedValue == "-- All Process --")
+                if (selectedValue == Lang.AllProcess)
                 {
                     gridView.ActiveFilter.Clear();
                 }
@@ -783,7 +828,7 @@ namespace KpiApplication.Controls
                     LoadDataToGrid(data);
                     ConfigureGridAfterDataBinding();
                 },
-                "Loading"
+                Lang.RefreshingData
             );
         }
     }

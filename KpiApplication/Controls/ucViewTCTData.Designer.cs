@@ -73,7 +73,7 @@
             // 
             this.btnExport.Caption = "Export TCT";
             this.btnExport.Id = 1;
-            this.btnExport.ImageOptions.Image = global::KpiApplication.Properties.Resources.download_16x161;
+            this.btnExport.ImageOptions.Image = global::KpiApplication.Properties.Resources.excel__1_;
             this.btnExport.ImageOptions.LargeImage = global::KpiApplication.Properties.Resources.download_32x321;
             this.btnExport.Name = "btnExport";
             this.btnExport.PaintStyle = DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph;
@@ -84,12 +84,11 @@
             // 
             this.btnRefresh.Caption = "Refresh";
             this.btnRefresh.Id = 2;
-            this.btnRefresh.ImageOptions.Image = global::KpiApplication.Properties.Resources.refresh_16x162;
+            this.btnRefresh.ImageOptions.Image = global::KpiApplication.Properties.Resources.rotate__1_;
             this.btnRefresh.ImageOptions.LargeImage = global::KpiApplication.Properties.Resources.refresh_32x322;
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.PaintStyle = DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph;
             this.btnRefresh.Size = new System.Drawing.Size(100, 22);
-            this.btnRefresh.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btnRefresh_ItemClick);
             // 
             // barDockControlTop
             // 
@@ -152,7 +151,6 @@
             this.Controls.Add(this.barDockControlTop);
             this.Name = "ucViewTCTData";
             this.Size = new System.Drawing.Size(930, 575);
-            this.Load += new System.EventHandler(this.ucTCTData_Load);
             ((System.ComponentModel.ISupportInitialize)(this.barManager1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridControl)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTCT)).EndInit();

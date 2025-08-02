@@ -1,6 +1,7 @@
 ﻿using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using KpiApplication.DataAccess;
+using KpiApplication.Services;
 using KpiApplication.Utils;
 using System;
 using System.Drawing;
@@ -17,9 +18,12 @@ namespace KpiApplication.Forms
         public bool IsConfirmed { get; private set; } = false;
         public string FileName => Path.GetFileName(txtFileName.Text?.Trim());
         public byte[] FinalFileData { get; private set; }
+        public string DocumentType => cbxDocumentType.SelectedItem?.ToString();
+
+        private readonly DocumentServices _docService = new DocumentServices();
 
         private readonly string modelName;
-        private readonly BonusDocument_DAL docDal;
+        private readonly string documentType;
 
         public PreviewSaveForm(byte[] fileData, string fileName, string modelName)
         {
@@ -31,7 +35,6 @@ namespace KpiApplication.Forms
 
             this.fileData = fileData;
             this.modelName = modelName;
-            this.docDal = new BonusDocument_DAL();
 
             txtFileName.Text = fileName;
             txtModelName.Text = modelName;
@@ -80,17 +83,24 @@ namespace KpiApplication.Forms
         private void btnSave_Click(object sender, EventArgs e)
         {
             string inputName = Path.GetFileNameWithoutExtension(txtFileName.Text.Trim());
-
             if (string.IsNullOrWhiteSpace(inputName))
             {
                 XtraMessageBox.Show("File name cannot be empty.", "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
+            if (cbxDocumentType.SelectedItem == null)
+            {
+                XtraMessageBox.Show("Please select a Document Type.", "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string selectedDocumentType = cbxDocumentType.SelectedItem.ToString();
+
             string newExtension = fileExtension;
             byte[] outputData = fileData;
 
-            if (fileExtension == ".jpg" || fileExtension == ".jpeg" || fileExtension == ".png" || fileExtension == ".bmp")
+            if (IsImage(fileExtension))
             {
                 var result = XtraMessageBox.Show(
                     "Do you want to convert this image to PDF before saving?",
@@ -130,7 +140,7 @@ namespace KpiApplication.Forms
             txtFileName.Text = newFileName;
             FinalFileData = outputData;
 
-            if (docDal.Exists(modelName, newFileName))
+            if (_docService.DocumentExists(modelName, newFileName))
             {
                 var overwrite = XtraMessageBox.Show(
                     $"A document named '{newFileName}' already exists under model '{modelName}'.\nDo you want to overwrite it?",
@@ -145,6 +155,9 @@ namespace KpiApplication.Forms
             IsConfirmed = true;
             this.Close();
         }
+
+        private static bool IsImage(string ext) =>
+            ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".bmp";
 
         // Sự kiện hủy
         private void btnCancel_Click(object sender, EventArgs e)

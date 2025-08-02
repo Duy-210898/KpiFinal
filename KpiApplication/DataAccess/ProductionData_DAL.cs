@@ -133,16 +133,16 @@ namespace KpiApplication.DataAccess
             }
         }
 
-        // Lấy tất cả dữ liệu
         public List<ProductionData_Model> GetAllData()
         {
-            List<ProductionData_Model> productionDataList = new List<ProductionData_Model>();
+            var productionDataList = new List<ProductionData_Model>();
 
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
+
                     string query = @"
 WITH RankedAPTD AS (
     SELECT
@@ -201,8 +201,7 @@ LEFT JOIN RankedAPTD R
     )
 LEFT JOIN [KPI-DATA].[dbo].ArtType AT ON R.TypeID = AT.TypeID
 ORDER BY P.ProductionID;
-
-                 ";
+";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -210,12 +209,10 @@ ORDER BY P.ProductionID;
 
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            int rowCount = 0;
                             while (reader.Read())
                             {
-                                rowCount++;
-                                var productionDataListFromReader = ProductionDataMapperService.MapFromReader(reader);
-                                productionDataList.AddRange(productionDataListFromReader);
+                                var data = ProductionDataMapperService.MapFromReaderSingleRow(reader);
+                                productionDataList.Add(data);
                             }
                         }
                     }
@@ -226,7 +223,7 @@ ORDER BY P.ProductionID;
                 LogError($"Lỗi khi lấy dữ liệu từ SQL: {ex.Message}");
             }
 
-            return productionDataList; 
+            return productionDataList;
         }
         public static List<Slides_Model> GetAllSlidesModels()
         {

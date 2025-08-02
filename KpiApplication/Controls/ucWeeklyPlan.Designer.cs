@@ -90,7 +90,7 @@
             // 
             this.btnImport.Caption = "Import";
             this.btnImport.Id = 0;
-            this.btnImport.ImageOptions.Image = global::KpiApplication.Properties.Resources.download_16x16;
+            this.btnImport.ImageOptions.Image = global::KpiApplication.Properties.Resources.import11;
             this.btnImport.ImageOptions.LargeImage = global::KpiApplication.Properties.Resources.download_32x32;
             this.btnImport.Name = "btnImport";
             this.btnImport.PaintStyle = DevExpress.XtraBars.BarItemPaintStyle.CaptionGlyph;
