@@ -221,6 +221,12 @@ namespace KpiApplication.Common
         public static string AccessDeniedToFile => LangHelper.GetString("AccessDeniedToFile");
         public static string ArticleList => LangHelper.GetString("ArticleList");
         public static string BonusFileList => LangHelper.GetString("BonusFileList");
+        public static string FileList => LangHelper.GetString("FileList");
+        public static string IETeam => LangHelper.GetString("IETeam");
+        public static string CITeam => LangHelper.GetString("CITeam");
+        public static string InvalidFileName => LangHelper.GetString("InvalidFileName");
+        public static string DocumentType => LangHelper.GetString("DocumentType");
+        public static string FileExtension => LangHelper.GetString("FileExtension");
     }
 } 
  

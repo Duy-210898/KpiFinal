@@ -31,16 +31,15 @@
             this.components = new System.ComponentModel.Container();
             this.splitContainerControl1 = new DevExpress.XtraEditors.SplitContainerControl();
             this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
-            this.listBoxLayoutFile = new DevExpress.XtraEditors.ListBoxControl();
+            this.gridControl1 = new DevExpress.XtraGrid.GridControl();
+            this.gridView1 = new DevExpress.XtraGrid.Views.Grid.GridView();
             this.btnExportFile = new DevExpress.XtraEditors.SimpleButton();
             this.btnDelete = new DevExpress.XtraEditors.SimpleButton();
             this.btnAddNew = new DevExpress.XtraEditors.SimpleButton();
-            this.listBoxMachineList = new DevExpress.XtraEditors.ListBoxControl();
             this.lookUpModelName = new DevExpress.XtraEditors.LookUpEdit();
             this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
             this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
             this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
-            this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
             this.layoutControlItem4 = new DevExpress.XtraLayout.LayoutControlItem();
             this.layoutControlItem6 = new DevExpress.XtraLayout.LayoutControlItem();
             this.layoutControlItem5 = new DevExpress.XtraLayout.LayoutControlItem();
@@ -57,13 +56,12 @@
             this.splitContainerControl1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
             this.layoutControl1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listBoxLayoutFile)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listBoxMachineList)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridControl1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.lookUpModelName.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem6)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).BeginInit();
@@ -94,11 +92,10 @@
             // 
             // layoutControl1
             // 
-            this.layoutControl1.Controls.Add(this.listBoxLayoutFile);
+            this.layoutControl1.Controls.Add(this.gridControl1);
             this.layoutControl1.Controls.Add(this.btnExportFile);
             this.layoutControl1.Controls.Add(this.btnDelete);
             this.layoutControl1.Controls.Add(this.btnAddNew);
-            this.layoutControl1.Controls.Add(this.listBoxMachineList);
             this.layoutControl1.Controls.Add(this.lookUpModelName);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.layoutControl1.Location = new System.Drawing.Point(0, 0);
@@ -108,14 +105,25 @@
             this.layoutControl1.TabIndex = 0;
             this.layoutControl1.Text = "layoutControl1";
             // 
-            // listBoxLayoutFile
+            // gridControl1
             // 
-            this.listBoxLayoutFile.Location = new System.Drawing.Point(12, 268);
-            this.listBoxLayoutFile.Name = "listBoxLayoutFile";
-            this.listBoxLayoutFile.Size = new System.Drawing.Size(289, 196);
-            this.listBoxLayoutFile.StyleController = this.layoutControl1;
-            this.listBoxLayoutFile.TabIndex = 11;
-            this.listBoxLayoutFile.UseDisabledStatePainter = false;
+            this.gridControl1.Location = new System.Drawing.Point(12, 36);
+            this.gridControl1.MainView = this.gridView1;
+            this.gridControl1.Name = "gridControl1";
+            this.gridControl1.Size = new System.Drawing.Size(289, 428);
+            this.gridControl1.TabIndex = 11;
+            this.gridControl1.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
+            this.gridView1});
+            // 
+            // gridView1
+            // 
+            this.gridView1.FocusRectStyle = DevExpress.XtraGrid.Views.Grid.DrawFocusRectStyle.RowFocus;
+            this.gridView1.GridControl = this.gridControl1;
+            this.gridView1.Name = "gridView1";
+            this.gridView1.OptionsSelection.EnableAppearanceFocusedCell = false;
+            this.gridView1.OptionsView.ShowGroupPanel = false;
+            this.gridView1.FocusedRowChanged += new DevExpress.XtraGrid.Views.Base.FocusedRowChangedEventHandler(this.gridView1_FocusedRowChanged);
+            this.gridView1.ValidateRow += new DevExpress.XtraGrid.Views.Base.ValidateRowEventHandler(this.gridView1_ValidateRow);
             // 
             // btnExportFile
             // 
@@ -127,6 +135,7 @@
             this.btnExportFile.TabIndex = 10;
             this.btnExportFile.Text = "Download file";
             this.btnExportFile.Visible = false;
+            this.btnExportFile.Click += new System.EventHandler(this.btnExportFile_Click);
             // 
             // btnDelete
             // 
@@ -138,6 +147,7 @@
             this.btnDelete.TabIndex = 9;
             this.btnDelete.Text = "Delete file";
             this.btnDelete.Visible = false;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // btnAddNew
             // 
@@ -147,15 +157,7 @@
             this.btnAddNew.StyleController = this.layoutControl1;
             this.btnAddNew.TabIndex = 7;
             this.btnAddNew.Text = "Add new file";
-            // 
-            // listBoxMachineList
-            // 
-            this.listBoxMachineList.Location = new System.Drawing.Point(12, 52);
-            this.listBoxMachineList.Name = "listBoxMachineList";
-            this.listBoxMachineList.Size = new System.Drawing.Size(289, 196);
-            this.listBoxMachineList.StyleController = this.layoutControl1;
-            this.listBoxMachineList.TabIndex = 6;
-            this.listBoxMachineList.UseDisabledStatePainter = false;
+            this.btnAddNew.Click += new System.EventHandler(this.btnAddNew_Click);
             // 
             // lookUpModelName
             // 
@@ -166,6 +168,7 @@
             this.lookUpModelName.Size = new System.Drawing.Size(219, 20);
             this.lookUpModelName.StyleController = this.layoutControl1;
             this.lookUpModelName.TabIndex = 4;
+            this.lookUpModelName.EditValueChanged += new System.EventHandler(this.lookUpModelName_EditValueChanged);
             // 
             // Root
             // 
@@ -174,7 +177,6 @@
             this.Root.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutControlItem1,
             this.emptySpaceItem1,
-            this.layoutControlItem3,
             this.layoutControlItem4,
             this.layoutControlItem6,
             this.layoutControlItem5,
@@ -196,16 +198,6 @@
             this.emptySpaceItem1.Location = new System.Drawing.Point(0, 456);
             this.emptySpaceItem1.Name = "emptySpaceItem1";
             this.emptySpaceItem1.Size = new System.Drawing.Size(146, 78);
-            // 
-            // layoutControlItem3
-            // 
-            this.layoutControlItem3.ContentVertAlignment = DevExpress.Utils.VertAlignment.Top;
-            this.layoutControlItem3.Control = this.listBoxMachineList;
-            this.layoutControlItem3.Location = new System.Drawing.Point(0, 24);
-            this.layoutControlItem3.Name = "layoutControlItem3";
-            this.layoutControlItem3.Size = new System.Drawing.Size(293, 216);
-            this.layoutControlItem3.Text = "Machine List";
-            this.layoutControlItem3.TextLocation = DevExpress.Utils.Locations.Top;
             // 
             // layoutControlItem4
             // 
@@ -233,13 +225,11 @@
             // 
             // layoutControlItem2
             // 
-            this.layoutControlItem2.Control = this.listBoxLayoutFile;
-            this.layoutControlItem2.CustomizationFormText = " ";
-            this.layoutControlItem2.Location = new System.Drawing.Point(0, 240);
+            this.layoutControlItem2.Control = this.gridControl1;
+            this.layoutControlItem2.Location = new System.Drawing.Point(0, 24);
             this.layoutControlItem2.Name = "layoutControlItem2";
-            this.layoutControlItem2.Size = new System.Drawing.Size(293, 216);
-            this.layoutControlItem2.Text = "Layout File";
-            this.layoutControlItem2.TextLocation = DevExpress.Utils.Locations.Top;
+            this.layoutControlItem2.Size = new System.Drawing.Size(293, 432);
+            this.layoutControlItem2.TextVisible = false;
             // 
             // pictureViewer
             // 
@@ -294,13 +284,12 @@
             this.splitContainerControl1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
             this.layoutControl1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.listBoxLayoutFile)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listBoxMachineList)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridControl1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.lookUpModelName.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem6)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).EndInit();
@@ -317,20 +306,19 @@
         private DevExpress.XtraEditors.SimpleButton btnExportFile;
         private DevExpress.XtraEditors.SimpleButton btnDelete;
         private DevExpress.XtraEditors.SimpleButton btnAddNew;
-        private DevExpress.XtraEditors.ListBoxControl listBoxMachineList;
         private DevExpress.XtraEditors.LookUpEdit lookUpModelName;
         private DevExpress.XtraLayout.LayoutControlGroup Root;
         private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
         private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
-        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem3;
         private DevExpress.XtraLayout.LayoutControlItem layoutControlItem4;
         private DevExpress.XtraLayout.LayoutControlItem layoutControlItem6;
         private DevExpress.XtraLayout.LayoutControlItem layoutControlItem5;
         private DevExpress.XtraEditors.PictureEdit pictureViewer;
         private DevExpress.XtraPdfViewer.PdfViewer pdfViewer;
         private DevExpress.XtraEditors.LabelControl lblFileName;
-        private DevExpress.XtraEditors.ListBoxControl listBoxLayoutFile;
-        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
         private DevExpress.Utils.ToolTipController toolTipController1;
+        private DevExpress.XtraGrid.GridControl gridControl1;
+        private DevExpress.XtraGrid.Views.Grid.GridView gridView1;
+        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
     }
 }

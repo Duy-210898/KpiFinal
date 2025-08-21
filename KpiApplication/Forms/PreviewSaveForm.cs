@@ -1,9 +1,9 @@
 ﻿using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
-using KpiApplication.DataAccess;
 using KpiApplication.Services;
 using KpiApplication.Utils;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -13,176 +13,222 @@ namespace KpiApplication.Forms
 {
     public partial class PreviewSaveForm : XtraForm
     {
-        private readonly byte[] fileData;
-        private readonly string fileExtension;
-        public bool IsConfirmed { get; private set; } = false;
-        public string FileName => Path.GetFileName(txtFileName.Text?.Trim());
-        public byte[] FinalFileData { get; private set; }
-        public string DocumentType => cbxDocumentType.SelectedItem?.ToString();
-
+        private readonly byte[] _fileData;
+        private readonly string _fileExtension;
+        private readonly string _modelName;
         private readonly DocumentServices _docService = new DocumentServices();
 
-        private readonly string modelName;
-        private readonly string documentType;
+        public bool IsConfirmed { get; private set; }
+        public byte[] FinalFileData { get; private set; }
+        public string FinalDocumentType { get; private set; }
+        public string FileName => Path.GetFileName(txtFileName.Text?.Trim());
 
-        public PreviewSaveForm(byte[] fileData, string fileName, string modelName)
+        public PreviewSaveForm(
+            byte[] fileData,
+            string fileName,
+            string modelName,
+            bool showDocumentType)
         {
             InitializeComponent();
-            pictureViewer.Properties.SizeMode = PictureSizeMode.Squeeze;
-            pictureViewer.Properties.ShowMenu = false;
-            pictureViewer.Properties.ZoomAccelerationFactor = 1;
-            pictureViewer.Properties.AllowScrollViaMouseDrag = false;
+            ConfigurePictureViewer();
 
-            this.fileData = fileData;
-            this.modelName = modelName;
+            _fileData = fileData;
+            _modelName = modelName;
+            _fileExtension = Path.GetExtension(fileName)?.ToLower();
 
             txtFileName.Text = fileName;
             txtModelName.Text = modelName;
             txtModelName.Properties.ReadOnly = true;
 
-            fileExtension = Path.GetExtension(fileName)?.ToLower();
-
+            ConfigureDocumentTypeDropdown(showDocumentType);
             DisplayPreview();
         }
 
-        // Hiển thị file PDF hoặc hình ảnh
+        #region UI Configuration
+        private void ConfigurePictureViewer()
+        {
+            pictureViewer.Properties.SizeMode = PictureSizeMode.Squeeze;
+            pictureViewer.Properties.ShowMenu = false;
+            pictureViewer.Properties.ZoomAccelerationFactor = 1;
+            pictureViewer.Properties.AllowScrollViaMouseDrag = false;
+        }
+
+        private void ConfigureDocumentTypeDropdown(bool showDocumentType)
+        {
+            layoutControlItem6.Visibility = showDocumentType
+                ? DevExpress.XtraLayout.Utils.LayoutVisibility.Always
+                : DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+
+            if (!showDocumentType) return;
+
+            cbxDocumentType.Properties.Items.Clear();
+            var types = new[] { "Layout File", "Machine List" };
+            cbxDocumentType.Properties.Items.AddRange(types);
+
+            cbxDocumentType.SelectedIndex = 0;
+        }
+        #endregion
+
+        #region Preview Handling
         private void DisplayPreview()
         {
             pdfViewer.Visible = false;
             pictureViewer.Visible = false;
 
-            if (fileExtension == ".pdf")
+            if (_fileExtension == ".pdf")
             {
-                var stream = new MemoryStream(fileData);
-                pdfViewer.LoadDocument(stream);
+                using (var stream = new MemoryStream(_fileData))
+                {
+                    pdfViewer.LoadDocument(stream);
+                }
                 pdfViewer.Visible = true;
             }
-            else if (fileExtension == ".jpg" || fileExtension == ".jpeg" || fileExtension == ".png" || fileExtension == ".bmp")
+            else if (IsImage(_fileExtension))
             {
                 try
                 {
-                    using (var stream = new MemoryStream(fileData))
-                    using (var rawImage = Image.FromStream(stream))
+                    using (var stream = new MemoryStream(_fileData))
                     {
-                        pictureViewer.Image = FixImageRotation((Image)rawImage.Clone());
+                        using (var rawImage = Image.FromStream(stream))
+                        {
+                            pictureViewer.Image = FixImageRotation((Image)rawImage.Clone());
+                        }
                     }
                     pictureViewer.Visible = true;
                 }
                 catch (Exception ex)
                 {
-                    XtraMessageBox.Show("Failed to load image: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    XtraMessageBox.Show($"Failed to load image: {ex.Message}", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
-                XtraMessageBox.Show("Unsupported file type.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                XtraMessageBox.Show("Unsupported file type.", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+        #endregion
 
-        // Sự kiện lưu file
+        #region Save Handling
         private void btnSave_Click(object sender, EventArgs e)
         {
-            string inputName = Path.GetFileNameWithoutExtension(txtFileName.Text.Trim());
-            if (string.IsNullOrWhiteSpace(inputName))
-            {
-                XtraMessageBox.Show("File name cannot be empty.", "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            var baseFileName = Path.GetFileNameWithoutExtension(txtFileName.Text.Trim());
+
+            if (!ValidateInputs(baseFileName))
                 return;
+
+            FinalDocumentType = cbxDocumentType.Visible
+                ? cbxDocumentType.SelectedItem.ToString()
+                : "Bonus Document";
+
+            var (finalData, finalExtension) = ProcessFileBeforeSave();
+            var newFileName = baseFileName + finalExtension;
+
+            if (!ConfirmOverwriteIfExists(newFileName))
+                return;
+
+            txtFileName.Text = newFileName;
+            FinalFileData = finalData;
+            IsConfirmed = true;
+            Close();
+        }
+
+        private bool ValidateInputs(string baseFileName)
+        {
+            if (cbxDocumentType.Visible && cbxDocumentType.SelectedItem == null)
+            {
+                XtraMessageBox.Show("Please select a Document Type.", "Validation",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
             }
 
-            if (cbxDocumentType.SelectedItem == null)
+            if (string.IsNullOrWhiteSpace(baseFileName))
             {
-                XtraMessageBox.Show("Please select a Document Type.", "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                XtraMessageBox.Show("File name cannot be empty.", "Validation",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
             }
 
-            string selectedDocumentType = cbxDocumentType.SelectedItem.ToString();
+            return true;
+        }
 
-            string newExtension = fileExtension;
-            byte[] outputData = fileData;
+        private (byte[] data, string extension) ProcessFileBeforeSave()
+        {
+            if (!IsImage(_fileExtension))
+                return (_fileData, _fileExtension);
 
-            if (IsImage(fileExtension))
+            var result = XtraMessageBox.Show(
+                "Do you want to convert this image to PDF before saving?",
+                "Convert to PDF?",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
             {
-                var result = XtraMessageBox.Show(
-                    "Do you want to convert this image to PDF before saving?",
-                    "Convert to PDF?",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                if (result == DialogResult.Yes)
+                try
                 {
-                    try
-                    {
-                        using (var ms = new MemoryStream(fileData))
-                        using (var image = Image.FromStream(ms))
-                        {
-                            var fixedImage = FixImageRotation((Image)image.Clone());
-                            var portraitImage = AutoRotateToPortrait(fixedImage);
-                            var resizedImage = ResizeImage(portraitImage, 1200);
-
-                            outputData = ImageToPdfConverter.ConvertImageToPdf(resizedImage);
-
-                            resizedImage.Dispose();
-                            portraitImage.Dispose();
-                            fixedImage.Dispose();
-                        }
-
-                        newExtension = ".pdf";
-                    }
-                    catch (Exception ex)
-                    {
-                        XtraMessageBox.Show("Failed to convert image to PDF: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
+                    return (ConvertImageToPdf(_fileData), ".pdf");
+                }
+                catch (Exception ex)
+                {
+                    XtraMessageBox.Show($"Failed to convert image to PDF: {ex.Message}",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
 
-            string newFileName = inputName + newExtension;
-            txtFileName.Text = newFileName;
-            FinalFileData = outputData;
-
-            if (_docService.DocumentExists(modelName, newFileName))
-            {
-                var overwrite = XtraMessageBox.Show(
-                    $"A document named '{newFileName}' already exists under model '{modelName}'.\nDo you want to overwrite it?",
-                    "Confirm Overwrite",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                if (overwrite != DialogResult.Yes)
-                    return;
-            }
-
-            IsConfirmed = true;
-            this.Close();
+            return (_fileData, _fileExtension);
         }
 
-        private static bool IsImage(string ext) =>
-            ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".bmp";
-
-        // Sự kiện hủy
-        private void btnCancel_Click(object sender, EventArgs e)
+        private bool ConfirmOverwriteIfExists(string fileName)
         {
-            this.Close();
+            if (!_docService.DocumentExists(_modelName, fileName))
+                return true;
+
+            var overwrite = XtraMessageBox.Show(
+                $"A document named '{fileName}' already exists under model '{_modelName}'.\nDo you want to overwrite it?",
+                "Confirm Overwrite",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            return overwrite == DialogResult.Yes;
         }
 
-        // Xoay hình ảnh sang chiều dọc nếu cần
+        private static byte[] ConvertImageToPdf(byte[] imageData)
+        {
+            using (var ms = new MemoryStream(imageData))
+            using (var image = Image.FromStream(ms))
+            {
+                using (var fixedImage = FixImageRotation((Image)image.Clone()))
+                using (var portraitImage = AutoRotateToPortrait((Image)fixedImage.Clone()))
+                using (var resizedImage = ResizeImage(portraitImage, 1200))
+                {
+                    return ImageToPdfConverter.ConvertImageToPdf(resizedImage);
+                }
+            }
+        }
+        #endregion
+
+        #region Helpers
+        private void btnCancel_Click(object sender, EventArgs e) => Close();
+        private static bool IsImage(string ext)
+        {
+            return ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".bmp";
+        }
         public static Image AutoRotateToPortrait(Image img)
         {
             if (img.Width > img.Height)
-            {
                 img.RotateFlip(RotateFlipType.Rotate90FlipNone);
-            }
             return img;
         }
 
-        // Resize hình theo chiều rộng tối đa
         public static Image ResizeImage(Image image, int maxWidth)
         {
             if (image.Width <= maxWidth)
                 return (Image)image.Clone();
 
             int newWidth = maxWidth;
-            int newHeight = (int)(image.Height * ((float)newWidth / image.Width));
+            int newHeight = (int)(image.Height * (float)newWidth / image.Width);
             var resized = new Bitmap(newWidth, newHeight);
 
             using (Graphics g = Graphics.FromImage(resized))
@@ -196,7 +242,6 @@ namespace KpiApplication.Forms
             return resized;
         }
 
-        // Sửa hướng ảnh nếu có thông tin Exif
         private static Image FixImageRotation(Image img)
         {
             const int OrientationId = 0x0112;
@@ -226,5 +271,6 @@ namespace KpiApplication.Forms
 
             return img;
         }
+        #endregion
     }
 }

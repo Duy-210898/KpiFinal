@@ -63,7 +63,7 @@
             this.dgvIEPPH.OptionsBehavior.AllowDeleteRows = DevExpress.Utils.DefaultBoolean.True;
             this.dgvIEPPH.OptionsBehavior.EditingMode = DevExpress.XtraGrid.Views.Grid.GridEditingMode.EditForm;
             this.dgvIEPPH.OptionsClipboard.AllowCopy = DevExpress.Utils.DefaultBoolean.True;
-            this.dgvIEPPH.OptionsEditForm.BindingMode = DevExpress.XtraGrid.Views.Grid.EditFormBindingMode.Cached;
+            this.dgvIEPPH.OptionsEditForm.BindingMode = DevExpress.XtraGrid.Views.Grid.EditFormBindingMode.Direct;
             this.dgvIEPPH.OptionsEditForm.ShowOnDoubleClick = DevExpress.Utils.DefaultBoolean.True;
             this.dgvIEPPH.OptionsEditForm.ShowOnF2Key = DevExpress.Utils.DefaultBoolean.True;
             this.dgvIEPPH.OptionsEditForm.ShowUpdateCancelPanel = DevExpress.Utils.DefaultBoolean.True;

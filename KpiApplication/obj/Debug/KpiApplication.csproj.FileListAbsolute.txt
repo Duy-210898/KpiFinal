@@ -269,5 +269,4 @@ D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\Kpi Application.application
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiAppli.A4444AD1.Up2Date
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\Kpi Application.exe
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\Kpi Application.pdb
-D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\Kpi Application.exe.licenses
 D:\KPI_Application\KpiFinal\KpiApplication\obj\Debug\KpiApplication.Controls.ucCIDocument.resources

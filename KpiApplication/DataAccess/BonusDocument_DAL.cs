@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace KpiApplication.DataAccess
 {
@@ -100,46 +101,66 @@ namespace KpiApplication.DataAccess
             }
         }
 
-        public List<BonusDocument_Model> GetMetadataByModelName(string modelName, string documentType = null)
+        public List<BonusDocument_Model> GetMetadataByModelName(string modelName, List<string> documentTypes = null)
         {
             var list = new List<BonusDocument_Model>();
             if (string.IsNullOrWhiteSpace(modelName)) return list;
 
             using (var conn = new SqlConnection(connectionString))
-            using (var cmd = new SqlCommand(@"
-        SELECT d.Id, d.ModelName, d.FileName, d.DocumentType, d.CreatedAt, d.CreatedBy, d.UpdatedAt, d.UpdatedBy,
-               u1.EmployeeName AS CreatedByName,
-               u2.EmployeeName AS UpdatedByName
-        FROM BonusDocuments d
-        LEFT JOIN Users u1 ON d.CreatedBy = u1.UserID
-        LEFT JOIN Users u2 ON d.UpdatedBy = u2.UserID
-        WHERE d.ModelName = @ModelName
-        " + (string.IsNullOrWhiteSpace(documentType) ? "" : "AND d.DocumentType = @DocumentType") + @"
-        ORDER BY d.Id DESC", conn))
             {
-                cmd.Parameters.AddWithValue("@ModelName", modelName);
-                if (!string.IsNullOrWhiteSpace(documentType))
-                    cmd.Parameters.AddWithValue("@DocumentType", documentType);
-
-                conn.Open();
-
-                using (var reader = cmd.ExecuteReader())
+                // Xây dựng phần filter cho DocumentType
+                string typeFilter = "";
+                if (documentTypes != null && documentTypes.Any())
                 {
-                    while (reader.Read())
+                    var parameters = documentTypes
+                        .Select((t, i) => $"@DocumentType{i}")
+                        .ToList();
+                    typeFilter = $"AND d.DocumentType IN ({string.Join(", ", parameters)})";
+                }
+
+                string query = $@"
+            SELECT d.Id, d.ModelName, d.FileName, d.DocumentType, d.CreatedAt, d.CreatedBy, d.UpdatedAt, d.UpdatedBy,
+                   u1.EmployeeName AS CreatedByName,
+                   u2.EmployeeName AS UpdatedByName
+            FROM BonusDocuments d
+            LEFT JOIN Users u1 ON d.CreatedBy = u1.UserID
+            LEFT JOIN Users u2 ON d.UpdatedBy = u2.UserID
+            WHERE d.ModelName = @ModelName
+            {typeFilter}
+            ORDER BY d.Id DESC";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ModelName", modelName);
+
+                    // Thêm danh sách DocumentType vào Parameters
+                    if (documentTypes != null && documentTypes.Any())
                     {
-                        list.Add(new BonusDocument_Model
+                        for (int i = 0; i < documentTypes.Count; i++)
                         {
-                            Id = (int)reader["Id"],
-                            ModelName = reader["ModelName"]?.ToString(),
-                            FileName = reader["FileName"]?.ToString(),
-                            DocumentType = reader["DocumentType"]?.ToString(),
-                            CreatedAt = reader["CreatedAt"] as DateTime?,
-                            CreatedBy = reader["CreatedBy"] as int?,
-                            UpdatedAt = reader["UpdatedAt"] as DateTime?,
-                            UpdatedBy = reader["UpdatedBy"] as int?,
-                            CreatedByName = reader["CreatedByName"]?.ToString(),
-                            UpdatedByName = reader["UpdatedByName"]?.ToString()
-                        });
+                            cmd.Parameters.AddWithValue($"@DocumentType{i}", documentTypes[i]);
+                        }
+                    }
+
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            list.Add(new BonusDocument_Model
+                            {
+                                Id = (int)reader["Id"],
+                                ModelName = reader["ModelName"]?.ToString(),
+                                FileName = reader["FileName"]?.ToString(),
+                                DocumentType = reader["DocumentType"]?.ToString(),
+                                CreatedAt = reader["CreatedAt"] as DateTime?,
+                                CreatedBy = reader["CreatedBy"] as int?,
+                                UpdatedAt = reader["UpdatedAt"] as DateTime?,
+                                UpdatedBy = reader["UpdatedBy"] as int?,
+                                CreatedByName = reader["CreatedByName"]?.ToString(),
+                                UpdatedByName = reader["UpdatedByName"]?.ToString()
+                            });
+                        }
                     }
                 }
             }
@@ -171,7 +192,7 @@ namespace KpiApplication.DataAccess
                             Id = (int)reader["Id"],
                             ModelName = reader["ModelName"]?.ToString(),
                             FileName = reader["FileName"]?.ToString(),
-                            DocumentType = reader["DocumentType"]?.ToString(), // ✅ thêm dòng này
+                            DocumentType = reader["DocumentType"]?.ToString(), 
                             PdfData = reader["PdfData"] as byte[],
                             CreatedAt = reader["CreatedAt"] as DateTime?,
                             CreatedBy = reader["CreatedBy"] as int?,

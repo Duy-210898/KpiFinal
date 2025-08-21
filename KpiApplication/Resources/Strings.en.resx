@@ -696,4 +696,97 @@
   <data name="AddNewRowHint" xml:space="preserve">
     <value>Click here to add new Article</value>
   </data>
+	<data name="ScanDate">
+		<value>Scan Date</value>
+	</data>
+	<data name="Factory">
+		<value>Factory</value>
+	</data>
+	<data name="Plant">
+		<value>Plant</value>
+	</data>
+	<data name="LineName">
+		<value>Line Name</value>
+	</data>
+	<data name="TotalWorker">
+		<value>Total Worker</value>
+	</data>
+	<data name="Quantity">
+		<value>Quantity</value>
+	</data>
+	<data name="PPHRate">
+		<value>PPH Rate</value>
+	</data>
+	<data name="TotalWorkingHours">
+		<value>Total Working Hours</value>
+	</data>
+	<data name="ActutalPPH">
+		<value>Actual PPH</value>
+	</data>
+	<data name="AutoCutting">
+		<value>Auto Cutting</value>
+	</data>
+	<data name="InvalidArticleName">
+		<value>Invalid article name</value>
+	</data>
+	<data name="Error_InsertArticleFailed">
+		<value>Error: Insert article failed</value>
+	</data>
+	<data name="InsertArticleFailed">
+		<value>Insert article failed</value>
+	</data>
+	<data name="ConfirmDeleteArticle">
+		<value>Are you sure to delete this article?</value>
+	</data>
+	<data name="AddNewRowHint">
+		<value>Click to add a new row</value>
+	</data>
+	<data name="NewModelsAdded">
+		<value>New models have been added</value>
+	</data>
+	<data name="InvalidModelName">
+		<value>Invalid model name</value>
+	</data>
+	<data name="CIDocument">
+		<value>CI Document</value>
+	</data>
+	<data name="SelectFile">
+		<value>Select file</value>
+	</data>
+	<data name="FileReadError">
+		<value>File read error</value>
+	</data>
+	<data name="FileNotFound">
+		<value>File not found</value>
+	</data>
+	<data name="AccessDeniedToFile">
+		<value>Access denied to file</value>
+	</data>
+	<data name="ArticleList">
+		<value>Article list</value>
+	</data>
+	<data name="BonusFileList">
+		<value>Bonus file list</value>
+	</data>
+	<data name="FileList">
+		<value>File list</value>
+	</data>
+	<data name="IETeam">
+		<value>IE Team</value>
+	</data>
+	<data name="CITeam">
+		<value>CI Team</value>
+	</data>
+	<data name="InvalidFileName">
+		<value>Invalid file name</value>
+	</data>
+	<data name="DocumentType">
+		<value>Document type</value>
+	</data>
+	<data name="FileExtension">
+		<value>File extension</value>
+	</data>
+	<data name="Update">
+		<value>Update</value>
+	</data>
 </root>

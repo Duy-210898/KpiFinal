@@ -3,10 +3,10 @@ using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Grid;
 using KpiApplication.Common;
 using KpiApplication.DataAccess;
-using KpiApplication.Models;
 using KpiApplication.Excel;
-using KpiApplication.Services;
+using KpiApplication.Models;
 using KpiApplication.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -14,7 +14,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System;
 
 namespace KpiApplication.Controls
 {
@@ -198,25 +197,42 @@ namespace KpiApplication.Controls
                     count++;
                 }
 
-                await Task.Run(() =>
-                {
-                    var convertedData = iepphDataList.Select(item => new IETotal_Model
+                await AsyncLoaderHelper.LoadDataWithSplashAsync(
+                    this,
+                    () =>
                     {
-                        ArticleName = item.ArticleName,
-                        ModelName = item.ModelName,
-                        Process = item.Process,
-                        IEPPHValue = item.IEPPHValue,
-                        THTValue = item.THTValue,
-                        TargetOutputPC = item.TargetOutputPC,
-                        AdjustOperatorNo = item.AdjustOperatorNo,
-                        IsSigned = item.IsSigned,
-                        TypeName = item.TypeName,
-                        PersonIncharge = item.PersonIncharge,
-                        NoteForPC = item.NoteForPC
-                    }).ToList();
+                        var filteredData = iepphDataList
+                            .GroupBy(x => new { x.ArticleName, x.Process })
+                            .Select(group =>
+                            {
+                                var best = group
+                                    .OrderBy(x => GetTypePriority(x.TypeName?.Trim() ?? string.Empty))
+                                    .First();
 
-                    ExcelExporter.ExportIETotalPivoted(convertedData, filePath, includeTCT);
-                });
+                                return best;
+                            })
+                            .ToList();
+                        var convertedData = filteredData.Select(item => new IETotal_Model
+                        {
+                            ArticleName = item.ArticleName,
+                            ModelName = item.ModelName,
+                            Process = item.Process,
+                            IEPPHValue = item.IEPPHValue,
+                            THTValue = item.THTValue,
+                            TCTValue = item.TCTValue,
+                            TargetOutputPC = item.TargetOutputPC,
+                            AdjustOperatorNo = item.AdjustOperatorNo,
+                            IsSigned = item.IsSigned,
+                            TypeName = item.TypeName,
+                            PersonIncharge = item.PersonIncharge,
+                            NoteForPC = item.NoteForPC
+                        }).ToList();
+                        ExcelExporter.ExportIETotalPivoted(convertedData, filePath, includeTCT);
+                        return true;
+                    },
+                    _ => { },
+                    Lang.Exporting
+                );
 
                 MessageBoxHelper.ShowInfo(Lang.ExcelExportSuccess);
 
@@ -230,5 +246,20 @@ namespace KpiApplication.Controls
                 }
             }
         }
+        public static int GetTypePriority(string typeName)
+        {
+            switch (typeName)
+            {
+                case "Mass Production":
+                    return 0;
+                case "First Production":
+                    return 1;
+                case "Production Trial":
+                    return 2;
+                default:
+                    return 3;
+            }
+        }
+
     }
 }

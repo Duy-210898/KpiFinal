@@ -37,6 +37,7 @@ namespace KpiApplication.Models
         }
 
         public double? THTValue { get; set; }
+        public double? TCTValue { get; set; }
 
         public string TypeName { get; set; }
         public string IsSigned { get; set; }

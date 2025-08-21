@@ -18,6 +18,9 @@ namespace KpiApplication.Services
 
         private readonly LruCache<int, byte[]> _docCache = new LruCache<int, byte[]>(20, TimeSpan.FromMinutes(10));
         private readonly LruCache<int, Image> _imageCache = new LruCache<int, Image>(10, TimeSpan.FromMinutes(10));
+        private readonly LruCache<string, List<BonusDocument_Model>> _docListCache
+            = new LruCache<string, List<BonusDocument_Model>>(50, TimeSpan.FromMinutes(10));
+
         public LruCache<int, Image> ImageCache => _imageCache;
 
         public DocumentServices()
@@ -30,16 +33,19 @@ namespace KpiApplication.Services
 
         public void ClearCache()
         {
-            _docCache.Clear();
-            _imageCache.Clear();
+            _docListCache.Clear(); // Xóa cache danh sách
+            _docCache.Clear();     // Xóa cache file bytes
+            _imageCache.Clear();   // Xóa cache ảnh
         }
 
-        public void RemoveDocumentFromCache(int docId)
+        public void RemoveDocumentFromCache(int docId, string modelName = null)
         {
             _docCache.Remove(docId);
             _imageCache.Remove(docId);
-        }
 
+            if (!string.IsNullOrEmpty(modelName))
+                _docListCache.Remove(modelName); 
+        }
         #endregion
 
         #region Query
@@ -49,9 +55,19 @@ namespace KpiApplication.Services
             return _articleDal.GetDistinctModelNames();
         }
 
-        public List<BonusDocument_Model> GetDocumentsByModel(string modelName)
+        public List<BonusDocument_Model> GetDocumentsByModel(string modelName, List<string> documentType)
         {
-            return _docDal.GetMetadataByModelName(modelName);
+            return _docDal.GetMetadataByModelName(modelName, documentType);
+        }
+        public List<BonusDocument_Model> GetDocumentsByModelCached(string modelName, List<string> documentTypes)
+        {
+            if (_docListCache.TryGetValue(modelName, out var cachedList))
+                return cachedList;
+
+            var list = _docDal.GetMetadataByModelName(modelName, documentTypes) ?? new List<BonusDocument_Model>();
+            _docListCache.AddOrUpdate(modelName, list);
+
+            return list;
         }
 
         public List<Article_Model> GetArticlesByModel(string modelName)
@@ -103,10 +119,12 @@ namespace KpiApplication.Services
             _docDal.RenameFileNameById(doc.Id, newFileName, DateTime.Now, userId);
         }
 
-        public void SaveOrUpdateDocument(string modelName, string fileName, string documentType, byte[] data, int userId)
+        public BonusDocument_Model SaveOrUpdateDocument(
+            string modelName, string fileName, string documentType, byte[] data, int userId)
         {
             if (string.IsNullOrWhiteSpace(modelName) || string.IsNullOrWhiteSpace(fileName) || data == null)
                 throw new ArgumentException("Invalid input for saving document.");
+
             var doc = new BonusDocument_Model
             {
                 ModelName = modelName,
@@ -133,6 +151,9 @@ namespace KpiApplication.Services
             {
                 _docDal.Insert(doc);
             }
+
+            return _docDal.GetMetadataByModelName(modelName)
+                          ?.FirstOrDefault(x => x.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase));
         }
 
         public void DeleteDocument(int docId)

@@ -26,7 +26,7 @@ namespace KpiApplication.Services
             if (!typeof(UserControl).IsAssignableFrom(controlType))
                 throw new ArgumentException($"{controlType.Name} is not a UserControl.");
 
-            // Nếu control đã được tạo → hiển thị lại, không load
+            // Nếu control đã được tạo → hiển thị lại
             if (_cachedControls.TryGetValue(controlType, out var cached))
             {
                 _navigationFrame.SelectedPage = cached.Page;
@@ -43,17 +43,24 @@ namespace KpiApplication.Services
             _navigationFrame.Pages.Add(page);
             _cachedControls[controlType] = (control, page);
 
-            _navigationFrame.SelectedPage = page;
+            // Nếu UserControl hỗ trợ LoadDataAsync → tải trước khi hiển thị
+            if (control is ISupportLoadAsync loadable)
+            {
+                if (loadingService != null)
+                {
+                    await loadingService.ShowLoadingAsync("Loading", $"Loading {controlType.Name}...", async () =>
+                    {
+                        await loadable.LoadDataAsync();
+                    });
+                }
+                else
+                {
+                    await loadable.LoadDataAsync();
+                }
+            }
 
-            // Gọi LoadDataAsync nếu có, kèm splash nếu được chỉ định
-            if (control is ISupportLoadAsync loadable && loadingService != null)
-            {
-                await loadingService.ShowLoadingAsync("Loading", $"Loading {controlType.Name}...", loadable.LoadDataAsync);
-            }
-            else if (control is ISupportLoadAsync l)
-            {
-                await l.LoadDataAsync();
-            }
+            // Chỉ hiển thị sau khi dữ liệu đã load xong
+            _navigationFrame.SelectedPage = page;
         }
         public async Task ReloadAsync<T>() where T : UserControl
         {

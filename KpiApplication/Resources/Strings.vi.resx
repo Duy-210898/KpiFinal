@@ -660,4 +660,99 @@
   <data name="Packing" xml:space="preserve">
     <value>Đóng gói</value>
   </data>
+		<data name="ScanDate">
+			<value>Ngày</value>
+		</data>
+		<data name="Factory">
+			<value>Nhà máy</value>
+		</data>
+		<data name="Plant">
+			<value>Xưởng</value>
+		</data>
+		<data name="LineName">
+			<value>Tên chuyền</value>
+		</data>
+		<data name="TotalWorker">
+			<value>Tổng số\ncông nhân</value>
+		</data>
+		<data name="Quantity">
+			<value>Số lượng</value>
+		</data>
+		<data name="PPHRate">
+			<value>Tỷ lệ PPH</value>
+		</data>
+		<data name="TotalWorkingHours">
+			<value>Tổng giờ\nlàm việc</value>
+		</data>
+		<data name="ActutalPPH">
+			<value>PPH thực tế</value>
+		</data>
+		<data name="AutoCutting">
+			<value>Cắt tự động</value>
+		</data>
+		<data name="InvalidArticleName">
+			<value>Tên mã hàng không hợp lệ</value>
+		</data>
+		<data name="Error_InsertArticleFailed">
+			<value>Lỗi: Thêm Article thất bại</value>
+		</data>
+		<data name="InsertArticleFailed">
+			<value>Thêm Article thất bại</value>
+		</data>
+		<data name="ConfirmDeleteArticle">
+			<value>Bạn có chắc muốn xóa mã hàng này?</value>
+		</data>
+		<data name="AddNewRowHint">
+			<value>Nhấn để thêm dòng mới</value>
+		</data>
+		<data name="NewModelsAdded">
+			<value>Đã thêm mẫu mới</value>
+		</data>
+		<data name="InvalidModelName">
+			<value>Tên mẫu không hợp lệ</value>
+		</data>
+		<data name="CIDocument">
+			<value>Tài liệu CI</value>
+		</data>
+		<data name="SelectFile">
+			<value>Chọn tệp</value>
+		</data>
+		<data name="FileReadError">
+			<value>Lỗi đọc tệp</value>
+		</data>
+		<data name="FileNotFound">
+			<value>Không tìm thấy tệp</value>
+		</data>
+		<data name="AccessDeniedToFile">
+			<value>Không được phép truy cập tệp</value>
+		</data>
+		<data name="ArticleList">
+			<value>Danh sách mã hàng</value>
+		</data>
+		<data name="BonusFileList">
+			<value>Danh sách tệp thưởng</value>
+		</data>
+		<data name="FileList">
+			<value>Danh sách tệp</value>
+		</data>
+		<data name="IETeam">
+			<value>Nhóm IE</value>
+		</data>
+		<data name="CITeam">
+			<value>Nhóm CI</value>
+		</data>
+		<data name="InvalidFileName">
+			<value>Tên tệp không hợp lệ</value>
+		</data>
+		<data name="DocumentType">
+			<value>Loại tài liệu</value>
+		</data>
+		<data name="FileExtension">
+			<value>Phần mở rộng tệp</value>
+		</data>
+		<data name="Update">
+			<value>Cập nhật</value>
+		</data>
+
+
 </root>

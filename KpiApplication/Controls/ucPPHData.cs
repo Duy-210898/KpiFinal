@@ -169,12 +169,12 @@ namespace KpiApplication.Controls
                     .OrderBy(x => x)
             );
             GridViewHelper.SetupComboBoxColumn(gridControl1, dgvIEPPH, "Status", ieTotalList.Select(x => x.Status));
-            GridViewHelper.SetupComboBoxColumn(gridControl1, dgvIEPPH, "TypeName", new[]
-            {
-    "Trial Pattern", "CR1", "CR2", "Presell", "SMS", "MCS", "MSO", "FGT",
-    "CS1", "CS2", "CS3",
-    "Production Trial", "First Production", "Mass Production"
-});
+            GridViewHelper.SetupComboBoxColumn(
+                gridControl1,
+                dgvIEPPH,
+                "TypeName",
+                iePPHData_DAL.GetAllTypeNames()
+            );
             GridViewHelper.SetupComboBoxColumn(gridControl1, dgvIEPPH, "IsSigned", new[] { "Signed", "Not Sign Yet" });
             GridViewHelper.SetupComboBoxColumn(gridControl1, dgvIEPPH, "Process", iePPHData_DAL.GetProcessList());
 
@@ -349,6 +349,7 @@ namespace KpiApplication.Controls
                             Process = item.Process,
                             IEPPHValue = item.IEPPHValue,
                             THTValue = item.THTValue,
+                            TCTValue = item.TCTValue,
                             TargetOutputPC = item.TargetOutputPC,
                             AdjustOperatorNo = item.AdjustOperatorNo,
                             IsSigned = item.IsSigned,

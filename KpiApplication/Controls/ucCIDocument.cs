@@ -1,5 +1,5 @@
-﻿using DevExpress.Utils;
-using DevExpress.XtraEditors;
+﻿using DevExpress.XtraGrid.Columns;
+using DevExpress.XtraGrid.Views.Grid;
 using KpiApplication.Common;
 using KpiApplication.Forms;
 using KpiApplication.Services;
@@ -7,11 +7,8 @@ using KpiApplication.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -19,33 +16,96 @@ namespace KpiApplication.Controls
 {
     public partial class ucCIDocument : DevExpress.XtraEditors.XtraUserControl, ISupportLoadAsync
     {
-        // -----------------------------
-        // Instance fields
-        // -----------------------------
         private readonly DocumentServices _docService = new DocumentServices();
-        private readonly TextEdit txtInPlaceRename = new TextEdit() { Visible = false };
         private MemoryStream currentStream;
         private BonusDocument_Model currentViewingDoc;
         private string previousModel;
+        private BindingList<BonusDocument_Model> _documentBindingList;
 
-        // -----------------------------
-        // Constructor
-        // -----------------------------
         public ucCIDocument()
         {
             InitializeComponent();
             InitializeControls();
             ApplyLocalizedText();
         }
+        public Task LoadDataAsync()
+        {
+            return LoadModelsAsync(true);
+        }
 
-        // -----------------------------
-        // Public methods
-        // -----------------------------
-        public void PerformRefresh() => _ = LoadModels(reset: true);
+        private async Task LoadModelsAsync(bool reset)
+        {
+            try
+            {
+                UseWaitCursor = true;
+                List<string> modelNames = await Task.Run(() => _docService.GetModelNames());
 
-        // -----------------------------
-        // Lifecycle overrides
-        // -----------------------------
+                if (reset)
+                {
+                    lookUpModelName.EditValue = null;
+                    ResetViewer();
+                    gridControl1.DataSource = null;
+                    _docService.ClearCache();
+                    btnAddNew.Enabled = false;
+                    btnDelete.Enabled = false;
+                    btnExportFile.Enabled = false;
+                    previousModel = null;
+                }
+
+                lookUpModelName.Properties.DataSource = modelNames;
+                SetupTooltipController();
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError(Lang.LoadDataFailed, ex);
+            }
+            finally
+            {
+                UseWaitCursor = false;
+            }
+        }
+
+        private bool RefreshDocumentList(string model)
+        {
+            if (string.IsNullOrWhiteSpace(model))
+                model = lookUpModelName.EditValue as string;
+
+            if (string.IsNullOrWhiteSpace(model))
+                return false;
+
+            try
+            {
+                ResetViewer();
+                btnAddNew.Enabled = true;
+
+                if (!model.Equals(previousModel, StringComparison.OrdinalIgnoreCase))
+                    _docService.ClearCache();
+
+                previousModel = model;
+                BindDocumentGrid(model);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowError(Lang.LoadDataFailed, ex);
+                return false;
+            }
+        }
+        private void BindDocumentGrid(string model)
+        {
+            var documents = GetAllDocuments(model);
+            _documentBindingList = new BindingList<BonusDocument_Model>(documents);
+            gridControl1.DataSource = _documentBindingList;
+
+            gridView1.PopulateColumns();
+            ShowColumns(gridView1, "FileNameWithoutExtension", "FileExtension", "DocumentType");
+            ConfigureDocumentGridView(gridView1);
+
+            gridView1.ClearSelection();
+            gridView1.FocusedRowHandle = DevExpress.XtraGrid.GridControl.InvalidRowHandle;
+        }
+
         protected override void OnVisibleChanged(EventArgs e)
         {
             base.OnVisibleChanged(e);
@@ -63,9 +123,6 @@ namespace KpiApplication.Controls
             }
         }
 
-        // -----------------------------
-        // Initialization methods
-        // -----------------------------
         private void InitializeControls()
         {
             pictureViewer.Properties.SizeMode = DevExpress.XtraEditors.Controls.PictureSizeMode.Squeeze;
@@ -76,12 +133,6 @@ namespace KpiApplication.Controls
             btnDelete.Enabled = false;
             btnExportFile.Enabled = false;
             btnAddNew.Enabled = false;
-
-            txtInPlaceRename.KeyDown += TxtInPlaceRename_KeyDown;
-            Controls.Add(txtInPlaceRename);
-
-            listBoxMachineList.DoubleClick += (s, e) => BeginRenameSelectedItem();
-            listBoxLayoutFile.DoubleClick += (s, e) => BeginRenameSelectedItem();
         }
 
         private void ApplyLocalizedText()
@@ -91,185 +142,151 @@ namespace KpiApplication.Controls
             btnAddNew.Text = Lang.AddNewFile;
             lookUpModelName.Properties.NullText = Lang.SelectModel;
             layoutControlItem1.Text = Lang.ModelName;
-            layoutControlItem2.Text = Lang.ArticleList;
-            layoutControlItem3.Text = Lang.BonusFileList;
+            layoutControlItem2.Text = Lang.FileList;
         }
 
-        private void SetupTooltipController()
+        private async void gridView1_FocusedRowChanged(object sender, DevExpress.XtraGrid.Views.Base.FocusedRowChangedEventArgs e)
         {
-            if (listBoxLayoutFile.ToolTipController != null && listBoxMachineList.ToolTipController != null)
+            var selectedDoc = GetSelectedDocument();
+            await LoadAndDisplayDocumentAsync(selectedDoc);
+        }
+
+        private async Task LoadAndDisplayDocumentAsync(BonusDocument_Model selectedDoc)
+        {
+            if (selectedDoc == null || currentViewingDoc?.Id == selectedDoc.Id)
                 return;
 
-            // Setup cho listBoxLayoutFile
-            if (listBoxLayoutFile.ToolTipController == null)
-            {
-                listBoxLayoutFile.ToolTipController = toolTipController1;
-                listBoxLayoutFile.ToolTipController.GetActiveObjectInfo += (_, ea) =>
-                {
-                    var point = listBoxLayoutFile.PointToClient(Cursor.Position);
-                    int index = listBoxLayoutFile.IndexFromPoint(point);
-
-                    if (index >= 0 && index < listBoxLayoutFile.ItemCount && listBoxLayoutFile.GetItem(index) is BonusDocument_Model item)
-                    {
-                        string tooltip = DocumentServices.GetDocumentTooltip(item);
-                        ea.Info = new DevExpress.Utils.ToolTipControlInfo(item, tooltip);
-                    }
-                };
-            }
-
-            // Setup cho listBoxMachineList
-            if (listBoxMachineList.ToolTipController == null)
-            {
-                listBoxMachineList.ToolTipController = toolTipController1;
-                listBoxMachineList.ToolTipController.GetActiveObjectInfo += (_, ea) =>
-                {
-                    var point = listBoxMachineList.PointToClient(Cursor.Position);
-                    int index = listBoxMachineList.IndexFromPoint(point);
-
-                    if (index >= 0 && index < listBoxMachineList.ItemCount && listBoxMachineList.GetItem(index) is BonusDocument_Model item)
-                    {
-                        string tooltip = DocumentServices.GetDocumentTooltip(item);
-                        ea.Info = new DevExpress.Utils.ToolTipControlInfo(item, tooltip);
-                    }
-                };
-            }
-        }
-        // -----------------------------
-        // Data loading and refresh
-        // -----------------------------
-        public async Task LoadDataAsync()
-        {
-            await LoadModels(reset: true);
-        }
-        private async Task LoadModels(bool reset = false)
-        {
             try
             {
-                UseWaitCursor = true;
+                SetUiStateDuringLoading(false);
+                var data = await LoadDocumentDataAsync(selectedDoc.Id);
 
-                var modelNames = await Task.Run(() => _docService.GetModelNames());
-
-                if (reset)
+                if (DisplaySelectedDocument(selectedDoc, data))
                 {
-                    lookUpModelName.EditValue = null;
-                    ResetViewer();
-                    listBoxMachineList.DataSource = null;
-                    listBoxLayoutFile.DataSource = null;
-                    _docService.ClearCache();
-                    btnAddNew.Enabled = btnDelete.Enabled = btnExportFile.Enabled = false;
+                    currentViewingDoc = selectedDoc;
                 }
-
-                lookUpModelName.Properties.DataSource = modelNames;
-                SetupTooltipController();
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError(Lang.LoadDataFailed, ex);
+                MessageBoxHelper.ShowError("Lỗi khi tải tài liệu", ex);
             }
             finally
             {
+                SetUiStateDuringLoading(true);
                 UseWaitCursor = false;
             }
         }
-        private bool RefreshDocumentList(string model = null)
+        private void ReloadCurrentDocument()
         {
-            if (model == null) model = lookUpModelName.EditValue?.ToString();
-            if (string.IsNullOrWhiteSpace(model)) return false;
+            var data = _docService.GetDocumentBytesWithCache(currentViewingDoc.Id);
+            if (data == null || data.Length == 0) return;
+
+            ResetViewer();
+
+            if (!DisplaySelectedDocument(currentViewingDoc, data))
+            {
+                return;
+            }
+        }
+        private bool DisplaySelectedDocument(BonusDocument_Model doc, byte[] data)
+        {
+            // Dùng đuôi gốc nếu có, fallback sang FileName
+            string extension = !string.IsNullOrWhiteSpace(doc.FileExtension)
+                ? doc.FileExtension
+                : Path.GetExtension(doc.FileName);
+
+            bool success = DocumentViewerHelper.DisplayDocument(
+                this,
+                pdfViewer,
+                pictureViewer,
+                lblFileName,
+                doc,
+                data,
+                ref currentStream,
+                _docService.ImageCache,
+                out var errorMessage);
+
+            if (!success && !string.IsNullOrWhiteSpace(errorMessage))
+            {
+                MessageBoxHelper.ShowWarning(errorMessage);
+            }
+
+            return success;
+        }
+        private void SetUiStateDuringLoading(bool enable)
+        {
+            btnExportFile.Enabled = enable;
+            btnDelete.Enabled = enable;
+            UseWaitCursor = !enable;
+        }
+
+        private List<BonusDocument_Model> GetAllDocuments(string model)
+        {
+            var documentTypes = new List<string> { "Layout File", "Machine List" };
+            return _docService.GetDocumentsByModelCached(model, documentTypes);
+        }
+        private BonusDocument_Model GetSelectedDocument()
+        {
+            return gridView1.GetFocusedRow() as BonusDocument_Model;
+        }
+
+        private async Task DeleteSelectedDocumentAsync()
+        {
+            var selectedDoc = GetSelectedDocument();
+            if (selectedDoc == null) return;
+
+            var confirm = MessageBoxHelper.ShowConfirm(
+                string.Format(Lang.ConfirmDelete_Message, selectedDoc.FileName, selectedDoc.ModelName),
+                Lang.ConfirmDelete_Title);
+
+            if (confirm != DialogResult.Yes) return;
 
             try
             {
-                ResetViewer();
-                btnAddNew.Enabled = true;
-                if (!model.Equals(previousModel, StringComparison.OrdinalIgnoreCase))
+                await Task.Run(() => _docService.DeleteDocument(selectedDoc.Id));
+                _docService.RemoveDocumentFromCache(selectedDoc.Id);
+
+                if (currentViewingDoc?.Id == selectedDoc.Id)
                 {
-                    _docService.ClearCache();
+                    ResetViewer();
+                    currentViewingDoc = null;
                 }
-                listBoxLayoutFile.SelectedIndexChanged -= ListBoxDocuments_SelectedIndexChanged;
-                listBoxMachineList.SelectedIndexChanged -= ListBoxDocuments_SelectedIndexChanged;
 
-                //listBoxDocuments.DataSource = new BindingList<BonusDocument_Model>(_docService.GetDocumentsByModel(model));
-                //listBoxDocuments.DisplayMember = "FileName";
-                //listBoxDocuments.SelectedIndex = -1;
+                _documentBindingList?.Remove(selectedDoc);
 
-                //listBoxArticles.DataSource = _docService.GetArticlesByModel(model);
-                //listBoxArticles.DisplayMember = "ArticleName";
-
-                listBoxMachineList.SelectedIndexChanged += ListBoxDocuments_SelectedIndexChanged;
-                listBoxLayoutFile.SelectedIndexChanged += ListBoxDocuments_SelectedIndexChanged;
-                return true;
+                MessageBoxHelper.ShowInfo(Lang.DeletedSuccess);
             }
             catch (Exception ex)
             {
-                MessageBoxHelper.ShowError(Lang.LoadDataFailed, ex);
-                return false;
+                MessageBoxHelper.ShowError(Lang.DeleteFailed, ex);
             }
         }
+        private void ShowColumns(GridView view, params string[] visibleColumns)
+        {
+            foreach (GridColumn col in view.Columns)
+                col.Visible = visibleColumns.Contains(col.FieldName);
+        }
+        private void ConfigureDocumentGridView(GridView gridView)
+        {
+            gridView.OptionsView.ShowIndicator = false;
+
+            gridView.OptionsView.ShowHorizontalLines = DevExpress.Utils.DefaultBoolean.False;
+            gridView.OptionsView.ShowVerticalLines = DevExpress.Utils.DefaultBoolean.False;
+
+            // Cho phép edit nhưng khóa mặc định
+            gridView.OptionsBehavior.Editable = true;
+            gridView.OptionsBehavior.EditorShowMode = DevExpress.Utils.EditorShowMode.MouseDownFocused;
+            gridView.Columns["FileName"].Caption = Lang.FileName;
+            gridView.Columns["DocumentType"].Caption = Lang.DocumentType;
+        }
+
         private void ResetViewer()
         {
             if (pdfViewer == null || pictureViewer == null || lblFileName == null) return;
             ViewerResetHelper.ResetViewer(pdfViewer, pictureViewer, lblFileName, ref currentStream, ref currentViewingDoc);
         }
-        // -----------------------------
-        // Rename logic
-        // -----------------------------
-        private void BeginRenameSelectedItem()
+        private (bool Success, string FileName, byte[] Data) TrySelectFile()
         {
-            var doc = listBoxLayoutFile.SelectedItem as BonusDocument_Model;
-            if (doc == null) return;
-            var bounds = listBoxLayoutFile.GetItemRectangle(listBoxLayoutFile.SelectedIndex);
-            txtInPlaceRename.SetBounds(listBoxLayoutFile.Left + bounds.Left, listBoxLayoutFile.Top + bounds.Top, bounds.Width, bounds.Height);
-            txtInPlaceRename.Text = Path.GetFileNameWithoutExtension(doc.FileName);
-            txtInPlaceRename.Tag = doc;
-            txtInPlaceRename.Visible = true;
-            txtInPlaceRename.BringToFront();
-            txtInPlaceRename.Focus();
-            txtInPlaceRename.SelectAll();
-        }
-
-        private void CommitRename()
-        {
-            txtInPlaceRename.Visible = false;
-            var selectedDoc = txtInPlaceRename.Tag as BonusDocument_Model;
-            if (selectedDoc == null) return;
-
-            string inputName = txtInPlaceRename.Text.Trim();
-            if (!DocumentServices.IsValidFileName(inputName, out var error))
-            {
-                MessageBoxHelper.ShowWarning(error);
-                return;
-            }
-
-            string extension = Path.GetExtension(selectedDoc.FileName);
-            string newFileName = inputName + extension;
-
-            if (newFileName.Equals(selectedDoc.FileName, StringComparison.OrdinalIgnoreCase)) return;
-            if (_docService.DocumentExists(selectedDoc.ModelName, newFileName))
-            {
-                MessageBoxHelper.ShowWarning(Lang.FileNameExists);
-                return;
-            }
-
-            try
-            {
-                _docService.RenameDocument(selectedDoc, newFileName, Global.CurrentEmployee?.UserID ?? 1);
-                selectedDoc.FileName = newFileName;
-                RefreshDocumentList(selectedDoc.ModelName);
-                MessageBoxHelper.ShowInfo(Lang.RenameSuccess);
-            }
-            catch (Exception ex)
-            {
-                MessageBoxHelper.ShowError(Lang.RenameFailed, ex);
-            }
-        }
-
-        // -----------------------------
-        // File operations
-        // -----------------------------
-        private bool TrySelectFile(out string fileName, out byte[] data)
-        {
-            fileName = null;
-            data = null;
-
             using (var ofd = new OpenFileDialog
             {
                 Filter = $"{Lang.SupportedFiles}|*.pdf;*.jpg;*.jpeg;*.png;*.bmp",
@@ -279,7 +296,7 @@ namespace KpiApplication.Controls
             })
             {
                 if (ofd.ShowDialog() != DialogResult.OK)
-                    return false;
+                    return (false, null, null);
 
                 try
                 {
@@ -287,12 +304,12 @@ namespace KpiApplication.Controls
                     if (!File.Exists(selectedPath))
                     {
                         MessageBoxHelper.ShowWarning(Lang.FileNotFound);
-                        return false;
+                        return (false, null, null);
                     }
 
-                    data = File.ReadAllBytes(selectedPath);
-                    fileName = Path.GetFileName(selectedPath);
-                    return true;
+                    byte[] data = File.ReadAllBytes(selectedPath);
+                    string fileName = Path.GetFileName(selectedPath);
+                    return (true, fileName, data);
                 }
                 catch (UnauthorizedAccessException ex)
                 {
@@ -307,16 +324,24 @@ namespace KpiApplication.Controls
                     MessageBoxHelper.ShowError(Lang.FailedToOpenFile, ex);
                 }
 
-                return false;
+                return (false, null, null);
             }
         }
-
         private void SaveDocument(string modelName, string fileName, string documentType, byte[] pdfData)
         {
             try
             {
-                _docService.SaveOrUpdateDocument(modelName, fileName, documentType, pdfData, Global.CurrentEmployee?.UserID ?? 1);
-                RefreshDocumentList(modelName);
+                // Gọi hàm lưu và lấy về document mới/cập nhật đầy đủ thông tin
+                var newDoc = _docService.SaveOrUpdateDocument(modelName, fileName, documentType, pdfData, Global.CurrentEmployee?.UserID ?? 1);
+                if (newDoc == null)
+                {
+                    MessageBoxHelper.ShowWarning("Không thể lấy thông tin tài liệu mới sau khi lưu.");
+                    return;
+                }
+
+                // Thêm vào BindingList để grid tự động cập nhật
+                _documentBindingList?.Add(newDoc);
+
                 MessageBoxHelper.ShowInfo(Lang.FileSavedSuccessfully);
             }
             catch (Exception ex)
@@ -324,38 +349,6 @@ namespace KpiApplication.Controls
                 MessageBoxHelper.ShowError(Lang.ErrorWhileSavingDocument, ex);
             }
         }
-
-        private void DeleteSelectedDocument()
-        {
-            var selectedDoc = listBoxLayoutFile.SelectedItem as BonusDocument_Model;
-            if (selectedDoc == null) return;
-
-            var confirm = MessageBoxHelper.ShowConfirm(
-                string.Format(Lang.ConfirmDelete_Message, selectedDoc.FileName, selectedDoc.ModelName),
-                Lang.ConfirmDelete_Title);
-
-            if (confirm != DialogResult.Yes) return;
-
-            try
-            {
-                _docService.DeleteDocument(selectedDoc.Id);
-                _docService.RemoveDocumentFromCache(selectedDoc.Id);
-
-                if (currentViewingDoc?.Id == selectedDoc.Id)
-                {
-                    ResetViewer();
-                    currentViewingDoc = null;
-                }
-
-                MessageBoxHelper.ShowInfo(Lang.DeletedSuccess);
-                RefreshDocumentList(selectedDoc.ModelName);
-            }
-            catch (Exception ex)
-            {
-                MessageBoxHelper.ShowError(Lang.DeleteFailed, ex);
-            }
-        }
-
         private Task<byte[]> LoadDocumentDataAsync(int docId)
         {
             return Task.Run(() => _docService.GetDocumentBytesWithCache(docId));
@@ -389,96 +382,10 @@ namespace KpiApplication.Controls
                 }
             }
         }
-        /// <summary>
-        /// Other Methods
-        /// </summary>
-        /// 
-        private void ReloadCurrentDocument()
-        {
-            var data = _docService.GetDocumentBytesWithCache(currentViewingDoc.Id);
-            if (data == null || data.Length == 0) return;
-
-            ResetViewer();
-
-            if (!DisplaySelectedDocument(currentViewingDoc, data))
-            {
-                return;
-            }
-        }
-        private void SetUiStateDuringLoading(bool enable)
-        {
-            btnExportFile.Enabled = enable;
-            btnDelete.Enabled = enable;
-            UseWaitCursor = !enable;
-        }
-        private bool DisplaySelectedDocument(BonusDocument_Model doc, byte[] data)
-        {
-            bool success = DocumentViewerHelper.DisplayDocument(
-                this,
-                pdfViewer,
-                pictureViewer,
-                lblFileName,
-                doc,
-                data,
-                ref currentStream,
-                _docService.ImageCache,
-                out var errorMessage);
-
-            if (!success && !string.IsNullOrWhiteSpace(errorMessage))
-            {
-                MessageBoxHelper.ShowWarning(errorMessage);
-            }
-
-            return success;
-        }
-
-
-
         // -----------------------------
         // Event handlers
         // -----------------------------
-        private void ListBoxDocuments_KeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.KeyCode)
-            {
-                case Keys.F2: BeginRenameSelectedItem(); e.Handled = true; break;
-                case Keys.Delete: DeleteSelectedDocument(); e.Handled = true; break;
-            }
-        }
 
-        private void TxtInPlaceRename_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter) { CommitRename(); e.Handled = true; }
-            else if (e.KeyCode == Keys.Escape) txtInPlaceRename.Visible = false;
-        }
-
-        private async void ListBoxDocuments_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var selectedDoc = listBoxLayoutFile.SelectedItem as BonusDocument_Model;
-            if (selectedDoc == null || currentViewingDoc?.Id == selectedDoc.Id)
-                return;
-
-            SetUiStateDuringLoading(false);
-
-            try
-            {
-                var data = await LoadDocumentDataAsync(selectedDoc.Id);
-
-                if (DisplaySelectedDocument(selectedDoc, data))
-                {
-                    currentViewingDoc = selectedDoc;
-                    SetUiStateDuringLoading(true);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBoxHelper.ShowError("Lỗi khi tải tài liệu", ex);
-            }
-            finally
-            {
-                UseWaitCursor = false;
-            }
-        }
         private void lookUpModelName_EditValueChanged(object sender, EventArgs e)
         {
             var model = lookUpModelName.EditValue?.ToString();
@@ -497,27 +404,91 @@ namespace KpiApplication.Controls
                 return;
             }
 
-            if (!TrySelectFile(out string fileName, out byte[] data)) return;
+            var result = TrySelectFile();
+            if (!result.Success)
+                return;
 
-            using (var preview = new PreviewSaveForm(data, fileName, modelName))
+            using (var preview = new PreviewSaveForm(result.Data, result.FileName, modelName, true))
             {
                 preview.ShowDialog();
 
                 if (preview.IsConfirmed &&
                     !string.IsNullOrWhiteSpace(preview.FileName) &&
-                    !string.IsNullOrWhiteSpace(preview.DocumentType))
+                    !string.IsNullOrWhiteSpace(preview.FinalDocumentType))
                 {
                     SaveDocument(
                         modelName,
                         preview.FileName,
-                        preview.DocumentType,
+                        preview.FinalDocumentType,
                         preview.FinalFileData
                     );
+                    // Đảm bảo gọi lại làm mới UI sau khi lưu
+                    RefreshDocumentList(modelName);
                 }
             }
         }
-
-        private void btnDelete_Click(object sender, EventArgs e) => DeleteSelectedDocument();
+        private async void btnDelete_Click(object sender, EventArgs e) => await DeleteSelectedDocumentAsync();
         private void btnExportFile_Click(object sender, EventArgs e) => ExportCurrentFile();
+        private void SetupTooltipController()
+        {
+            if (gridControl1.ToolTipController == null)
+            {
+                gridControl1.ToolTipController = toolTipController1;
+                gridControl1.ToolTipController.GetActiveObjectInfo += (_, ea) =>
+                {
+                    var hitInfo = gridView1.CalcHitInfo(gridControl1.PointToClient(Cursor.Position));
+                    if (hitInfo.InRowCell)
+                    {
+                        var doc = gridView1.GetRow(hitInfo.RowHandle) as BonusDocument_Model;
+                        if (doc != null)
+                        {
+                            string tooltip = DocumentServices.GetDocumentTooltip(doc);
+                            ea.Info = new DevExpress.Utils.ToolTipControlInfo(doc, tooltip);
+                        }
+                    }
+                };
+            }
+        }
+        private void gridView1_ValidateRow(object sender, DevExpress.XtraGrid.Views.Base.ValidateRowEventArgs e)
+        {
+            var view = sender as DevExpress.XtraGrid.Views.Grid.GridView;
+            var doc = view.GetRow(e.RowHandle) as BonusDocument_Model;
+            if (doc == null) return;
+
+            string newFileNameWithoutExt = doc.FileNameWithoutExtension;
+            string finalFileName = doc.FileName; // Đã tự động ghép tên + đuôi
+
+            if (string.IsNullOrWhiteSpace(newFileNameWithoutExt))
+            {
+                e.Valid = false;
+                MessageBoxHelper.ShowWarning(Lang.InvalidFileName);
+                return;
+            }
+
+            if (!DocumentServices.IsValidFileName(newFileNameWithoutExt, out var error))
+            {
+                e.Valid = false;
+                MessageBoxHelper.ShowWarning(error);
+                return;
+            }
+
+            if (_docService.DocumentExists(doc.ModelName, finalFileName))
+            {
+                e.Valid = false;
+                MessageBoxHelper.ShowWarning(Lang.FileNameExists);
+                return;
+            }
+
+            try
+            {
+                _docService.RenameDocument(doc, finalFileName, Global.CurrentEmployee?.UserID ?? 1);
+                doc.FileName = finalFileName; // Cập nhật lại
+            }
+            catch (Exception ex)
+            {
+                e.Valid = false;
+                MessageBoxHelper.ShowError(Lang.RenameFailed, ex);
+            }
+        }
     }
 }

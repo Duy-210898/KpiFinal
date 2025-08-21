@@ -769,11 +769,23 @@ WHERE ArticleID = @ArticleID
 
             try
             {
+                // Lấy danh sách TCTData để tạo dictionary tra cứu
+                var tctDataList = GetAllTCTData();
+                var tctDict = tctDataList
+                    .GroupBy(t => (
+                        Model: t.ModelName?.Trim().ToLowerInvariant() ?? "",
+                        Process: t.Process?.Trim().ToLowerInvariant() ?? "",
+                        Type: t.Type?.Trim().ToLowerInvariant() ?? ""
+                    ))
+                    .ToDictionary(
+                        g => g.Key,
+                        g => g.First().TCTValue
+                    );
+
                 using (var conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
 
-                    // Tạo câu truy vấn động dựa trên tham số truyền vào
                     var queryBuilder = new StringBuilder(@"
                 SELECT 
                     a.ArticleID,
@@ -803,8 +815,8 @@ WHERE ArticleID = @ArticleID
                 LEFT JOIN ArtType at ON aptd.TypeID = at.TypeID
                 LEFT JOIN Article_PCIncharge apc ON a.ArticleID = apc.ArticleID
                 LEFT JOIN Article_Outsourcing ao ON a.ArticleID = ao.ArticleID
-                Where a.IsDeleted = 0  
-                    ");
+                WHERE a.IsDeleted = 0
+            ");
 
                     var cmd = new SqlCommand();
                     if (!string.IsNullOrEmpty(modelName))
@@ -855,6 +867,18 @@ WHERE ArticleID = @ArticleID
                                 OutsourcingStockFittingBool = reader["GCN_StockFitting"] != DBNull.Value && Convert.ToBoolean(reader["GCN_StockFitting"]),
                             };
 
+                            // Tạo key để tra cứu TCTValue
+                            var key = (
+                                Model: data.ModelName.Trim().ToLowerInvariant(),
+                                Process: data.Process.Trim().ToLowerInvariant(),
+                                Type: data.TypeName.Trim().ToLowerInvariant()
+                            );
+
+                            if (tctDict.TryGetValue(key, out var tctValue))
+                            {
+                                data.TCTValue = tctValue;
+                            }
+
                             // Tính IE_PPH nếu có đủ dữ liệu
                             if (data.TargetOutputPC.HasValue && data.AdjustOperatorNo.HasValue && data.AdjustOperatorNo.Value != 0)
                             {
@@ -872,6 +896,28 @@ WHERE ArticleID = @ArticleID
             }
 
             return iePPHList;
+        }
+        public List<string> GetAllTypeNames()
+        {
+            var typeNames = new List<string>();
+            string query = "SELECT DISTINCT TypeName FROM ArtType ORDER BY TypeName";
+
+            using (var conn = new SqlConnection(connectionString))
+            using (var cmd = new SqlCommand(query, conn))
+            {
+                conn.Open();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var typeName = reader["TypeName"]?.ToString()?.Trim();
+                        if (!string.IsNullOrWhiteSpace(typeName))
+                            typeNames.Add(typeName);
+                    }
+                }
+            }
+
+            return typeNames;
         }
     }
 }

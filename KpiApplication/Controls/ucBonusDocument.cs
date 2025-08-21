@@ -4,10 +4,12 @@ using KpiApplication.Forms;
 using KpiApplication.Services;
 using KpiApplication.Utils;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace KpiApplication.Controls
 {
@@ -21,6 +23,7 @@ namespace KpiApplication.Controls
         private MemoryStream currentStream;
         private BonusDocument_Model currentViewingDoc;
         private string previousModel;
+        private BindingList<BonusDocument_Model> _documentBindingList;
 
         // -----------------------------
         // Constructor
@@ -127,6 +130,7 @@ namespace KpiApplication.Controls
                     listBoxArticles.DataSource = null;
                     _docService.ClearCache();
                     btnAddNew.Enabled = btnDelete.Enabled = btnExportFile.Enabled = false;
+                    previousModel = null;
                 }
 
                 lookUpModelName.Properties.DataSource = modelNames;
@@ -141,8 +145,14 @@ namespace KpiApplication.Controls
                 UseWaitCursor = false;
             }
         }
-
-
+        private void BindDocumentList(ListBoxControl listBox, string model, string documentType)
+        {
+            var documents = _docService.GetDocumentsByModelCached(model, new List<string> { documentType });
+            _documentBindingList = new BindingList<BonusDocument_Model>(documents);
+            listBox.DataSource = _documentBindingList;
+            listBox.DisplayMember = "FileName";
+            listBox.SelectedIndex = -1;
+        }
         private bool RefreshDocumentList(string model = null)
         {
             if (model == null) model = lookUpModelName.EditValue?.ToString();
@@ -159,9 +169,7 @@ namespace KpiApplication.Controls
                 // Ngắt kết nối sự kiện trước khi gán
                 listBoxDocuments.SelectedIndexChanged -= ListBoxDocuments_SelectedIndexChanged;
 
-                listBoxDocuments.DataSource = new BindingList<BonusDocument_Model>(_docService.GetDocumentsByModel(model));
-                listBoxDocuments.DisplayMember = "FileName";
-                listBoxDocuments.SelectedIndex = -1; // Rõ ràng hơn
+                BindDocumentList(listBoxDocuments, model, "Bonus Document");
 
                 listBoxArticles.DataSource = _docService.GetArticlesByModel(model);
                 listBoxArticles.DisplayMember = "ArticleName";
@@ -288,7 +296,18 @@ namespace KpiApplication.Controls
             try
             {
                 _docService.SaveOrUpdateDocument(modelName, fileName, documentType, pdfData, Global.CurrentEmployee?.UserID ?? 1);
-                RefreshDocumentList(modelName);
+
+                var newDoc = new BonusDocument_Model
+                {
+                    ModelName = modelName,
+                    FileName = fileName,
+                    DocumentType = documentType,
+                    PdfData = pdfData
+                };
+
+                // Thêm vào BindingList để cập nhật UI ngay
+                _documentBindingList.Add(newDoc);
+
                 MessageBoxHelper.ShowInfo(Lang.FileSavedSuccessfully);
             }
             catch (Exception ex)
@@ -296,7 +315,6 @@ namespace KpiApplication.Controls
                 MessageBoxHelper.ShowError(Lang.ErrorWhileSavingDocument, ex);
             }
         }
-
         private void DeleteSelectedDocument()
         {
             var selectedDoc = listBoxDocuments.SelectedItem as BonusDocument_Model;
@@ -319,15 +337,16 @@ namespace KpiApplication.Controls
                     currentViewingDoc = null;
                 }
 
+                // Xóa khỏi BindingList
+                _documentBindingList.Remove(selectedDoc);
+
                 MessageBoxHelper.ShowInfo(Lang.DeletedSuccess);
-                RefreshDocumentList(selectedDoc.ModelName);
             }
             catch (Exception ex)
             {
                 MessageBoxHelper.ShowError(Lang.DeleteFailed, ex);
             }
         }
-
         private Task<byte[]> LoadDocumentDataAsync(int docId)
         {
             return Task.Run(() => _docService.GetDocumentBytesWithCache(docId));
@@ -471,12 +490,12 @@ namespace KpiApplication.Controls
 
             if (!TrySelectFile(out string fileName, out byte[] data)) return;
 
-            using (var preview = new PreviewSaveForm(data, fileName, modelName))
+            using (var preview = new PreviewSaveForm(data, fileName, modelName, false))
             {
                 preview.ShowDialog();
                 if (preview.IsConfirmed && !string.IsNullOrWhiteSpace(preview.FileName))
                 {
-                    SaveDocument(modelName, preview.FileName, preview.DocumentType, preview.FinalFileData);
+                    SaveDocument(modelName, preview.FileName, preview.FinalDocumentType, preview.FinalFileData);
                 }
             }
         }

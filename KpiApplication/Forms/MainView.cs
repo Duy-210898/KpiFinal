@@ -42,13 +42,13 @@ namespace KpiApplication
                 (btnPPHData, typeof(ucPPHData), Lang.SearchIEPPH),
                 (btnViewPPHData, typeof(ucViewPPHData), Lang.ViewIEPPH),
                 (btnViewData, typeof(ucViewData), Lang.ViewDailyData),
-                (btnWeeklyPlan, typeof(ucWeeklyPlan), Lang.WeeklyPlan),
+                (btnWeeklyPlan, typeof(ucWeeklyPlan), Lang.WeeklyPlan),  
                 (btnAccountManage, typeof(ucAccountManage), Lang.AccountManagement),
                 (btnViewTCT, typeof(ucViewTCTData), Lang.ViewTCTData),
                 (btnTCT, typeof(ucTCTData), Lang.TCTData),
                 (btnBonus, typeof(ucBonusDocument), Lang.BonusDocument),
                 (btnViewBonusDocuments, typeof(ucViewBonusDocuments), Lang.ViewBonusDocuments),
-                (btnCIDocument, typeof(ucCIDocument), "CI Document")
+                (btnCIDocument, typeof(ucCIDocument), Lang.CIDocument)
             };
 
             InitMenuItems();
@@ -61,7 +61,7 @@ namespace KpiApplication
         {
             try
             {
-                SplashScreenManager.ShowForm(this, typeof(CustomWaitForm), true, true, false);
+                SplashScreenManager.ShowForm(typeof(CustomWaitForm), true, true);
                 SplashScreenManager.Default.SetWaitFormCaption(caption);
                 SplashScreenManager.Default.SetWaitFormDescription(description);
 
@@ -77,7 +77,6 @@ namespace KpiApplication
                     SplashScreenManager.CloseForm();
             }
         }
-
         private void InitMenuItems()
         {
             foreach (var (element, type, text) in _menuItems)
@@ -90,6 +89,8 @@ namespace KpiApplication
             accordion2.Text = Lang.PC;
             accordion3.Text = Lang.ME;
             accordion4.Text = Lang.Management;
+            btnIE.Text = Lang.IETeam;
+            btnCI.Text = Lang.CITeam;
         }
 
         private void InitializeLogOutButton()

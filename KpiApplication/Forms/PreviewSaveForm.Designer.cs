@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+            this.cbxDocumentType = new DevExpress.XtraEditors.ComboBoxEdit();
             this.panelControl1 = new DevExpress.XtraEditors.PanelControl();
             this.pictureViewer = new DevExpress.XtraEditors.PictureEdit();
             this.pdfViewer = new DevExpress.XtraPdfViewer.PdfViewer();
@@ -44,10 +45,10 @@
             this.layoutControlItem4 = new DevExpress.XtraLayout.LayoutControlItem();
             this.layoutControlItem5 = new DevExpress.XtraLayout.LayoutControlItem();
             this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
-            this.cbxDocumentType = new DevExpress.XtraEditors.ComboBoxEdit();
             this.layoutControlItem6 = new DevExpress.XtraLayout.LayoutControlItem();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
             this.layoutControl1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.cbxDocumentType.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.panelControl1)).BeginInit();
             this.panelControl1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureViewer.Properties)).BeginInit();
@@ -61,7 +62,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.cbxDocumentType.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem6)).BeginInit();
             this.SuspendLayout();
             // 
@@ -80,6 +80,17 @@
             this.layoutControl1.Size = new System.Drawing.Size(803, 568);
             this.layoutControl1.TabIndex = 0;
             this.layoutControl1.Text = "layoutControl1";
+            // 
+            // cbxDocumentType
+            // 
+            this.cbxDocumentType.Location = new System.Drawing.Point(99, 60);
+            this.cbxDocumentType.Name = "cbxDocumentType";
+            this.cbxDocumentType.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
+            this.cbxDocumentType.Size = new System.Drawing.Size(165, 20);
+            this.cbxDocumentType.StyleController = this.layoutControl1;
+            this.cbxDocumentType.TabIndex = 10;
+            this.cbxDocumentType.Visible = false;
             // 
             // panelControl1
             // 
@@ -215,16 +226,6 @@
             this.layoutControlItem2.Size = new System.Drawing.Size(527, 548);
             this.layoutControlItem2.TextVisible = false;
             // 
-            // cbxDocumentType
-            // 
-            this.cbxDocumentType.Location = new System.Drawing.Point(99, 60);
-            this.cbxDocumentType.Name = "cbxDocumentType";
-            this.cbxDocumentType.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-            this.cbxDocumentType.Size = new System.Drawing.Size(165, 20);
-            this.cbxDocumentType.StyleController = this.layoutControl1;
-            this.cbxDocumentType.TabIndex = 10;
-            // 
             // layoutControlItem6
             // 
             this.layoutControlItem6.Control = this.cbxDocumentType;
@@ -246,6 +247,7 @@
             this.Text = "Preview PDF";
             ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
             this.layoutControl1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.cbxDocumentType.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.panelControl1)).EndInit();
             this.panelControl1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureViewer.Properties)).EndInit();
@@ -259,7 +261,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.cbxDocumentType.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem6)).EndInit();
             this.ResumeLayout(false);
 

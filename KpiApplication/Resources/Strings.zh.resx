@@ -318,6 +318,95 @@
 	<data name="RefreshingDescription" xml:space="preserve"><value>请稍候，正在刷新数据…</value></data>
 	<data name="ExportFile" xml:space="preserve"><value>导出文件</value></data>
 	<data name="Plant" xml:space="preserve"><value>工厂</value></data>
-
+	<data name="ScanDate">
+		<value>扫描日期</value>
+	</data>
+	<data name="Factory">
+		<value>工厂</value>
+	</data>
+	<data name="Plant">
+		<value>车间</value>
+	</data>
+	<data name="LineName">
+		<value>生产线名称</value>
+	</data>
+	<data name="TotalWorker">
+		<value>总工人</value>
+	</data>
+	<data name="Quantity">
+		<value>数量</value>
+	</data>
+	<data name="PPHRate">
+		<value>PPH 速率</value>
+	</data>
+	<data name="TotalWorkingHours">
+		<value>总工作时数</value>
+	</data>
+	<data name="ActutalPPH">
+		<value>实际 PPH</value>
+	</data>
+	<data name="AutoCutting">
+		<value>自动裁剪</value>
+	</data>
+	<data name="InvalidArticleName">
+		<value>无效的款号</value>
+	</data>
+	<data name="Error_InsertArticleFailed">
+		<value>错误：添加款号失败</value>
+	</data>
+	<data name="InsertArticleFailed">
+		<value>添加款号失败</value>
+	</data>
+	<data name="ConfirmDeleteArticle">
+		<value>确定要删除该款号吗？</value>
+	</data>
+	<data name="AddNewRowHint">
+		<value>点击添加新行</value>
+	</data>
+	<data name="NewModelsAdded">
+		<value>已添加新款式</value>
+	</data>
+	<data name="InvalidModelName">
+		<value>无效的款式名称</value>
+	</data>
+	<data name="CIDocument">
+		<value>CI 文件</value>
+	</data>
+	<data name="SelectFile">
+		<value>选择文件</value>
+	</data>
+	<data name="FileReadError">
+		<value>文件读取错误</value>
+	</data>
+	<data name="FileNotFound">
+		<value>文件未找到</value>
+	</data>
+	<data name="AccessDeniedToFile">
+		<value>文件访问被拒绝</value>
+	</data>
+	<data name="ArticleList">
+		<value>款号列表</value>
+	</data>
+	<data name="BonusFileList">
+		<value>奖金文件列表</value>
+	</data>
+	<data name="FileList">
+		<value>文件列表</value>
+	</data>
+	<data name="IETeam">
+		<value>IE 团队</value>
+	</data>
+	<data name="CITeam">
+		<value>CI 团队</value>
+	</data>
+	<data name="InvalidFileName">
+		<value>无效的文件名</value>
+	</data>
+	<data name="DocumentType">
+		<value>文件类型</value>
+	</data>
+	<data name="FileExtension">
+		<value>文件扩展名</value>
+	</data>
 
 </root>

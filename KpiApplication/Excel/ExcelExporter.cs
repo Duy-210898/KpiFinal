@@ -114,7 +114,7 @@ namespace KpiApplication.Excel
 
                 int GetColumnCountForProcess(string process)
                 {
-                    int baseCols = processesWithIsSigned.Contains(process) ? 5 : 4;
+                    int baseCols = processesWithIsSigned.Contains(process) ? 6 : 5;
                     if (includeTCT) baseCols += 1;
                     return baseCols;
                 }
@@ -197,7 +197,7 @@ namespace KpiApplication.Excel
                         currentProcessColumns.AddRange(new[] {
                     "Target Output Of PC\nMục tiêu sản lượng của PC",
                     "Adjust Operator No\nSố người điều chỉnh",
-                    "IE PPH"
+                    "IE PPH", "THT"
                 });
 
                         if (includeTCT)
@@ -242,6 +242,7 @@ namespace KpiApplication.Excel
                                 ws.Cells[row, col++].Value = data.TargetOutputPC;
                                 ws.Cells[row, col++].Value = data.AdjustOperatorNo;
                                 ws.Cells[row, col++].Value = data.IEPPHValue;
+                                ws.Cells[row, col++].Value = data.THTValue;
                                 if (includeTCT)
                                     ws.Cells[row, col++].Value = data.TCTValue;
                             }
@@ -308,7 +309,7 @@ namespace KpiApplication.Excel
 
             int GetColumnCountForProcess(string process)
             {
-                int baseCols = processesWithIsSigned.Contains(process) ? 5 : 4;
+                int baseCols = processesWithIsSigned.Contains(process) ? 6 : 5;
                 if (includeTCT) baseCols += 1;
                 return baseCols;
             }

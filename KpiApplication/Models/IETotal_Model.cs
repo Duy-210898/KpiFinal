@@ -164,12 +164,24 @@ namespace KpiApplication.Models
             if (TargetOutputPC.HasValue && AdjustOperatorNo.HasValue && AdjustOperatorNo.Value != 0)
             {
                 IEPPHValue = Math.Round((double)TargetOutputPC.Value / AdjustOperatorNo.Value, 2);
+
+                // Tính THTValue = 3600 / IEPPHValue, làm tròn phần nguyên
+                if (IEPPHValue.HasValue && IEPPHValue.Value != 0)
+                {
+                    THTValue = Math.Floor(3600 / IEPPHValue.Value);
+                }
+                else
+                {
+                    THTValue = null;
+                }
             }
             else
             {
                 IEPPHValue = null;
+                THTValue = null;
             }
         }
+
         private void RecalculateFinalOperator()
         {
             if (ReferenceOperator.HasValue)

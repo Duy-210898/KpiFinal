@@ -35,7 +35,11 @@ namespace KpiApplication.Utils
                 pictureViewer.Visible = false;
             });
 
-            string ext = Path.GetExtension(doc.FileName)?.ToLowerInvariant();
+            // Ưu tiên đuôi gốc (OriginalExtension)
+            string ext = !string.IsNullOrWhiteSpace(doc.FileExtension)
+                ? doc.FileExtension.ToLowerInvariant()
+                : Path.GetExtension(doc.FileName)?.ToLowerInvariant();
+
             var stream = new MemoryStream(data);
 
             try
