@@ -26,7 +26,7 @@ namespace KpiApplication.Controls
 
         private readonly ProductionData_DAL productionData_DAL = new ProductionData_DAL();
 
-        private readonly List<ProductionData_Model> _modifiedDataList = new List<ProductionData_Model>();
+        private readonly HashSet<ProductionData_Model> _modifiedDataList = new HashSet<ProductionData_Model>();
         private List<ExcelRowData_Model> _excelPreviewData;
         public ucWorkingTime()
         {
@@ -34,27 +34,22 @@ namespace KpiApplication.Controls
 
             dgvWorkingTime.CustomRowFilter += dgvWorkingTime_CustomRowFilter;
             dgvWorkingTime.MouseUp += dgvWorkingTime_MouseUp;
-            dgvWorkingTime.RowCellStyle += dgvWorkingTime_RowCellStyle;
             dgvWorkingTime.KeyDown += dgvWorkingTime_KeyDown;
-            cbxProcess.SelectedIndexChanged += cbxProcess_SelectedIndexChanged;
             dgvWorkingTime.CellMerge += dgvWorkingTime_CellMerge;
             dgvWorkingTime.CellValueChanged += dgvWorkingTime_CellValueChanged;
+            dgvWorkingTime.ValidatingEditor += dgvWorkingTime_ValidatingEditor;
 
-            mergeMenuItem = new ToolStripMenuItem("Merge");
-            mergeMenuItem.Click += mergeToolStripMenuItem_Click;
-
-            unmergeMenuItem = new ToolStripMenuItem("Unmerge");
-            unmergeMenuItem.Click += unmergeToolStripMenuItem_Click;
+            mergeMenuItem = new ToolStripMenuItem("Merge", null, mergeToolStripMenuItem_Click);
+            unmergeMenuItem = new ToolStripMenuItem("Unmerge", null, unmergeToolStripMenuItem_Click);
 
             contextMenuMerge.Items.Add(mergeMenuItem);
             contextMenuMerge.Items.Add(unmergeMenuItem);
+            contextMenuMerge.Items.Add(new ToolStripSeparator());
         }
-
         private void btnPreviewCancel_Click(object sender, EventArgs e)
         {
             layoutPreview.Visible = false;
         }
-
         public async Task LoadDataAsync()
         {
             try
@@ -74,12 +69,6 @@ namespace KpiApplication.Controls
                 UseWaitCursor = false;
             }
         }
-        //private async void btnRefresh_ItemClick(object sender, ItemClickEventArgs e)
-        //{
-        //    await LoadDataAsync();
-        //    _modifiedDataList.Clear();
-        //}
-
 
         private void mergeToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -90,7 +79,6 @@ namespace KpiApplication.Controls
                 return;
             }
 
-            // Check if the selected rows are eligible to be merged (e.g., same Process, Line, ScanDate...)
             if (!CanMergeItems(selectedItems))
             {
                 MessageBoxHelper.ShowWarning("Selected rows are not valid for merging.");
@@ -98,10 +86,8 @@ namespace KpiApplication.Controls
                 return;
             }
 
-            // Call service to perform merge (update model, recalculate, etc.)
             _productionDataService.MergeItems(selectedItems);
 
-            // Update the database for each ProductionID with the new MergeGroupID
             foreach (var item in selectedItems)
             {
                 if (item.MergeGroupID.HasValue)
@@ -125,7 +111,6 @@ namespace KpiApplication.Controls
 
             int groupId = mergedItem.MergeGroupID.Value;
 
-            // Get all rows with this MergeGroupID from raw data
             var groupItems = _productionDataService.RawData
                 .Where(x => x.MergeGroupID == groupId)
                 .ToList();
@@ -136,10 +121,8 @@ namespace KpiApplication.Controls
                 return;
             }
 
-            // Update DB to unmerge (e.g., set MergeGroupID = null)
             productionData_DAL.SetUnmergeInfo(groupId);
 
-            // Update in-memory model (remove merge)
             _productionDataService.UnmergeItems(groupId, groupItems.Select(x => x.ProductionID).ToList());
 
             dgvWorkingTime.ClearSelection();
@@ -258,7 +241,7 @@ namespace KpiApplication.Controls
                 "ArticleID", "DepartmentCode", "ProductionID","TargetOfPC",
                 "OutputRateValue", "IsMerged", "IsVisible", "TotalWorkingHours",
                 "MergeGroupID", "IsSlides", "PPHRateValue", "PPHFallsBelowReasons",
-                "Process", "ActualPPH", "PPHRate", "LargestOutput", "OperatorAdjust"
+                "ActualPPH", "PPHRate", "LargestOutput", "OperatorAdjust", "IsModified"
             );
 
             GridViewHelper.SetColumnCaptions(dgvWorkingTime, new Dictionary<string, string>
@@ -280,6 +263,133 @@ namespace KpiApplication.Controls
             ApplyFilter();
         }
 
+        private async Task SendOverLimitAlertEmailAsync(List<ProductionData_Model> overLimitRows)
+        {
+            if (overLimitRows == null || !overLimitRows.Any())
+                return;
+
+            try
+            {
+                if (_productionDataService == null)
+                {
+                    Debug.WriteLine("⚠️ _productionDataService chưa có dữ liệu, bỏ qua kiểm tra lịch sử.");
+                    return;
+                }
+
+                DateTime fromDate = DateTime.Today.AddMonths(-6); // chỉ lấy 6 tháng gần nhất
+                var historyData = _productionDataService.MergedList?
+                    .Where(x =>
+                        x.ScanDate >= fromDate &&
+                        x.ScanDate < DateTime.Today &&
+                        string.Equals(x.TypeName, "Mass Production", StringComparison.OrdinalIgnoreCase) &&
+                        x.PPHRateValue.HasValue &&
+                        x.PPHRateValue.Value >= 1.3)
+                    .OrderByDescending(x => x.ScanDate)
+                    .ToList();
+
+                if (historyData == null || historyData.Count == 0)
+                {
+                    Debug.WriteLine("📭 Không có dữ liệu lịch sử trong 3 tháng gần nhất, bỏ qua gửi.");
+                    return;
+                }
+
+                var filteredRows = new List<object>();
+                foreach (var current in overLimitRows)
+                {
+                    var matchedHistory = historyData
+                        .Where(prev =>
+                            string.Equals(prev.LineName, current.LineName, StringComparison.OrdinalIgnoreCase) &&
+                            IsModelSimilar(prev.ModelName, current.ModelName)
+                        )
+                        .Take(3) // chỉ lấy 3 dòng lịch sử mới nhất
+                        .ToList();
+
+                    if (matchedHistory.Any())
+                    {
+                        Debug.WriteLine($"✅ [MATCH] {current.ScanDate:yyyy-MM-dd} | {current.LineName} | {current.ModelName} " +
+                                        $"→ Tìm thấy {matchedHistory.Count} bản ghi lịch sử trong 3 tháng qua.");
+
+                        filteredRows.Add(new
+                        {
+                            Current = new
+                            {
+                                current.ScanDate,
+                                current.LineName,
+                                current.ModelName,
+                                current.TypeName,
+                                current.Quantity,
+                                current.TotalWorker,
+                                current.WorkingTime,
+                                current.ActualPPH,
+                                current.IEPPH,
+                                current.PPHRate
+                            },
+                            History = matchedHistory.Select(h => new
+                            {
+                                h.ScanDate,
+                                h.LineName,
+                                h.ModelName,
+                                h.Quantity,
+                                h.TotalWorker,
+                                h.WorkingTime,
+                                h.ActualPPH,
+                                h.IEPPH,
+                                h.PPHRate
+                            }).ToList(),
+                            PushedAt = DateTime.UtcNow.ToString("o")
+                        });
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"🔇 [NO MATCH] {current.ScanDate:yyyy-MM-dd} | {current.LineName} | {current.ModelName}");
+                    }
+                }
+
+                if (!filteredRows.Any())
+                {
+                    Debug.WriteLine("🔇 Không tìm thấy dòng nào có tiền sử vượt 130%, không gửi mail.");
+                    return;
+                }
+
+                await MailHelper.PushDailyAlertDataAsync(filteredRows);
+
+                Debug.WriteLine($"📤 Đã push {filteredRows.Count} dòng vượt ngưỡng (kèm lịch sử).");
+            }
+            catch (Exception ex)
+            {
+                MessageBoxHelper.ShowWarning($"❌ Không push được dữ liệu cảnh báo: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Bỏ ngoặc và chuẩn hoá model
+        /// </summary>
+        private string NormalizeModel(string model)
+        {
+            if (string.IsNullOrWhiteSpace(model)) return string.Empty;
+
+            string result = model.Trim().ToUpperInvariant();
+
+            // Bỏ toàn bộ nội dung trong ngoặc, nếu có nhiều ngoặc cũng bỏ hết
+            result = System.Text.RegularExpressions.Regex.Replace(result, @"\([^)]*\)", "").Trim();
+
+            return result;
+        }
+
+        /// <summary>
+        /// So sánh model: chỉ cần một chứa model còn lại là coi như giống
+        /// </summary>
+        private bool IsModelSimilar(string model1, string model2)
+        {
+            string norm1 = NormalizeModel(model1);
+            string norm2 = NormalizeModel(model2);
+
+            if (string.IsNullOrEmpty(norm1) || string.IsNullOrEmpty(norm2))
+                return false;
+
+            return norm1.Contains(norm2) || norm2.Contains(norm1);
+        }
+
         public async Task SaveModifiedData()
         {
             if (_modifiedDataList == null || !_modifiedDataList.Any())
@@ -288,16 +398,27 @@ namespace KpiApplication.Controls
                 return;
             }
 
+            var overLimitRows = _modifiedDataList
+                .Where(x =>
+                    string.Equals(x.TypeName, "Mass Production", StringComparison.OrdinalIgnoreCase) &&
+                    x.PPHRateValue.HasValue &&
+                    x.PPHRateValue.Value >= 1.3)
+                .ToList();
+
+            await SendOverLimitAlertEmailAsync(overLimitRows);
+
             try
             {
                 await AsyncLoaderHelper.LoadDataWithSplashAsync(
                     this,
                     SaveAllDataToDatabase,
-                    (result) => { }, 
+                    result => { },
                     Lang.Saving);
 
                 MessageBoxHelper.ShowInfo("Data saved successfully!");
                 _modifiedDataList.Clear();
+                dgvWorkingTime.RefreshData();
+
             }
             catch (Exception ex)
             {
@@ -305,104 +426,101 @@ namespace KpiApplication.Controls
             }
         }
 
+        #region === Lưu dữ liệu song song ===
         private async Task SaveAllDataToDatabase()
         {
             var dal = new ProductionData_DAL();
-            var dataToSave = _modifiedDataList.ToList();
+            var tasks = new List<Task>();
 
-            foreach (var item in dataToSave)
+            foreach (var item in _modifiedDataList)
             {
-                try
+                tasks.Add(Task.Run(() =>
                 {
-                    await Task.Run(() => dal.UpdateProductionData(item));
-                }
-                catch (Exception ex)
-                {
-                    if (ex.Message.ToLower().Contains("duplicate") || ex.Message.ToLower().Contains("trùng"))
+                    try
                     {
-                        throw new Exception("Duplicate data detected, please check your input.");
+                        dal.UpdateProductionData(item);
+                        item.IsModified = false;
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        throw; 
+                        Debug.WriteLine($"❌ Lỗi khi lưu ProductionID={item.ProductionID}: {ex.Message}");
+                        // Bạn có thể log vào file hoặc hiển thị trong UI nếu cần
                     }
-                }
+                }));
             }
-        }
 
+            await Task.WhenAll(tasks);
+        }
+        #endregion
+
+
+        #region === CellValueChanged: Ghi nhận thay đổi ===
         private void dgvWorkingTime_CellValueChanged(object sender, DevExpress.XtraGrid.Views.Base.CellValueChangedEventArgs e)
         {
-            var gridView = sender as GridView;
-            var data = gridView.GetRow(e.RowHandle) as ProductionData_Model;
-            if (data == null)
-                return;
+            if (!(sender is GridView gridView)) return;
+            if (!(gridView.GetRow(e.RowHandle) is ProductionData_Model data)) return;
 
-            string fieldName = e.Column.FieldName;  
-            object newValue = e.Value;           
+            string fieldName = e.Column.FieldName;
+            object newValue = e.Value;
 
             Debug.WriteLine($"ProductionID: {data.ProductionID} | Field: {fieldName} | NewValue: {newValue}");
 
-            // Cập nhật _modifiedDataList để lưu các thay đổi tạm thời
-            var modified = _modifiedDataList.FirstOrDefault(x => x.ProductionID == data.ProductionID);
-            if (modified != null)
+            // Gán trực tiếp vào object (nếu chưa gán bởi grid)
+            typeof(ProductionData_Model).GetProperty(fieldName)?.SetValue(data, newValue);
+
+            // Đánh dấu là đã chỉnh sửa
+            data.IsModified = true;
+            _modifiedDataList.Add(data);
+
+            // Nếu có field cần tính toán lại
+            if (fieldName == nameof(ProductionData_Model.TotalWorker) ||
+                fieldName == nameof(ProductionData_Model.WorkingTime) ||
+                fieldName == nameof(ProductionData_Model.IEPPH))
             {
-                typeof(ProductionData_Model).GetProperty(fieldName)?.SetValue(modified, newValue);
-            }
-            else
-            {
-                var clone = new ProductionData_Model
-                {
-                    ProductionID = data.ProductionID,
-                    TotalWorker = data.TotalWorker,
-                    WorkingTime = data.WorkingTime,
-                    Quantity = data.Quantity,
-                    IEPPH = data.IEPPH,
-                    // Copy thêm các trường khác nếu cần
-                };
-                typeof(ProductionData_Model).GetProperty(fieldName)?.SetValue(clone, newValue);
-                _modifiedDataList.Add(clone);
+                data.Recalculate();
             }
 
-            // Cập nhật trực tiếp vào RawData (BindingList<ProductionData>)
-            var rawItem = _productionDataService.RawData.FirstOrDefault(r => r.ProductionID == data.ProductionID);
-            if (rawItem != null)
-            {
-                typeof(ProductionData_Model).GetProperty(fieldName)?.SetValue(rawItem, newValue);
-
-                // Optional: Nếu có cần tính toán lại Target/Rate thì gọi Recalculate()
-                if (fieldName == nameof(ProductionData_Model.TotalWorker) || fieldName == nameof(ProductionData_Model.WorkingTime) || fieldName == nameof(ProductionData_Model.IEPPH))
-                {
-                    rawItem.Recalculate();
-                }
-            }
+            gridView.RefreshRow(e.RowHandle);
         }
-
+        #endregion
         private void toolTipController1_GetActiveObjectInfo(object sender, DevExpress.Utils.ToolTipControllerGetActiveObjectInfoEventArgs e)
         {
-            if (e.SelectedControl is DevExpress.XtraGrid.GridControl grid)
+            var grid = e.SelectedControl as DevExpress.XtraGrid.GridControl;
+            if (grid == null)
+                return;
+
+            var view = grid.FocusedView as DevExpress.XtraGrid.Views.Grid.GridView;
+            if (view == null)
+                return;
+
+            // Lấy tọa độ dựa trên e.Control, không dùng MousePosition (chính xác hơn)
+            Point clientPoint = grid.PointToClient(Control.MousePosition);
+            var hitInfo = view.CalcHitInfo(clientPoint);
+
+            if (!hitInfo.InRowCell || hitInfo.Column == null)
+                return;
+
+            string fieldName = hitInfo.Column.FieldName;
+            string toolTip = null;
+
+            if (fieldName == "TotalWorker")
             {
-                DevExpress.XtraGrid.Views.Grid.GridView view = grid.FocusedView as DevExpress.XtraGrid.Views.Grid.GridView;
-                var pt = view.GridControl.PointToClient(System.Windows.Forms.Control.MousePosition);
-                var hitInfo = view.CalcHitInfo(pt);
-
-                if (hitInfo.InRowCell)
-                {
-                    string fieldName = hitInfo.Column.FieldName;
-                    string toolTip = null;
-
-                    if (fieldName == "TotalWorker")
-                        toolTip = "Number of workers must be a positive integer (e.g., 20)";
-                    else if (fieldName == "WorkingTime")
-                        toolTip = "Working hours must be a positive decimal number (e.g., 9.5)";
-
-                    if (!string.IsNullOrEmpty(toolTip))
-                    {
-                        string key = $"{hitInfo.RowHandle}_{fieldName}";
-                        e.Info = new DevExpress.Utils.ToolTipControlInfo(key, toolTip);
-                    }
-                }
+                toolTip = "Number of workers must be a positive integer (e.g., 20)";
             }
+            else if (fieldName == "WorkingTime")
+            {
+                toolTip = string.Format("Working hours must be a positive decimal number (e.g., 9{0}5)",
+                    CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
+            }
+
+            if (string.IsNullOrEmpty(toolTip))
+                return;
+
+            // Key phải unique để tránh tooltip cũ hiện lại
+            string key = string.Format("Row{0}_Col{1}", hitInfo.RowHandle, fieldName);
+            e.Info = new DevExpress.Utils.ToolTipControlInfo(key, toolTip);
         }
+
 
         private void dgvWorkingTime_ValidatingEditor(object sender, DevExpress.XtraEditors.Controls.BaseContainerValidateEditorEventArgs e)
         {
@@ -416,6 +534,7 @@ namespace KpiApplication.Controls
                 return;
             }
 
+
             if (field == "TotalWorker")
             {
                 if (!int.TryParse(valueStr, out int tw) || tw <= 0)
@@ -426,11 +545,31 @@ namespace KpiApplication.Controls
             }
             else if (field == "WorkingTime")
             {
-                if (!double.TryParse(valueStr, NumberStyles.Float, CultureInfo.InvariantCulture, out double wt) || wt <= 0)
+                double wt;
+                // NumberStyles.Float bao gồm AllowThousands -> cần remove
+                const NumberStyles style = NumberStyles.Float & ~NumberStyles.AllowThousands;
+
+                bool parsed = double.TryParse(
+                    valueStr,
+                    style,
+                    CultureInfo.CurrentCulture,
+                    out wt);
+
+                if (!parsed)
+                {
+                    parsed = double.TryParse(
+                        valueStr,
+                        style,
+                        CultureInfo.InvariantCulture,
+                        out wt);
+                }
+
+                if (!parsed || wt <= 0)
                 {
                     e.Valid = false;
-                    e.ErrorText = "Only positive decimal numbers (e.g., 9.5) are allowed or leave it blank.";
+                    e.ErrorText = $"Only positive decimal numbers are allowed ({CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator} as separator).";
                 }
+
             }
         }
 
@@ -441,11 +580,13 @@ namespace KpiApplication.Controls
             {
                 Invoke(new Action(OnProductionDataListChanged));
                 return;
+            
             }
         }
-        private ProductionDataService_Model FetchData()
+
+        private ProductionDataService_Model FetchData()  
         {
-            var data = productionData_DAL.GetAllData();
+            var data = productionData_DAL.GetAllData();     
             return new ProductionDataService_Model(data);
         }
 

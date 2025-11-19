@@ -227,6 +227,8 @@ namespace KpiApplication.Common
         public static string InvalidFileName => LangHelper.GetString("InvalidFileName");
         public static string DocumentType => LangHelper.GetString("DocumentType");
         public static string FileExtension => LangHelper.GetString("FileExtension");
+        public static string ApplicationAlreadyRunning => LangHelper.GetString("ApplicationAlreadyRunning");
+        public static string ProductionSchedules => LangHelper.GetString("ProductionSchedules");
     }
 } 
  

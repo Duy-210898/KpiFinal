@@ -29,33 +29,40 @@ namespace KpiApplication
         public MainView()
         {
             InitializeComponent();
-            account_DAL = new Account_DAL();
-            _ucManager = new UserControlServices(navigationFrame);
 
-            LangHelper.ApplyCulture();
-            InitializeLogOutButton();
-            this.KeyPreview = true;
-
-            _menuItems = new (AccordionControlElement, Type, string)[]
+            if (!DesignMode)
             {
-                (btnWorkingTime, typeof(ucWorkingTime), Lang.WorkingTime),
-                (btnPPHData, typeof(ucPPHData), Lang.SearchIEPPH),
-                (btnViewPPHData, typeof(ucViewPPHData), Lang.ViewIEPPH),
-                (btnViewData, typeof(ucViewData), Lang.ViewDailyData),
-                (btnWeeklyPlan, typeof(ucWeeklyPlan), Lang.WeeklyPlan),  
-                (btnAccountManage, typeof(ucAccountManage), Lang.AccountManagement),
-                (btnViewTCT, typeof(ucViewTCTData), Lang.ViewTCTData),
-                (btnTCT, typeof(ucTCTData), Lang.TCTData),
-                (btnBonus, typeof(ucBonusDocument), Lang.BonusDocument),
-                (btnViewBonusDocuments, typeof(ucViewBonusDocuments), Lang.ViewBonusDocuments),
-                (btnCIDocument, typeof(ucCIDocument), Lang.CIDocument)
-            };
+                account_DAL = new Account_DAL();
+                _ucManager = new UserControlServices(navigationFrame);
 
-            InitMenuItems();
+                LangHelper.ApplyCulture();
+                InitializeLogOutButton();
+                this.KeyPreview = true;
 
-            accordionControl1.ElementClick += AccordionControl1_ElementClick;
-            UserLookAndFeel.Default.StyleChanged += (s, e) => SaveLastSkinName(UserLookAndFeel.Default.SkinName);
-            previousSelectedElement = accordionControl1.SelectedElement;
+                _menuItems = new (AccordionControlElement, Type, string)[]
+                {
+            (btnWorkingTime, typeof(ucWorkingTime), Lang.WorkingTime),
+            (btnPPHData, typeof(ucPPHData), Lang.SearchIEPPH),
+            (btnViewPPHData, typeof(ucViewPPHData), Lang.ViewIEPPH),
+            (btnViewData, typeof(ucViewData), Lang.ViewDailyData),
+            (btnWeeklyPlan, typeof(ucWeeklyPlan), Lang.WeeklyPlan),
+            (btnAccountManage, typeof(ucAccountManage), Lang.AccountManagement),
+            (btnViewTCT, typeof(ucViewTCTData), Lang.ViewTCTData),
+            (btnTCT, typeof(ucTCTData), Lang.TCTData),
+            (btnBonus, typeof(ucBonusDocument), Lang.BonusDocument),
+            (btnViewBonusDocuments, typeof(ucViewBonusDocuments), Lang.ViewBonusDocuments),
+            (btnCIDocument, typeof(ucCIDocument), Lang.CIDocument),
+            (btnProductionSchedules, typeof(ucProductionSchedules), Lang.ProductionSchedules)
+                };
+
+                InitMenuItems();
+
+                accordionControl1.ElementClick += AccordionControl1_ElementClick;
+                UserLookAndFeel.Default.StyleChanged +=
+                    (s, e) => SaveLastSkinName(UserLookAndFeel.Default.SkinName);
+
+                previousSelectedElement = accordionControl1.SelectedElement;
+            }
         }
         public async Task ShowLoadingAsync(string caption, string description, Func<Task> loadAction)
         {
@@ -285,6 +292,11 @@ namespace KpiApplication
         private async void btnRefresh_ItemClick(object sender, ItemClickEventArgs e)
         {
             await ShowLoadingAsync("Refreshing...", string.Empty, ReloadCurrentUserControlAsync);
+        }
+
+        private void btnProductionSchedules_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

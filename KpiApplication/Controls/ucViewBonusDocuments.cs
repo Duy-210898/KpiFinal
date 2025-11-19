@@ -309,7 +309,7 @@ namespace KpiApplication.Controls
         private void SetupTooltipController()
         {
             if (gridControl1.ToolTipController == null)
-            {
+            {   
                 gridControl1.ToolTipController = toolTipController1;
                 gridControl1.ToolTipController.GetActiveObjectInfo += (_, ea) =>
                 {

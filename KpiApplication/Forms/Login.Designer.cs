@@ -139,6 +139,7 @@
             this.layoutControlItem1.Location = new System.Drawing.Point(476, 0);
             this.layoutControlItem1.Name = "layoutControlItem1";
             this.layoutControlItem1.Size = new System.Drawing.Size(238, 24);
+            this.layoutControlItem1.TextSize = new System.Drawing.Size(93, 13);
             // 
             // emptySpaceItem1
             // 

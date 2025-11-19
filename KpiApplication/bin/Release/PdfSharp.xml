@@ -14273,14 +14273,9 @@
             Initializes a new instance from an existing dictionary. Used for object type transformation.
             </summary>
         </member>
-        <member name="M:PdfSharp.Pdf.Advanced.PdfObjectStream.ReadReferencesAndOffsets(PdfSharp.Pdf.Advanced.PdfCrossReferenceTable)">
+        <member name="M:PdfSharp.Pdf.Advanced.PdfObjectStream.ReadObjectIDsWithOffsets">
             <summary>
-            Reads all references inside the ObjectStream and returns all ObjectIDs and offsets for its objects.
-            </summary>
-        </member>
-        <member name="M:PdfSharp.Pdf.Advanced.PdfObjectStream.TryGetObjectOffset(PdfSharp.Pdf.PdfObjectID,System.Int64@,PdfSharp.Internal.SuppressExceptions)">
-            <summary>
-            Tries to get the position of the PdfObject inside this ObjectStream.
+            Returns all ObjectIDs and read positions for the objects inside this ObjectStream.
             </summary>
         </member>
         <member name="F:PdfSharp.Pdf.Advanced.PdfObjectStream._header">
@@ -14289,11 +14284,6 @@
             The first integer represents the object number of the compressed object.
             The second integer represents the absolute offset of that object in the decoded stream,
             i.e. the byte offset plus First entry.
-            </summary>
-        </member>
-        <member name="F:PdfSharp.Pdf.Advanced.PdfObjectStream._objectOffsets">
-            <summary>
-            Manages the read positions for all PdfObjects inside this ObjectStream.
             </summary>
         </member>
         <member name="T:PdfSharp.Pdf.Advanced.PdfObjectStream.Keys">
@@ -18187,8 +18177,8 @@
         </member>
         <member name="M:PdfSharp.Pdf.IO.Lexer.ScanHexadecimalString">
             <summary>
-            Scans a hex encoded literal string, contained between "&lt;" and "&gt;".
-            </summary>
+            Scans a hex encoded literal byte string, contained between "&lt;" and "&gt;".
+             </summary>
         </member>
         <member name="M:PdfSharp.Pdf.IO.Lexer.TryScanLiterally(System.String)">
             <summary>
@@ -20284,31 +20274,41 @@
             The page index, zero-based, of the page showing the signature.
             </summary>
         </member>
-        <member name="T:PdfSharp.Pdf.Signatures.PdfArrayWithPadding">
+        <member name="T:PdfSharp.Pdf.Signatures.PdfPlaceholderObject">
             <summary>
-            Internal PDF array used for digital signatures.
-            For digital signatures, we have to add an array with four integers,
-            but at the time we add the array we cannot yet determine
-            how many digits those integers will have.
+            This object reserves space in the stream of the PdfWriter by adding spaces for objects that can not be written at this time.
+            It is used e.g. for digital signatures to reserve space for the ByteRange Array.
             </summary>
-            <param name="document">The document.</param>
-            <param name="paddingRight">The count of spaces added after the array.</param>
-            <param name="items">The contents of the array.</param>
+            <param name="length">The length of the reserved space.</param>
         </member>
-        <member name="M:PdfSharp.Pdf.Signatures.PdfArrayWithPadding.#ctor(PdfSharp.Pdf.PdfDocument,System.Int32,PdfSharp.Pdf.PdfItem[])">
+        <member name="M:PdfSharp.Pdf.Signatures.PdfPlaceholderObject.#ctor(System.Int32)">
             <summary>
-            Internal PDF array used for digital signatures.
-            For digital signatures, we have to add an array with four integers,
-            but at the time we add the array we cannot yet determine
-            how many digits those integers will have.
+            This object reserves space in the stream of the PdfWriter by adding spaces for objects that can not be written at this time.
+            It is used e.g. for digital signatures to reserve space for the ByteRange Array.
             </summary>
-            <param name="document">The document.</param>
-            <param name="paddingRight">The count of spaces added after the array.</param>
-            <param name="items">The contents of the array.</param>
+            <param name="length">The length of the reserved space.</param>
         </member>
-        <member name="P:PdfSharp.Pdf.Signatures.PdfArrayWithPadding.StartPosition">
+        <member name="M:PdfSharp.Pdf.Signatures.PdfPlaceholderObject.WriteObject(PdfSharp.Pdf.IO.PdfWriter)">
             <summary>
-            Position of the first byte of this string in PdfWriter’s stream.
+            This only writes spaces as placeholder for the actual object.
+            </summary>
+        </member>
+        <member name="M:PdfSharp.Pdf.Signatures.PdfPlaceholderObject.WriteActualObject(PdfSharp.Pdf.PdfObject,PdfSharp.Pdf.IO.PdfWriter)">
+            <summary>
+            Writes the object, the placeholder is used for.
+            </summary>
+            <param name="obj">The object to write.</param>
+            <param name="writer">The PDFWriter.</param>
+            <exception cref="T:System.Exception">Throws an exception, when the space reserved by the placeholder isn’t enough.</exception>
+        </member>
+        <member name="P:PdfSharp.Pdf.Signatures.PdfPlaceholderObject.StartPosition">
+            <summary>
+            Position of this object in PdfWriter’s stream.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Pdf.Signatures.PdfPlaceholderObject.Object">
+            <summary>
+            The object replacing the reserved space.
             </summary>
         </member>
         <member name="T:PdfSharp.Pdf.Signatures.PdfSignature2">
@@ -20332,9 +20332,9 @@
             Attaches a PKCS#7 signature digest to PdfDocument.
             </summary>
         </member>
-        <member name="F:PdfSharp.Pdf.Signatures.DigitalSignatureHandler.ByteRangePaddingLength">
+        <member name="F:PdfSharp.Pdf.Signatures.DigitalSignatureHandler.ByteRangePlaceholderLength">
             <summary>
-            Space ... big enough reserved space to replace ByteRange placeholder [0 0 0 0] with the actual computed value of the byte range to sign
+            Big enough space reserved by PdfPlaceholderObject to be replaced by the actual computed value of the byte range to sign
             Worst case: signature dictionary is near the end of an 10 GB PDF file.
             </summary>
         </member>
@@ -22924,6 +22924,11 @@
         <member name="P:PdfSharp.Pdf.PdfDocumentOptions.UseFlateDecoderForJpegImages">
             <summary>
             Gets or sets a value indicating whether to compress JPEG images with the FlateDecode filter.
+            </summary>
+        </member>
+        <member name="P:PdfSharp.Pdf.PdfDocumentOptions.Layout">
+            <summary>
+            Gets or sets a value used for the PdfWriterLayout in PdfWriter.
             </summary>
         </member>
         <member name="T:PdfSharp.Pdf.PdfDocumentSettings">

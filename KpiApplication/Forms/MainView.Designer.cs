@@ -53,6 +53,9 @@
             this.accordion1 = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             this.btnViewBonusDocuments = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             this.btnViewTCT = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            this.accordionControlSeparator1 = new DevExpress.XtraBars.Navigation.AccordionControlSeparator();
+            this.accordionControlElement1 = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            this.btnProductionSchedules = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             this.fluentDesignFormContainer1 = new DevExpress.XtraBars.FluentDesignSystem.FluentDesignFormContainer();
             this.navigationFrame = new DevExpress.XtraBars.Navigation.NavigationFrame();
             this.navigationPage1 = new DevExpress.XtraBars.Navigation.NavigationPage();
@@ -226,10 +229,12 @@
             // 
             this.accordionControl1.Dock = System.Windows.Forms.DockStyle.Left;
             this.accordionControl1.Elements.AddRange(new DevExpress.XtraBars.Navigation.AccordionControlElement[] {
-            this.accordion1,
             this.accordion2,
             this.accordion3,
-            this.accordion4});
+            this.accordion4,
+            this.accordion1,
+            this.accordionControlSeparator1,
+            this.accordionControlElement1});
             this.accordionControl1.Location = new System.Drawing.Point(0, 31);
             this.accordionControl1.Name = "accordionControl1";
             this.accordionControl1.ScrollBarMode = DevExpress.XtraBars.Navigation.ScrollBarMode.Touch;
@@ -260,6 +265,25 @@
             this.btnViewTCT.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
             this.btnViewTCT.Text = "View TCT Data";
             // 
+            // accordionControlSeparator1
+            // 
+            this.accordionControlSeparator1.Name = "accordionControlSeparator1";
+            // 
+            // accordionControlElement1
+            // 
+            this.accordionControlElement1.Elements.AddRange(new DevExpress.XtraBars.Navigation.AccordionControlElement[] {
+            this.btnProductionSchedules});
+            this.accordionControlElement1.Expanded = true;
+            this.accordionControlElement1.Name = "accordionControlElement1";
+            this.accordionControlElement1.Text = "Production Schedules";
+            // 
+            // btnProductionSchedules
+            // 
+            this.btnProductionSchedules.Name = "btnProductionSchedules";
+            this.btnProductionSchedules.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
+            this.btnProductionSchedules.Text = "Element2";
+            this.btnProductionSchedules.Click += new System.EventHandler(this.btnProductionSchedules_Click);
+            // 
             // fluentDesignFormContainer1
             // 
             this.fluentDesignFormContainer1.Controls.Add(this.navigationFrame);
@@ -286,11 +310,13 @@
             // 
             // navigationPage1
             // 
+            this.navigationPage1.Caption = "navigationPage1";
             this.navigationPage1.Name = "navigationPage1";
             this.navigationPage1.Size = new System.Drawing.Size(859, 613);
             // 
             // navigationPage2
             // 
+            this.navigationPage2.Caption = "navigationPage2";
             this.navigationPage2.Name = "navigationPage2";
             this.navigationPage2.Size = new System.Drawing.Size(859, 613);
             // 
@@ -353,5 +379,8 @@
         private DevExpress.XtraBars.Navigation.NavigationPage navigationPage1;
         private DevExpress.XtraBars.Navigation.NavigationPage navigationPage2;
         private DevExpress.XtraBars.BarButtonItem btnRefresh;
+        private DevExpress.XtraBars.Navigation.AccordionControlSeparator accordionControlSeparator1;
+        private DevExpress.XtraBars.Navigation.AccordionControlElement accordionControlElement1;
+        private DevExpress.XtraBars.Navigation.AccordionControlElement btnProductionSchedules;
     }
 }

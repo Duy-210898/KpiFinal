@@ -293,7 +293,7 @@ namespace KpiApplication.Models
         }
 
         public string OutputRate => OutputRateValue.HasValue
-            ? $"{(int)(OutputRateValue.Value * 1000) / 10.0:0.0}%"
+            ? $"{Math.Round(OutputRateValue.Value * 100, 1):0.0}%"
             : string.Empty;
 
         public string PPHRate => PPHRateValue.HasValue
@@ -355,11 +355,11 @@ namespace KpiApplication.Models
             if (TotalWorker.HasValue && WorkingTime.HasValue && IEPPH.HasValue &&
                 TotalWorker.Value > 0 && WorkingTime.Value > 0 && IEPPH.Value > 0)
             {
-                TargetOfPC = (int?)Math.Round(TotalWorker.Value * WorkingTime.Value * IEPPH.Value, 1);
+                TargetIE = (int?)Math.Round(TotalWorker.Value * WorkingTime.Value * IEPPH.Value, 1);
             }
             else
             {
-                TargetOfPC = null;
+                TargetIE = null;
             }
         }
 
@@ -390,10 +390,11 @@ namespace KpiApplication.Models
         }
         public void CalculateOutputRate()
         {
-            if (Quantity.HasValue && TargetOfPC.HasValue &&
-                Quantity.Value > 0 && TargetOfPC.Value > 0)
+            if (Quantity.HasValue && TargetIE.HasValue &&
+                Quantity.Value > 0 && TargetIE.Value > 0)
             {
-                OutputRateValue = Math.Round((double)Quantity.Value / TargetOfPC.Value, 4);
+                // Làm tròn ngay giá trị thô để tránh hiển thị sai khi format
+                OutputRateValue = Math.Round((double)Quantity.Value / TargetIE.Value, 4);
             }
             else
             {
@@ -401,12 +402,13 @@ namespace KpiApplication.Models
             }
         }
 
+
         private void CalculatePPHRate()
         {
             if (IEPPH.HasValue && ActualPPH.HasValue &&
                 IEPPH.Value > 0 && ActualPPH.Value > 0)
             {
-                PPHRateValue = ActualPPH.Value / IEPPH.Value; 
+                PPHRateValue = Math.Round(ActualPPH.Value / IEPPH.Value, 4);
             }
             else
             {
@@ -420,7 +422,7 @@ namespace KpiApplication.Models
             get => _isSlides;
             private set => SetProperty(ref _isSlides, value);
         }
-
+        public bool IsModified { get; set; }
         public void CopyFrom(ProductionData_Model source)
         {
             if (source == null) return;

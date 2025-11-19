@@ -1,0 +1,36 @@
+2025-09-22 09:52:54 | Không gửi được mail (Subject: ⚠ Cảnh báo / 警告 / Warning: PPHRate >= 130% (Mass Production)) | System.Net.Http.HttpRequestException: An error occurred while sending the request. ---> System.Net.WebException: Unable to connect to the remote server ---> System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it 10.30.0.106:3000
+   at System.Net.Sockets.Socket.InternalEndConnect(IAsyncResult asyncResult)
+   at System.Net.Sockets.Socket.EndConnect(IAsyncResult asyncResult)
+   at System.Net.ServicePoint.ConnectSocketInternal(Boolean connectFailure, Socket s4, Socket s6, Socket& socket, IPAddress& address, ConnectSocketState state, IAsyncResult asyncResult, Exception& exception)
+   --- End of inner exception stack trace ---
+   at System.Net.HttpWebRequest.EndGetRequestStream(IAsyncResult asyncResult, TransportContext& context)
+   at System.Net.Http.HttpClientHandler.GetRequestStreamCallback(IAsyncResult ar)
+   --- End of inner exception stack trace ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at MailHelper.<SendMailAsync>d__1.MoveNext() in D:\KPI_Application\KpiFinal\KpiApplication\Utils\MailHelper.cs:line 40
+2025-09-29 08:34:44 | Không thể push dữ liệu cảnh báo | System.Exception: Mail collector error NotFound: <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /addDailyData</pre>
+</body>
+</html>
+
+   at MailHelper.<PushDailyAlertDataAsync>d__1.MoveNext() in D:\KPI_Application\KpiFinal\KpiApplication\Utils\MailHelper.cs:line 34
+2025-09-29 08:39:39 | Không thể push dữ liệu cảnh báo | System.Exception: Mail collector error NotFound: <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /addDailyData</pre>
+</body>
+</html>
+
+   at MailHelper.<PushDailyAlertDataAsync>d__1.MoveNext() in D:\KPI_Application\KpiFinal\KpiApplication\Utils\MailHelper.cs:line 34

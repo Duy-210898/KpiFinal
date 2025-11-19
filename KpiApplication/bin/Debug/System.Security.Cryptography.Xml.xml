@@ -51,14 +51,14 @@
     <member name="M:System.Security.Cryptography.Xml.CipherReference.#ctor">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> class.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.CipherReference.#ctor(System.String)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> class using the specified Uniform Resource Identifier (URI).</summary>
-      <param name="uri">A Uniform Resource Identifier (URI) pointing to the encrypted data.</param>
-    </member>
     <member name="M:System.Security.Cryptography.Xml.CipherReference.#ctor(System.String,System.Security.Cryptography.Xml.TransformChain)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> class using the specified Uniform Resource Identifier (URI) and transform chain information.</summary>
       <param name="uri">A Uniform Resource Identifier (URI) pointing to the encrypted data.</param>
       <param name="transformChain">A <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object that describes transforms to do on the encrypted data.</param>
+    </member>
+    <member name="M:System.Security.Cryptography.Xml.CipherReference.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> class using the specified Uniform Resource Identifier (URI).</summary>
+      <param name="uri">A Uniform Resource Identifier (URI) pointing to the encrypted data.</param>
     </member>
     <member name="M:System.Security.Cryptography.Xml.CipherReference.GetXml">
       <summary>Returns the XML representation of a <see cref="T:System.Security.Cryptography.Xml.CipherReference" /> object.</summary>
@@ -82,14 +82,14 @@
       <param name="info">The object that holds the serialized object data.</param>
       <param name="context">The contextual information about the source or destination.</param>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.CryptoSignedXmlRecursionException.#ctor(System.String)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.CryptoSignedXmlRecursionException" /> class with a specified error message.</summary>
-      <param name="message">The error message that explains the reason for the exception.</param>
-    </member>
     <member name="M:System.Security.Cryptography.Xml.CryptoSignedXmlRecursionException.#ctor(System.String,System.Exception)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.CryptoSignedXmlRecursionException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</summary>
       <param name="message">The error message that explains the reason for the exception.</param>
       <param name="inner">The exception that is the cause of the current exception.</param>
+    </member>
+    <member name="M:System.Security.Cryptography.Xml.CryptoSignedXmlRecursionException.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.CryptoSignedXmlRecursionException" /> class with a specified error message.</summary>
+      <param name="message">The error message that explains the reason for the exception.</param>
     </member>
     <member name="T:System.Security.Cryptography.Xml.DataObject">
       <summary>Represents the object element of an XML signature that holds data to be signed.</summary>
@@ -137,14 +137,14 @@
     <member name="M:System.Security.Cryptography.Xml.DataReference.#ctor">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> class.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.DataReference.#ctor(System.String)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> class using the specified Uniform Resource Identifier (URI).</summary>
-      <param name="uri">A Uniform Resource Identifier (URI) that points to the encrypted data.</param>
-    </member>
     <member name="M:System.Security.Cryptography.Xml.DataReference.#ctor(System.String,System.Security.Cryptography.Xml.TransformChain)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> class using the specified Uniform Resource Identifier (URI) and a <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object.</summary>
       <param name="uri">A Uniform Resource Identifier (URI) that points to the encrypted data.</param>
       <param name="transformChain">A <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object that describes transforms to do on the encrypted data.</param>
+    </member>
+    <member name="M:System.Security.Cryptography.Xml.DataReference.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.DataReference" /> class using the specified Uniform Resource Identifier (URI).</summary>
+      <param name="uri">A Uniform Resource Identifier (URI) that points to the encrypted data.</param>
     </member>
     <member name="T:System.Security.Cryptography.Xml.DSAKeyValue">
       <summary>Represents the <see cref="T:System.Security.Cryptography.DSA" /> private key of the <see langword="&lt;KeyInfo&gt;" /> element.</summary>
@@ -230,15 +230,15 @@
     <member name="M:System.Security.Cryptography.Xml.EncryptedReference.#ctor">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedReference" /> class.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.EncryptedReference.#ctor(System.String)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedReference" /> class using the specified Uniform Resource Identifier (URI).</summary>
-      <param name="uri">The Uniform Resource Identifier (URI) that points to the data to encrypt.</param>
-      <exception cref="T:System.ArgumentNullException">The <paramref name="uri" /> parameter is <see langword="null" />.</exception>
-    </member>
     <member name="M:System.Security.Cryptography.Xml.EncryptedReference.#ctor(System.String,System.Security.Cryptography.Xml.TransformChain)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedReference" /> class using the specified Uniform Resource Identifier (URI) and transform chain.</summary>
       <param name="uri">The Uniform Resource Identifier (URI) that points to the data to encrypt.</param>
       <param name="transformChain">A <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object that describes transforms to be done on the data to encrypt.</param>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="uri" /> parameter is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.Cryptography.Xml.EncryptedReference.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedReference" /> class using the specified Uniform Resource Identifier (URI).</summary>
+      <param name="uri">The Uniform Resource Identifier (URI) that points to the data to encrypt.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="uri" /> parameter is <see langword="null" />.</exception>
     </member>
     <member name="M:System.Security.Cryptography.Xml.EncryptedReference.AddTransform(System.Security.Cryptography.Xml.Transform)">
@@ -382,14 +382,14 @@
     <member name="M:System.Security.Cryptography.Xml.EncryptedXml.#ctor">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.EncryptedXml.#ctor(System.Xml.XmlDocument)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class using the specified XML document.</summary>
-      <param name="document">An <see cref="T:System.Xml.XmlDocument" /> object used to initialize the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> object.</param>
-    </member>
     <member name="M:System.Security.Cryptography.Xml.EncryptedXml.#ctor(System.Xml.XmlDocument,System.Security.Policy.Evidence)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class using the specified XML document and evidence.</summary>
       <param name="document">An <see cref="T:System.Xml.XmlDocument" /> object used to initialize the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> object.</param>
       <param name="evidence">An <see cref="T:System.Security.Policy.Evidence" /> object associated with the <see cref="T:System.Xml.XmlDocument" /> object.</param>
+    </member>
+    <member name="M:System.Security.Cryptography.Xml.EncryptedXml.#ctor(System.Xml.XmlDocument)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> class using the specified XML document.</summary>
+      <param name="document">An <see cref="T:System.Xml.XmlDocument" /> object used to initialize the <see cref="T:System.Security.Cryptography.Xml.EncryptedXml" /> object.</param>
     </member>
     <member name="M:System.Security.Cryptography.Xml.EncryptedXml.AddKeyNameMapping(System.String,System.Object)">
       <summary>Defines a mapping between a key name and a symmetric key or an asymmetric key.</summary>
@@ -945,14 +945,14 @@
     <member name="M:System.Security.Cryptography.Xml.KeyInfoRetrievalMethod.#ctor">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoRetrievalMethod" /> class.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.KeyInfoRetrievalMethod.#ctor(System.String)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoRetrievalMethod" /> class with the specified Uniform Resource Identifier (URI) pointing to the referenced <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> object.</summary>
-      <param name="strUri">The Uniform Resource Identifier (URI) of the information to be referenced by the new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoRetrievalMethod" />.</param>
-    </member>
     <member name="M:System.Security.Cryptography.Xml.KeyInfoRetrievalMethod.#ctor(System.String,System.String)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoRetrievalMethod" /> class with the specified Uniform Resource Identifier (URI) pointing to the referenced <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> object and the URI that describes the type of data to retrieve.</summary>
       <param name="strUri">The Uniform Resource Identifier (URI) of the information to be referenced by the new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoRetrievalMethod" />.</param>
       <param name="typeName">The URI that describes the type of data to retrieve.</param>
+    </member>
+    <member name="M:System.Security.Cryptography.Xml.KeyInfoRetrievalMethod.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoRetrievalMethod" /> class with the specified Uniform Resource Identifier (URI) pointing to the referenced <see cref="T:System.Security.Cryptography.Xml.KeyInfo" /> object.</summary>
+      <param name="strUri">The Uniform Resource Identifier (URI) of the information to be referenced by the new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoRetrievalMethod" />.</param>
     </member>
     <member name="M:System.Security.Cryptography.Xml.KeyInfoRetrievalMethod.GetXml">
       <summary>Returns the XML representation of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoRetrievalMethod" /> object.</summary>
@@ -981,17 +981,17 @@
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> class from the specified ASN.1 DER encoding of an X.509v3 certificate.</summary>
       <param name="rgbCert">The ASN.1 DER encoding of an <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> from.</param>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509Data.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> class from the specified X.509v3 certificate.</summary>
-      <param name="cert">The <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> from.</param>
-      <exception cref="T:System.ArgumentNullException">The <paramref name="cert" /> parameter is <see langword="null" />.</exception>
-    </member>
     <member name="M:System.Security.Cryptography.Xml.KeyInfoX509Data.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate,System.Security.Cryptography.X509Certificates.X509IncludeOption)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> class from the specified X.509v3 certificate.</summary>
       <param name="cert">The <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> from.</param>
       <param name="includeOption">One of the <see cref="T:System.Security.Cryptography.X509Certificates.X509IncludeOption" /> values that specifies how much of the certificate chain to include.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="cert" /> parameter is <see langword="null" />.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">The certificate has only a partial certificate chain.</exception>
+    </member>
+    <member name="M:System.Security.Cryptography.Xml.KeyInfoX509Data.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> class from the specified X.509v3 certificate.</summary>
+      <param name="cert">The <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" /> from.</param>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="cert" /> parameter is <see langword="null" />.</exception>
     </member>
     <member name="M:System.Security.Cryptography.Xml.KeyInfoX509Data.AddCertificate(System.Security.Cryptography.X509Certificates.X509Certificate)">
       <summary>Adds the specified X.509v3 certificate to the <see cref="T:System.Security.Cryptography.Xml.KeyInfoX509Data" />.</summary>
@@ -1055,14 +1055,14 @@
     <member name="M:System.Security.Cryptography.Xml.KeyReference.#ctor">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> class for XML encryption.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.KeyReference.#ctor(System.String)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> class for XML encryption using the supplied Uniform Resource Identifier (URI).</summary>
-      <param name="uri">A Uniform Resource Identifier (URI) that points to the encrypted key.</param>
-    </member>
     <member name="M:System.Security.Cryptography.Xml.KeyReference.#ctor(System.String,System.Security.Cryptography.Xml.TransformChain)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> class for XML encryption using the specified Uniform Resource Identifier (URI) and a <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object.</summary>
       <param name="uri">A Uniform Resource Identifier (URI) that points to the encrypted key.</param>
       <param name="transformChain">A <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object that describes transforms to do on the encrypted key.</param>
+    </member>
+    <member name="M:System.Security.Cryptography.Xml.KeyReference.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.KeyReference" /> class for XML encryption using the supplied Uniform Resource Identifier (URI).</summary>
+      <param name="uri">A Uniform Resource Identifier (URI) that points to the encrypted key.</param>
     </member>
     <member name="T:System.Security.Cryptography.Xml.Reference">
       <summary>Represents the <see langword="&lt;reference&gt;" /> element of an XML signature.</summary>
@@ -1478,10 +1478,10 @@
     <member name="M:System.Security.Cryptography.Xml.SignedXml.#ctor(System.Xml.XmlDocument)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> class from the specified XML document.</summary>
       <param name="document">The <see cref="T:System.Xml.XmlDocument" /> object to use to initialize the new instance of <see cref="T:System.Security.Cryptography.Xml.SignedXml" />.</param>
-      <exception cref="T:System.ArgumentNullException">The <paramref name="document" /> parameter is <see langword="null" />.  
-  
- -or-  
-  
+      <exception cref="T:System.ArgumentNullException">The <paramref name="document" /> parameter is <see langword="null" />.
+
+ -or-
+
  The <paramref name="document" /> parameter contains a null <see cref="P:System.Xml.XmlDocument.DocumentElement" /> property.</exception>
     </member>
     <member name="M:System.Security.Cryptography.Xml.SignedXml.#ctor(System.Xml.XmlElement)">
@@ -1499,14 +1499,14 @@
     </member>
     <member name="M:System.Security.Cryptography.Xml.SignedXml.CheckSignature">
       <summary>Determines whether the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies using the public key in the signature.</summary>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.AsymmetricAlgorithm.SignatureAlgorithm" /> property of the public key in the signature does not match the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignatureMethod" /> property.  
-  
- -or-  
-  
- The signature description could not be created.  
-  
- -or  
-  
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.AsymmetricAlgorithm.SignatureAlgorithm" /> property of the public key in the signature does not match the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignatureMethod" /> property.
+
+ -or-
+
+ The signature description could not be created.
+
+ -or
+
  The hash algorithm could not be created.</exception>
       <returns>
         <see langword="true" /> if the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies; otherwise, <see langword="false" />.</returns>
@@ -1515,14 +1515,14 @@
       <summary>Determines whether the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies for the specified key.</summary>
       <param name="key">The implementation of the <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> property that holds the key to be used to verify the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="key" /> parameter is <see langword="null" />.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.AsymmetricAlgorithm.SignatureAlgorithm" /> property of the <paramref name="key" /> parameter does not match the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignatureMethod" /> property.  
-  
- -or-  
-  
- The signature description could not be created.  
-  
- -or  
-  
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.AsymmetricAlgorithm.SignatureAlgorithm" /> property of the <paramref name="key" /> parameter does not match the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignatureMethod" /> property.
+
+ -or-
+
+ The signature description could not be created.
+
+ -or
+
  The hash algorithm could not be created.</exception>
       <returns>
         <see langword="true" /> if the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies for the specified key; otherwise, <see langword="false" />.</returns>
@@ -1531,14 +1531,14 @@
       <summary>Determines whether the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies for the specified message authentication code (MAC) algorithm.</summary>
       <param name="macAlg">The implementation of <see cref="T:System.Security.Cryptography.KeyedHashAlgorithm" /> that holds the MAC to be used to verify the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="macAlg" /> parameter is <see langword="null" />.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.HashAlgorithm.HashSize" /> property of the specified <see cref="T:System.Security.Cryptography.KeyedHashAlgorithm" /> object is not valid.  
-  
- -or-  
-  
- The <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property is <see langword="null" />.  
-  
- -or-  
-  
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.HashAlgorithm.HashSize" /> property of the specified <see cref="T:System.Security.Cryptography.KeyedHashAlgorithm" /> object is not valid.
+
+ -or-
+
+ The <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property is <see langword="null" />.
+
+ -or-
+
  The cryptographic transform used to check the signature could not be created.</exception>
       <returns>
         <see langword="true" /> if the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies for the specified MAC; otherwise, <see langword="false" />.</returns>
@@ -1551,38 +1551,38 @@
       <exception cref="T:System.ArgumentNullException">The <paramref name="certificate" /> parameter is <see langword="null" />.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">A signature description could not be created for the <paramref name="certificate" /> parameter.</exception>
       <returns>
-        <see langword="true" /> if the signature is valid; otherwise, <see langword="false" />.  
-  
- -or-  
-  
+        <see langword="true" /> if the signature is valid; otherwise, <see langword="false" />.
+
+ -or-
+
  <see langword="true" /> if the signature and certificate are valid; otherwise, <see langword="false" />.</returns>
     </member>
     <member name="M:System.Security.Cryptography.Xml.SignedXml.CheckSignatureReturningKey(System.Security.Cryptography.AsymmetricAlgorithm@)">
       <summary>Determines whether the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies using the public key in the signature.</summary>
       <param name="signingKey">When this method returns, contains the implementation of <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> that holds the public key in the signature. This parameter is passed uninitialized.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="signingKey" /> parameter is null.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.AsymmetricAlgorithm.SignatureAlgorithm" /> property of the public key in the signature does not match the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignatureMethod" /> property.  
-  
- -or-  
-  
- The signature description could not be created.  
-  
- -or  
-  
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.AsymmetricAlgorithm.SignatureAlgorithm" /> property of the public key in the signature does not match the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignatureMethod" /> property.
+
+ -or-
+
+ The signature description could not be created.
+
+ -or
+
  The hash algorithm could not be created.</exception>
       <returns>
         <see langword="true" /> if the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property verifies using the public key in the signature; otherwise, <see langword="false" />.</returns>
     </member>
     <member name="M:System.Security.Cryptography.Xml.SignedXml.ComputeSignature">
       <summary>Computes an XML digital signature.</summary>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.Xml.SignedXml.SigningKey" /> property is <see langword="null" />.  
-  
- -or-  
-  
- The <see cref="P:System.Security.Cryptography.Xml.SignedXml.SigningKey" /> property is not a <see cref="T:System.Security.Cryptography.DSA" /> object or <see cref="T:System.Security.Cryptography.RSA" /> object.  
-  
- -or-  
-  
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.Xml.SignedXml.SigningKey" /> property is <see langword="null" />.
+
+ -or-
+
+ The <see cref="P:System.Security.Cryptography.Xml.SignedXml.SigningKey" /> property is not a <see cref="T:System.Security.Cryptography.DSA" /> object or <see cref="T:System.Security.Cryptography.RSA" /> object.
+
+ -or-
+
  The key could not be loaded.</exception>
     </member>
     <member name="M:System.Security.Cryptography.Xml.SignedXml.ComputeSignature(System.Security.Cryptography.KeyedHashAlgorithm)">
@@ -1590,13 +1590,13 @@
       <param name="macAlg">A <see cref="T:System.Security.Cryptography.KeyedHashAlgorithm" /> object that holds the MAC to be used to compute the value of the <see cref="P:System.Security.Cryptography.Xml.SignedXml.Signature" /> property.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="macAlg" /> parameter is <see langword="null" />.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="T:System.Security.Cryptography.KeyedHashAlgorithm" /> object specified by the <paramref name="macAlg" /> parameter is not an instance of <see cref="T:System.Security.Cryptography.HMACSHA1" /> or <see cref="T:System.Security.Cryptography.HMACSHA256" /> or <see cref="T:System.Security.Cryptography.HMACSHA384" /> or <see cref="T:System.Security.Cryptography.HMACSHA512" />.
-  
- -or-  
-  
- The <see cref="P:System.Security.Cryptography.HashAlgorithm.HashSize" /> property of the specified <see cref="T:System.Security.Cryptography.KeyedHashAlgorithm" /> object is not valid.  
-  
- -or-  
-  
+
+ -or-
+
+ The <see cref="P:System.Security.Cryptography.HashAlgorithm.HashSize" /> property of the specified <see cref="T:System.Security.Cryptography.KeyedHashAlgorithm" /> object is not valid.
+
+ -or-
+
  The cryptographic transform used to check the signature could not be created.</exception>
     </member>
     <member name="M:System.Security.Cryptography.Xml.SignedXml.GetIdElement(System.Xml.XmlDocument,System.String)">
@@ -1612,10 +1612,10 @@
     </member>
     <member name="M:System.Security.Cryptography.Xml.SignedXml.GetXml">
       <summary>Returns the XML representation of a <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> object.</summary>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignedInfo" /> property is <see langword="null" />.  
-  
- -or-  
-  
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignedInfo" /> property is <see langword="null" />.
+
+ -or-
+
  The <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignatureValue" /> property is <see langword="null" />.</exception>
       <returns>The XML representation of the <see cref="T:System.Security.Cryptography.Xml.Signature" /> object.</returns>
     </member>
@@ -1623,10 +1623,10 @@
       <summary>Loads a <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> state from an XML element.</summary>
       <param name="value">The XML element to load the <see cref="T:System.Security.Cryptography.Xml.SignedXml" /> state from.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="value" /> parameter is <see langword="null" />.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <paramref name="value" /> parameter does not contain a valid <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignatureValue" /> property.  
-  
- -or-  
-  
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <paramref name="value" /> parameter does not contain a valid <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignatureValue" /> property.
+
+ -or-
+
  The <paramref name="value" /> parameter does not contain a valid <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignedInfo" /> property.</exception>
     </member>
     <member name="P:System.Security.Cryptography.Xml.SignedXml.EncryptedXml">
@@ -1970,16 +1970,16 @@
     <member name="M:System.Security.Cryptography.Xml.XmlDsigExcC14NTransform.#ctor">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NTransform" /> class.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Xml.XmlDsigExcC14NTransform.#ctor(System.Boolean)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NTransform" /> class specifying a value that determines whether to include comments.</summary>
-      <param name="includeComments">
-        <see langword="true" /> to include comments; otherwise, <see langword="false" />.</param>
-    </member>
     <member name="M:System.Security.Cryptography.Xml.XmlDsigExcC14NTransform.#ctor(System.Boolean,System.String)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NTransform" /> class specifying whether to include comments, and specifying a list of namespace prefixes.</summary>
       <param name="includeComments">
         <see langword="true" /> to include comments; otherwise, <see langword="false" />.</param>
       <param name="inclusiveNamespacesPrefixList">The namespace prefixes to canonicalize using the standard canonicalization algorithm.</param>
+    </member>
+    <member name="M:System.Security.Cryptography.Xml.XmlDsigExcC14NTransform.#ctor(System.Boolean)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NTransform" /> class specifying a value that determines whether to include comments.</summary>
+      <param name="includeComments">
+        <see langword="true" /> to include comments; otherwise, <see langword="false" />.</param>
     </member>
     <member name="M:System.Security.Cryptography.Xml.XmlDsigExcC14NTransform.#ctor(System.String)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NTransform" /> class specifying a list of namespace prefixes to canonicalize using the standard canonicalization algorithm.</summary>

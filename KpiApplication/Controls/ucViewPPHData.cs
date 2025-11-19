@@ -260,6 +260,5 @@ namespace KpiApplication.Controls
                     return 3;
             }
         }
-
     }
 }

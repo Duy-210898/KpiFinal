@@ -117,296 +117,820 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-
-	<data name="AccountDisabled" xml:space="preserve"><value>账户已被禁用。</value></data>
-	<data name="AccountManagement" xml:space="preserve"><value>账户管理</value></data>
-	<data name="AddNewFile" xml:space="preserve"><value>添加新文件</value></data>
-	<data name="AdjustOperator" xml:space="preserve"><value>调整操作员</value></data>
-	<data name="AllProcess" xml:space="preserve"><value>全部工序</value></data>
-	<data name="ArticleName" xml:space="preserve"><value>款号</value></data>
-	<data name="Assembly" xml:space="preserve"><value>组装</value></data>
-	<data name="BonusDocument" xml:space="preserve"><value>奖金文件</value></data>
-	<data name="Cancel" xml:space="preserve"><value>取消</value></data>
-	<data name="ChangePassword" xml:space="preserve"><value>更改密码</value></data>
-	<data name="Confirm" xml:space="preserve"><value>确认</value></data>
-	<data name="ConfirmDelete" xml:space="preserve"><value>您确定要删除吗？</value></data>
-	<data name="ConfirmDelete_Message" xml:space="preserve"><value>你确定要从型号“{1}”中删除文件“{0}”吗？</value></data>
-	<data name="ConfirmDelete_Title" xml:space="preserve"><value>确认删除...</value></data>
-	<data name="ConfirmIncludeTCT" xml:space="preserve"><value>是否要在导出中包含 TCT 列？</value></data>
-	<data name="ConfirmLogout" xml:space="preserve"><value>您确定要注销吗？</value></data>
-	<data name="CreatedAt" xml:space="preserve"><value>创建时间</value></data>
-	<data name="CreatedBy" xml:space="preserve"><value>创建者</value></data>
-	<data name="Cutting" xml:space="preserve"><value>裁断</value></data>
-	<data name="DataStatus" xml:space="preserve"><value>数据状态</value></data>
-	<data name="Delete" xml:space="preserve"><value>删除</value></data>
-	<data name="DeleteFailed" xml:space="preserve"><value>删除失败</value></data>
-	<data name="Error" xml:space="preserve"><value>错误</value></data>
-	<data name="ErrorDetails" xml:space="preserve"><value>错误详情</value></data>
-	<data name="ErrorLoadingProcessList" xml:space="preserve"><value>加载工序列表出错。</value></data>
-	<data name="ErrorWhileDeletingRow" xml:space="preserve"><value>❌ 删除行时发生错误。</value></data>
-	<data name="ErrorWhileSavingDocument" xml:space="preserve"><value>保存文档时出错。</value></data>
-	<data name="Error_MissingDependencies" xml:space="preserve"><value>❌ 缺少必要的依赖项。</value></data>
-	<data name="Error_UpdateArticleProcess" xml:space="preserve"><value>无法更新 ArticleID = {0} 的工艺/类型数据。</value></data>
-	<data name="Error_UpdateModelNameFailed" xml:space="preserve"><value>❌ 更新型号名称失败。</value></data>
-	<data name="Error_UpdateOutsourcing" xml:space="preserve"><value>无法更新 ArticleID = {0} 的外协信息。</value></data>
-	<data name="Error_UpdatePCIncharge" xml:space="preserve"><value>无法更新 ArticleID = {0} 的负责人。</value></data>
-	<data name="Error_UpdateTCT" xml:space="preserve"><value>无法更新 ArticleID = {0} 的 TCT 数据。</value></data>
-	<data name="Exit" xml:space="preserve"><value>退出</value></data>
-	<data name="Export" xml:space="preserve"><value>导出</value></data>
-	<data name="ExportCompleted" xml:space="preserve"><value>✅ 成功导出 Excel。</value></data>
-	<data name="ExportError" xml:space="preserve"><value>导出过程中发生错误。</value></data>
-	<data name="ExportExcelTitle" xml:space="preserve"><value>导出到 Excel</value></data>
-	<data name="ExportFailed" xml:space="preserve"><value>导出失败</value></data>
-	<data name="ExportIEReportFile" xml:space="preserve"><value>IE 报告</value></data>
-	<data name="ExportInsufficientData" xml:space="preserve"><value>数据不足，无法导出。</value></data>
-	<data name="ExportOutputPerLineReportFile" xml:space="preserve"><value>各产线产量报告</value></data>
-	<data name="ExportShoesKPIReportFile" xml:space="preserve"><value>鞋类 KPI 报告</value></data>
-	<data name="ExportSlidesKPIReportFile" xml:space="preserve"><value>拖鞋 KPI 报告</value></data>
-	<data name="ExportSuccess" xml:space="preserve"><value>导出成功</value></data>
-	<data name="ExportTCTTitle" xml:space="preserve"><value>导出 TCT 数据到 Excel</value></data>
-	<data name="Export_UnableToExportTryReorder" xml:space="preserve"><value>无法导出。请尝试重新排序数据。</value></data>
-	<data name="Export_ErrorCreatingFolder" xml:space="preserve"><value>创建导出文件夹出错。</value></data>
-	<data name="Export_ErrorGettingDate" xml:space="preserve"><value>获取日期时出错。</value></data>
-	<data name="Export_FileNamePrefix" xml:space="preserve"><value>导出_</value></data>
-	<data name="Export_NoMatchingData" xml:space="preserve"><value>未找到匹配的数据。</value></data>
-	<data name="Export_ScanDateColumnMissing" xml:space="preserve"><value>缺少扫描日期列。</value></data>
-	<data name="FailedToBuildExportData" xml:space="preserve"><value>构建导出数据失败。</value></data>
-	<data name="FailedToCreateExcelFile" xml:space="preserve"><value>创建 Excel 文件失败。</value></data>
-	<data name="FailedToCreateReportFolder" xml:space="preserve"><value>无法创建报告文件夹。</value></data>
-	<data name="FailedToOpenFile" xml:space="preserve"><value>无法打开文件。</value></data>
-	<data name="FileAlreadyExists" xml:space="preserve"><value>文件已存在。</value></data>
-	<data name="FileExistsConfirm" xml:space="preserve"><value>文件已存在。是否要覆盖？</value></data>
-	<data name="FileLockedOrOpened" xml:space="preserve"><value>文件已锁定或正在被打开。</value></data>
-	<data name="FileName" xml:space="preserve"><value>文件名</value></data>
-	<data name="FileNameCannotBeEmpty" xml:space="preserve"><value>文件名不能为空。</value></data>
-	<data name="FileNameExists" xml:space="preserve"><value>文件名已存在。</value></data>
-	<data name="FileSavedSuccessfully" xml:space="preserve"><value>文件保存成功。</value></data>
-	<data name="FileUpdatedSuccessfully" xml:space="preserve"><value>文件更新成功。</value></data>
-	<data name="FinalOperator" xml:space="preserve"><value>最终操作员</value></data>
-	<data name="Guest" xml:space="preserve"><value>访客</value></data>
-	<data name="GuestLogin" xml:space="preserve"><value>以访客身份登录</value></data>
-	<data name="IncludeTCTInExport" xml:space="preserve"><value>导出中包含 TCT 数据</value></data>
-	<data name="Import" xml:space="preserve"><value>导入</value></data>
-	<data name="ImportFailed" xml:space="preserve"><value>导入失败</value></data>
-	<data name="ImportSuccess" xml:space="preserve"><value>导入成功</value></data>
-	<data name="Importing" xml:space="preserve"><value>正在导入...</value></data>
-	<data name="ImportingDescription" xml:space="preserve"><value>请稍候，正在导入数据...</value></data>
-	<data name="ImportingTCTData" xml:space="preserve"><value>正在导入 TCT 数据...</value></data>
-	<data name="Inserted" xml:space="preserve"><value>已插入</value></data>
-	<data name="InvalidArticleID" xml:space="preserve"><value>❌ 无效的 Article ID。</value></data>
-	<data name="InvalidFileName" xml:space="preserve"><value>文件名无效。</value></data>
-	<data name="InvalidFileNameCharacters" xml:space="preserve"><value>文件名包含无效字符。</value></data>
-	<data name="InvalidRow" xml:space="preserve"><value>❌ 检测到无效行。</value></data>
-	<data name="Language" xml:space="preserve"><value>语言</value></data>
-	<data name="LastUpdatedAt" xml:space="preserve"><value>最后更新时间</value></data>
-	<data name="LoadDataError" xml:space="preserve"><value>❌ 加载数据时出错。</value></data>
-	<data name="LoadDataFailed" xml:space="preserve"><value>加载数据失败</value></data>
-	<data name="Loading" xml:space="preserve"><value>加载中...</value></data>
-	<data name="LoadingDescription" xml:space="preserve"><value>请稍候，正在加载数据...</value></data>
-	<data name="LoadingModelNames" xml:space="preserve"><value>正在加载型号...</value></data>
-	<data name="Login" xml:space="preserve"><value>登录</value></data>
-	<data name="Logout" xml:space="preserve"><value>登出</value></data>
-	<data name="MainTitle" xml:space="preserve"><value>绩效管理系统</value></data>
-	<data name="Management" xml:space="preserve"><value>管理部</value></data>
-	<data name="ME" xml:space="preserve"><value>工艺部</value></data>
-	<data name="MissingProcessOrTypeID" xml:space="preserve"><value>❌ 缺少 Process 或 Type ID。</value></data>
-	<data name="ModelName" xml:space="preserve"><value>型号名称</value></data>
-	<data name="NoDataToExport" xml:space="preserve"><value>没有可导出的数据。</value></data>
-	<data name="NoFileSelected" xml:space="preserve"><value>未选择文件</value></data>
-	<data name="NoValidDataToExport" xml:space="preserve"><value>没有有效数据可导出。</value></data>
-	<data name="NoValidTCTDataFound" xml:space="preserve"><value>未找到有效的 TCT 数据。</value></data>
-	<data name="NoteForPC" xml:space="preserve"><value>给 PC 的备注</value></data>
-	<data name="Notes" xml:space="preserve"><value>备注</value></data>
-	<data name="Notification" xml:space="preserve"><value>通知</value></data>
-	<data name="OperatorAdjust" xml:space="preserve"><value>调整操作员</value></data>
-	<data name="OutsourcingAssembling" xml:space="preserve"><value>外包组装</value></data>
-	<data name="OutsourcingStitching" xml:space="preserve"><value>外包缝纫</value></data>
-	<data name="OutsourcingStockFitting" xml:space="preserve"><value>外包备料仓</value></data>
-	<data name="Password" xml:space="preserve"><value>密码</value></data>
-	<data name="PC" xml:space="preserve"><value>生产部</value></data>
-	<data name="PCSend" xml:space="preserve"><value>PC 发送</value></data>
-	<data name="PersonIncharge" xml:space="preserve"><value>负责人</value></data>
-	<data name="PleaseEnterUsernameBeforeChangingPassword" xml:space="preserve"><value>更改密码前请先输入用户名！</value></data>
-	<data name="Process" xml:space="preserve"><value>工序</value></data>
-	<data name="ProcessIDNotFound" xml:space="preserve"><value>❌ 未找到 Process ID。</value></data>
-	<data name="ProductionSign" xml:space="preserve"><value>生产标识</value></data>
-	<data name="ReadOnly" xml:space="preserve"><value>只读</value></data>
-	<data name="ReferenceModel" xml:space="preserve"><value>参考款式</value></data>
-	<data name="ReferenceOperator" xml:space="preserve"><value>参考操作员</value></data>
-	<data name="Refreshing" xml:space="preserve"><value>正在刷新...</value></data>
-	<data name="RefreshingBonusDocData" xml:space="preserve"><value>正在刷新奖励文档数据...</value></data>
-	<data name="RefreshingBonusDocuments" xml:space="preserve"><value>正在刷新奖金文档...</value></data>
-	<data name="RefreshingData" xml:space="preserve"><value>正在刷新数据...</value></data>
-	<data name="RememberMe" xml:space="preserve"><value>记住账户</value></data>
-	<data name="RenameFailed" xml:space="preserve"><value>重命名失败。</value></data>
-	<data name="RenameSuccess" xml:space="preserve"><value>重命名成功。</value></data>
-	<data name="ReportExportSuccess" xml:space="preserve"><value>报告导出成功。</value></data>
-	<data name="Required" xml:space="preserve"><value>必填</value></data>
-	<data name="RequiredBeforeChangePassword" xml:space="preserve"><value>更改密码前请先输入用户名！</value></data>
-	<data name="RestartNotice" xml:space="preserve"><value>更改语言后需要重新启动应用程序。</value></data>
-	<data name="Rows" xml:space="preserve"><value>行</value></data>
-	<data name="SaveDataError" xml:space="preserve"><value>❌ 保存数据时出错。</value></data>
-	<data name="SaveFileFailed" xml:space="preserve"><value>保存文件失败</value></data>
-	<data name="ScanDateNotFound" xml:space="preserve"><value>找不到扫描日期。</value></data>
-	<data name="SelectModel" xml:space="preserve"><value>-- 选择型号 --</value></data>
-	<data name="SelectModelFirst" xml:space="preserve"><value>请先选择型号。</value></data>
-	<data name="SharedData" xml:space="preserve"><value>共享数据</value></data>
-	<data name="SheetSelect" xml:space="preserve"><value>选择工作表</value></data>
-	<data name="Show" xml:space="preserve"><value>显示</value></data>
-	<data name="SkippedRows" xml:space="preserve"><value>已跳过的行</value></data>
-	<data name="Stitching" xml:space="preserve"><value>缝纫</value></data>
-	<data name="StockFitting" xml:space="preserve"><value>备料</value></data>
-	<data name="Success" xml:space="preserve"><value>成功</value></data>
-	<data name="SupportedFiles" xml:space="preserve"><value>仅支持 PDF 或图像文件（JPG、PNG、BMP）。</value></data>
-	<data name="TargetOutput" xml:space="preserve"><value>目标产量</value></data>
-	<data name="TCTData" xml:space="preserve"><value>TCT 数据</value></data>
-	<data name="TooltipTemplate_FileInfo" xml:space="preserve"><value>📄 文件名: {0}\n🕒 创建时间: {1:yyyy-MM-dd}\n👤 创建人: {2}</value></data>
-	<data name="TooltipTemplate_UpdatedInfo" xml:space="preserve"><value>\n✏️ 更新于: {0:yyyy-MM-dd}\n👤 更新人: {1}</value></data>
-	<data name="TotalTCT" xml:space="preserve"><value>TCT总计</value></data>
-	<data name="Type" xml:space="preserve"><value>类型</value></data>
-	<data name="TypeIDNotFound" xml:space="preserve"><value>❌ 未找到 Type ID。</value></data>
-	<data name="UnexpectedError" xml:space="preserve"><value>发生未知错误。</value></data>
-	<data name="Update" xml:space="preserve"><value>更新</value></data>
-	<data name="UpdateFailed" xml:space="preserve"><value>更新失败</value></data>
-	<data name="UpdateSuccess" xml:space="preserve"><value>更新成功</value></data>
-	<data name="Updated" xml:space="preserve"><value>已更新</value></data>
-	<data name="UpdatedAt" xml:space="preserve"><value>更新时间</value></data>
-	<data name="UpdatedBy" xml:space="preserve"><value>更新者</value></data>
-	<data name="Username" xml:space="preserve"><value>用户名</value></data>
-	<data name="UsernameDoesNotExist" xml:space="preserve"><value>用户名不存在。</value></data>
-	<data name="UsernameNotExists" xml:space="preserve"><value>用户名不存在。</value></data>
-	<data name="UserNotFound" xml:space="preserve"><value>找不到用户。</value></data>
-	<data name="ViewBonusDocuments" xml:space="preserve"><value>查看奖金文件</value></data>
-	<data name="ViewDailyData" xml:space="preserve"><value>查看日数据</value></data>
-	<data name="ViewIEPPH" xml:space="preserve"><value>查看 IE PPH</value></data>
-	<data name="ViewTCTData" xml:space="preserve"><value>查看 TCT 数据</value></data>
-	<data name="Warning" xml:space="preserve"><value>警告</value></data>
-	<data name="WeeklyPlan" xml:space="preserve"><value>周计划</value></data>
-	<data name="WorkingTime" xml:space="preserve"><value>上班时间</value></data>
-	<data name="WrongPassword" xml:space="preserve"><value>密码错误。</value></data>
-	<data name="ZoomPercent" xml:space="preserve"><value>缩放：{0}%</value></data>
-	<data name="ConfirmIncludeTCT" xml:space="preserve"><value>是否在导出中包含 TCT 列？</value></data>
-	<data name="ConfirmLogout" xml:space="preserve"><value>您确定要注销吗？</value></data>
-	<data name="DeletedSuccess" xml:space="preserve"><value>删除成功。</value></data>
-	<data name="Exporting" xml:space="preserve"><value>正在导出...</value></data>
-	<data name="ExportingDescription" xml:space="preserve"><value>请稍候，正在导出数据...</value></data>
-	<data name="Importing" xml:space="preserve"><value>正在导入...</value></data>
-	<data name="ImportingDescription" xml:space="preserve"><value>请稍候，正在导入数据...</value></data>
-	<data name="ImportingTCTData" xml:space="preserve"><value>正在导入 TCT 数据...</value></data>
-	<data name="ProcessingDescription" xml:space="preserve"><value>请稍候，正在处理...</value></data>
-	<data name="Saving" xml:space="preserve"><value>正在保存...</value></data>
-	<data name="DeletedSuccess" xml:space="preserve"><value>删除成功。</value></data>
-	<data name="ExportExcelTitle" xml:space="preserve"><value>导出到 Excel</value></data>
-	<data name="ExportCompleted" xml:space="preserve"><value>导出完成</value></data>
-	<data name="ExportTCTTitle" xml:space="preserve"><value>导出 TCT 数据到 Excel</value></data>
-	<data name="ErrorWhileDeletingRow" xml:space="preserve"><value>删除行时发生错误。</value></data>
-	<data name="Cancel" xml:space="preserve"><value>取消</value></data>
-	<data name="SharedData" xml:space="preserve"><value>共享数据</value></data>
-	<data name="ExcelExportOptions" xml:space="preserve"><value>Excel 导出选项</value></data>
-	<data name="OutsourcingAssembling" xml:space="preserve"><value>外包组装</value></data>
-	<data name="OutsourcingStitching" xml:space="preserve"><value>外包缝纫</value></data>
-	<data name="OutsourcingStockFitting" xml:space="preserve"><value>外包备料</value></data>
-	<data name="ModelName" xml:space="preserve"><value>型号名称</value></data>
-	<data name="NoteForPC" xml:space="preserve"><value>给生产部的备注</value></data>
-	<data name="ProductionSign" xml:space="preserve"><value>生产标识</value></data>
-	<data name="ResetNotice" xml:space="preserve"><value>更改语言后应用程序将重启。</value></data>
-	<data name="RememberMe" xml:space="preserve"><value>记住我</value></data>
-	<data name="SearchIEPPH" xml:space="preserve"><value>IE PPH管理</value></data>
-	<data name="SheetSelect" xml:space="preserve"><value>选择工作表</value></data>
-	<data name="SharedData" xml:space="preserve"><value>共享数据</value></data>
-	<data name="Refresh" xml:space="preserve"><value>刷新</value></data>
-	<data name="RefreshingDescription" xml:space="preserve"><value>请稍候，正在刷新数据…</value></data>
-	<data name="ExportFile" xml:space="preserve"><value>导出文件</value></data>
-	<data name="Plant" xml:space="preserve"><value>工厂</value></data>
-	<data name="ScanDate">
-		<value>扫描日期</value>
-	</data>
-	<data name="Factory">
-		<value>工厂</value>
-	</data>
-	<data name="Plant">
-		<value>车间</value>
-	</data>
-	<data name="LineName">
-		<value>生产线名称</value>
-	</data>
-	<data name="TotalWorker">
-		<value>总工人</value>
-	</data>
-	<data name="Quantity">
-		<value>数量</value>
-	</data>
-	<data name="PPHRate">
-		<value>PPH 速率</value>
-	</data>
-	<data name="TotalWorkingHours">
-		<value>总工作时数</value>
-	</data>
-	<data name="ActutalPPH">
-		<value>实际 PPH</value>
-	</data>
-	<data name="AutoCutting">
-		<value>自动裁剪</value>
-	</data>
-	<data name="InvalidArticleName">
-		<value>无效的款号</value>
-	</data>
-	<data name="Error_InsertArticleFailed">
-		<value>错误：添加款号失败</value>
-	</data>
-	<data name="InsertArticleFailed">
-		<value>添加款号失败</value>
-	</data>
-	<data name="ConfirmDeleteArticle">
-		<value>确定要删除该款号吗？</value>
-	</data>
-	<data name="AddNewRowHint">
-		<value>点击添加新行</value>
-	</data>
-	<data name="NewModelsAdded">
-		<value>已添加新款式</value>
-	</data>
-	<data name="InvalidModelName">
-		<value>无效的款式名称</value>
-	</data>
-	<data name="CIDocument">
-		<value>CI 文件</value>
-	</data>
-	<data name="SelectFile">
-		<value>选择文件</value>
-	</data>
-	<data name="FileReadError">
-		<value>文件读取错误</value>
-	</data>
-	<data name="FileNotFound">
-		<value>文件未找到</value>
-	</data>
-	<data name="AccessDeniedToFile">
-		<value>文件访问被拒绝</value>
-	</data>
-	<data name="ArticleList">
-		<value>款号列表</value>
-	</data>
-	<data name="BonusFileList">
-		<value>奖金文件列表</value>
-	</data>
-	<data name="FileList">
-		<value>文件列表</value>
-	</data>
-	<data name="IETeam">
-		<value>IE 团队</value>
-	</data>
-	<data name="CITeam">
-		<value>CI 团队</value>
-	</data>
-	<data name="InvalidFileName">
-		<value>无效的文件名</value>
-	</data>
-	<data name="DocumentType">
-		<value>文件类型</value>
-	</data>
-	<data name="FileExtension">
-		<value>文件扩展名</value>
-	</data>
-
+  <data name="AccountDisabled" xml:space="preserve">
+    <value>账户已被禁用。</value>
+  </data>
+  <data name="AccountManagement" xml:space="preserve">
+    <value>账户管理</value>
+  </data>
+  <data name="AddNewFile" xml:space="preserve">
+    <value>添加新文件</value>
+  </data>
+  <data name="AdjustOperator" xml:space="preserve">
+    <value>调整操作员</value>
+  </data>
+  <data name="AllProcess" xml:space="preserve">
+    <value>全部工序</value>
+  </data>
+  <data name="ArticleName" xml:space="preserve">
+    <value>款号</value>
+  </data>
+  <data name="Assembly" xml:space="preserve">
+    <value>组装</value>
+  </data>
+  <data name="BonusDocument" xml:space="preserve">
+    <value>奖金文件</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>更改密码</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>确认</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>您确定要删除吗？</value>
+  </data>
+  <data name="ConfirmDelete_Message" xml:space="preserve">
+    <value>你确定要从型号“{1}”中删除文件“{0}”吗？</value>
+  </data>
+  <data name="ConfirmDelete_Title" xml:space="preserve">
+    <value>确认删除</value>
+  </data>
+  <data name="ConfirmIncludeTCT" xml:space="preserve">
+    <value>是否在导出中包含 TCT 列？</value>
+  </data>
+  <data name="ConfirmLogout" xml:space="preserve">
+    <value>您确定要注销吗？</value>
+  </data>
+  <data name="CreatedAt" xml:space="preserve">
+    <value>创建时间</value>
+  </data>
+  <data name="CreatedBy" xml:space="preserve">
+    <value>创建者</value>
+  </data>
+  <data name="Cutting" xml:space="preserve">
+    <value>裁断</value>
+  </data>
+  <data name="DataStatus" xml:space="preserve">
+    <value>数据状态</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>删除失败</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="ErrorDetails" xml:space="preserve">
+    <value>错误详情</value>
+  </data>
+  <data name="ErrorLoadingProcessList" xml:space="preserve">
+    <value>加载工序列表出错。</value>
+  </data>
+  <data name="ErrorWhileDeletingRow" xml:space="preserve">
+    <value>删除行时发生错误。</value>
+  </data>
+  <data name="ErrorWhileSavingDocument" xml:space="preserve">
+    <value>保存文档时出错。</value>
+  </data>
+  <data name="Error_MissingDependencies" xml:space="preserve">
+    <value>❌ 缺少必要的依赖项。</value>
+  </data>
+  <data name="Error_UpdateArticleProcess" xml:space="preserve">
+    <value>无法更新 ArticleID = {0} 的工艺/类型数据</value>
+  </data>
+  <data name="Error_UpdateModelNameFailed" xml:space="preserve">
+    <value>❌ 更新型号名称失败。</value>
+  </data>
+  <data name="Error_UpdateOutsourcing" xml:space="preserve">
+    <value>无法更新 ArticleID = {0} 的外协信息</value>
+  </data>
+  <data name="Error_UpdatePCIncharge" xml:space="preserve">
+    <value>无法更新 ArticleID = {0} 的负责人</value>
+  </data>
+  <data name="Error_UpdateTCT" xml:space="preserve">
+    <value>无法更新 ArticleID = {0} 的 TCT 数据</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>退出</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>导出</value>
+  </data>
+  <data name="ExportCompleted" xml:space="preserve">
+    <value>导出完成</value>
+  </data>
+  <data name="ExportError" xml:space="preserve">
+    <value>导出过程中发生错误。</value>
+  </data>
+  <data name="ExportExcelTitle" xml:space="preserve">
+    <value>导出到 Excel</value>
+  </data>
+  <data name="ExportFailed" xml:space="preserve">
+    <value>导出失败</value>
+  </data>
+  <data name="ExportIEReportFile" xml:space="preserve">
+    <value>IE 报告</value>
+  </data>
+  <data name="ExportInsufficientData" xml:space="preserve">
+    <value>数据不足，无法导出。</value>
+  </data>
+  <data name="ExportOutputPerLineReportFile" xml:space="preserve">
+    <value>各产线产量报告</value>
+  </data>
+  <data name="ExportShoesKPIReportFile" xml:space="preserve">
+    <value>鞋类 KPI 报告</value>
+  </data>
+  <data name="ExportSlidesKPIReportFile" xml:space="preserve">
+    <value>拖鞋 KPI 报告</value>
+  </data>
+  <data name="ExportSuccess" xml:space="preserve">
+    <value>导出成功</value>
+  </data>
+  <data name="ExportTCTTitle" xml:space="preserve">
+    <value>导出 TCT 数据到 Excel</value>
+  </data>
+  <data name="Export_UnableToExportTryReorder" xml:space="preserve">
+    <value>无法导出。请尝试重新排序数据。</value>
+  </data>
+  <data name="Export_ErrorCreatingFolder" xml:space="preserve">
+    <value>创建导出文件夹出错。</value>
+  </data>
+  <data name="Export_ErrorGettingDate" xml:space="preserve">
+    <value>获取日期时出错。</value>
+  </data>
+  <data name="Export_FileNamePrefix" xml:space="preserve">
+    <value>导出文件名前缀</value>
+  </data>
+  <data name="Export_NoMatchingData" xml:space="preserve">
+    <value>没有匹配的数据可导出</value>
+  </data>
+  <data name="FailedToBuildExportData" xml:space="preserve">
+    <value>构建导出数据失败。</value>
+  </data>
+  <data name="FailedToCreateExcelFile" xml:space="preserve">
+    <value>创建 Excel 文件失败。</value>
+  </data>
+  <data name="FailedToCreateReportFolder" xml:space="preserve">
+    <value>无法创建报告文件夹。</value>
+  </data>
+  <data name="FailedToOpenFile" xml:space="preserve">
+    <value>无法打开文件。</value>
+  </data>
+  <data name="FileAlreadyExists" xml:space="preserve">
+    <value>文件已存在。</value>
+  </data>
+  <data name="FileExistsConfirm" xml:space="preserve">
+    <value>文件已存在。是否要覆盖？</value>
+  </data>
+  <data name="FileLockedOrOpened" xml:space="preserve">
+    <value>文件被其他应用锁定或已打开。</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>文件名</value>
+  </data>
+  <data name="FileNameCannotBeEmpty" xml:space="preserve">
+    <value>文件名不能为空。</value>
+  </data>
+  <data name="FileNameExists" xml:space="preserve">
+    <value>文件名已存在。</value>
+  </data>
+  <data name="FileSavedSuccessfully" xml:space="preserve">
+    <value>文件保存成功。</value>
+  </data>
+  <data name="FileUpdatedSuccessfully" xml:space="preserve">
+    <value>文件更新成功。</value>
+  </data>
+  <data name="GuestLogin" xml:space="preserve">
+    <value>以访客身份登录</value>
+  </data>
+  <data name="IncludeTCTInExport" xml:space="preserve">
+    <value>导出中包含 TCT 数据</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>导入</value>
+  </data>
+  <data name="ImportFailed" xml:space="preserve">
+    <value>导入失败</value>
+  </data>
+  <data name="ImportSuccess" xml:space="preserve">
+    <value>导入成功</value>
+  </data>
+  <data name="Importing" xml:space="preserve">
+    <value>正在导入...</value>
+  </data>
+  <data name="ImportingDescription" xml:space="preserve">
+    <value>请稍候，正在导入数据...</value>
+  </data>
+  <data name="ImportingTCTData" xml:space="preserve">
+    <value>正在导入 TCT 数据...</value>
+  </data>
+  <data name="Inserted" xml:space="preserve">
+    <value>已插入</value>
+  </data>
+  <data name="InvalidArticleID" xml:space="preserve">
+    <value>❌ 无效的 Article ID。</value>
+  </data>
+  <data name="InvalidFileName" xml:space="preserve">
+    <value>无效的文件名</value>
+  </data>
+  <data name="InvalidFileNameCharacters" xml:space="preserve">
+    <value>文件名包含无效字符。</value>
+  </data>
+  <data name="InvalidRow" xml:space="preserve">
+    <value>❌ 检测到无效行。</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>语言</value>
+  </data>
+  <data name="LastUpdatedAt" xml:space="preserve">
+    <value>最后更新时间</value>
+  </data>
+  <data name="LoadDataError" xml:space="preserve">
+    <value>❌ 加载数据时出错。</value>
+  </data>
+  <data name="LoadDataFailed" xml:space="preserve">
+    <value>加载数据失败</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>加载中...</value>
+  </data>
+  <data name="LoadingDescription" xml:space="preserve">
+    <value>请稍候，正在加载数据...</value>
+  </data>
+  <data name="RefreshingDescription" xml:space="preserve">
+    <value>请稍候，正在刷新数据…</value>
+  </data>
+  <data name="LoadingModelNames" xml:space="preserve">
+    <value>正在加载型号...</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>登录</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>登出</value>
+  </data>
+  <data name="MainTitle" xml:space="preserve">
+    <value>绩效管理系统</value>
+  </data>
+  <data name="Management" xml:space="preserve">
+    <value>管理部</value>
+  </data>
+  <data name="ME" xml:space="preserve">
+    <value>工艺部</value>
+  </data>
+  <data name="MissingProcessOrTypeID" xml:space="preserve">
+    <value>❌ 缺少 Process 或 Type ID。</value>
+  </data>
+  <data name="ModelName" xml:space="preserve">
+    <value>型号名称</value>
+  </data>
+  <data name="NoDataToExport" xml:space="preserve">
+    <value>没有可导出的数据。</value>
+  </data>
+  <data name="NoFileSelected" xml:space="preserve">
+    <value>未选择文件</value>
+  </data>
+  <data name="NoValidDataToExport" xml:space="preserve">
+    <value>没有有效数据可导出。</value>
+  </data>
+  <data name="NoValidTCTDataFound" xml:space="preserve">
+    <value>未找到有效的 TCT 数据。</value>
+  </data>
+  <data name="NoteForPC" xml:space="preserve">
+    <value>给生产部的备注</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>备注</value>
+  </data>
+  <data name="Notification" xml:space="preserve">
+    <value>通知</value>
+  </data>
+  <data name="OperatorAdjust" xml:space="preserve">
+    <value>调整操作员</value>
+  </data>
+  <data name="OutsourcingAssembling" xml:space="preserve">
+    <value>外包组装</value>
+  </data>
+  <data name="OutsourcingStitching" xml:space="preserve">
+    <value>外包缝制</value>
+  </data>
+  <data name="OutsourcingStockFitting" xml:space="preserve">
+    <value>外包仓库配件安装</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>密码</value>
+  </data>
+  <data name="PC" xml:space="preserve">
+    <value>生产部</value>
+  </data>
+  <data name="PCSend" xml:space="preserve">
+    <value>PC 发送</value>
+  </data>
+  <data name="PersonIncharge" xml:space="preserve">
+    <value>负责人</value>
+  </data>
+  <data name="PleaseEnterUsernameBeforeChangingPassword" xml:space="preserve">
+    <value>更改密码前请先输入用户名！</value>
+  </data>
+  <data name="Process" xml:space="preserve">
+    <value>工序</value>
+  </data>
+  <data name="ProcessIDNotFound" xml:space="preserve">
+    <value>❌ 未找到 Process。</value>
+  </data>
+  <data name="ProductionSign" xml:space="preserve">
+    <value>生产标识</value>
+  </data>
+  <data name="ReadOnly" xml:space="preserve">
+    <value>只读</value>
+  </data>
+  <data name="ReferenceModel" xml:space="preserve">
+    <value>参考款式</value>
+  </data>
+  <data name="ReferenceOperator" xml:space="preserve">
+    <value>参考操作员</value>
+  </data>
+  <data name="Refreshing" xml:space="preserve">
+    <value>正在刷新...</value>
+  </data>
+  <data name="RefreshingBonusDocData" xml:space="preserve">
+    <value>正在刷新奖励文档数据...</value>
+  </data>
+  <data name="RefreshingBonusDocuments" xml:space="preserve">
+    <value>正在刷新奖金文档...</value>
+  </data>
+  <data name="RefreshingData" xml:space="preserve">
+    <value>正在刷新数据...</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>记住我</value>
+  </data>
+  <data name="RenameFailed" xml:space="preserve">
+    <value>重命名失败。</value>
+  </data>
+  <data name="RenameSuccess" xml:space="preserve">
+    <value>重命名成功。</value>
+  </data>
+  <data name="ReportExportSuccess" xml:space="preserve">
+    <value>报告导出成功。</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>必填</value>
+  </data>
+  <data name="RequiredBeforeChangePassword" xml:space="preserve">
+    <value>更改密码前请先输入用户名！</value>
+  </data>
+  <data name="RestartNotice" xml:space="preserve">
+    <value>更改语言后需要重新启动应用程序。</value>
+  </data>
+  <data name="Rows" xml:space="preserve">
+    <value>行</value>
+  </data>
+  <data name="SaveDataError" xml:space="preserve">
+    <value>❌ 保存数据时出错。</value>
+  </data>
+  <data name="SaveFileFailed" xml:space="preserve">
+    <value>保存文件失败</value>
+  </data>
+  <data name="ScanDateNotFound" xml:space="preserve">
+    <value>找不到扫描日期。</value>
+  </data>
+  <data name="SelectModel" xml:space="preserve">
+    <value>-- 选择型号 --</value>
+  </data>
+  <data name="SelectModelFirst" xml:space="preserve">
+    <value>请先选择型号。</value>
+  </data>
+  <data name="SharedData" xml:space="preserve">
+    <value>共享数据</value>
+  </data>
+  <data name="SheetSelect" xml:space="preserve">
+    <value>选择工作表</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>显示</value>
+  </data>
+  <data name="SkippedRows" xml:space="preserve">
+    <value>已跳过的行</value>
+  </data>
+  <data name="Stitching" xml:space="preserve">
+    <value>缝纫</value>
+  </data>
+  <data name="StockFitting" xml:space="preserve">
+    <value>备料</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="SupportedFiles" xml:space="preserve">
+    <value>仅支持 PDF 或图像文件（JPG、PNG、BMP）。</value>
+  </data>
+  <data name="TargetOutput" xml:space="preserve">
+    <value>目标产量</value>
+  </data>
+  <data name="TCTData" xml:space="preserve">
+    <value>TCT 数据</value>
+  </data>
+  <data name="TooltipTemplate_FileInfo" xml:space="preserve">
+    <value>📄 文件名: {0}\n🕒 创建时间: {1:yyyy-MM-dd}\n👤 创建人: {2}</value>
+  </data>
+  <data name="TooltipTemplate_UpdatedInfo" xml:space="preserve">
+    <value>\n✏️ 更新于: {0:yyyy-MM-dd}\n👤 更新人: {1}</value>
+  </data>
+  <data name="TotalTCT" xml:space="preserve">
+    <value>TCT总计</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>类型</value>
+  </data>
+  <data name="TypeIDNotFound" xml:space="preserve">
+    <value>❌ 未找到 Type ID。</value>
+  </data>
+  <data name="UnexpectedError" xml:space="preserve">
+    <value>发生未知错误。</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="UpdateFailed" xml:space="preserve">
+    <value>更新失败</value>
+  </data>
+  <data name="UpdateSuccess" xml:space="preserve">
+    <value>更新成功</value>
+  </data>
+  <data name="Updated" xml:space="preserve">
+    <value>已更新</value>
+  </data>
+  <data name="UpdatedAt" xml:space="preserve">
+    <value>更新时间</value>
+  </data>
+  <data name="UpdatedBy" xml:space="preserve">
+    <value>更新者</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>用户名</value>
+  </data>
+  <data name="UsernameDoesNotExist" xml:space="preserve">
+    <value>用户名不存在。</value>
+  </data>
+  <data name="UsernameNotExists" xml:space="preserve">
+    <value>用户名不存在。</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>找不到用户。</value>
+  </data>
+  <data name="ViewBonusDocuments" xml:space="preserve">
+    <value>查看奖金文件</value>
+  </data>
+  <data name="ViewDailyData" xml:space="preserve">
+    <value>查看日数据</value>
+  </data>
+  <data name="ViewIEPPH" xml:space="preserve">
+    <value>查看 IE PPH</value>
+  </data>
+  <data name="ViewTCTData" xml:space="preserve">
+    <value>查看 TCT 数据</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>警告</value>
+  </data>
+  <data name="WeeklyPlan" xml:space="preserve">
+    <value>周计划</value>
+  </data>
+  <data name="WorkingTime" xml:space="preserve">
+    <value>上班时间</value>
+  </data>
+  <data name="WrongPassword" xml:space="preserve">
+    <value>密码错误。</value>
+  </data>
+  <data name="ZoomPercent" xml:space="preserve">
+    <value>缩放：{0}%</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>正在保存...</value>
+  </data>
+  <data name="AllStatus" xml:space="preserve">
+    <value>所有状态</value>
+  </data>
+  <data name="Assigned" xml:space="preserve">
+    <value>已签署</value>
+  </data>
+  <data name="ChangeTCTReason" xml:space="preserve">
+    <value>更改TCT原因</value>
+  </data>
+  <data name="Chinese" xml:space="preserve">
+    <value>中文</value>
+  </data>
+  <data name="ChooseFile" xml:space="preserve">
+    <value>选择文件</value>
+  </data>
+  <data name="DateRange" xml:space="preserve">
+    <value>日期范围</value>
+  </data>
+  <data name="DepartmentRequired" xml:space="preserve">
+    <value>部门必填</value>
+  </data>
+  <data name="DownloadTemplate" xml:space="preserve">
+    <value>下载模板</value>
+  </data>
+  <data name="EditTCTData" xml:space="preserve">
+    <value>编辑TCT数据</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>英文</value>
+  </data>
+  <data name="ExportFile" xml:space="preserve">
+    <value>导出文件</value>
+  </data>
+  <data name="FileDeleted" xml:space="preserve">
+    <value>文件已删除</value>
+  </data>
+  <data name="FileRenamed" xml:space="preserve">
+    <value>文件已重命名。</value>
+  </data>
+  <data name="InvalidFileFormat" xml:space="preserve">
+    <value>无效的文件格式</value>
+  </data>
+  <data name="NoTCTSelected" xml:space="preserve">
+    <value>未选择TCT</value>
+  </data>
+  <data name="OperationSuccess" xml:space="preserve">
+    <value>操作成功</value>
+  </data>
+  <data name="PersonInchargeRequired" xml:space="preserve">
+    <value>负责人为必填项。</value>
+  </data>
+  <data name="StatusRequired" xml:space="preserve">
+    <value>状态为必填项。</value>
+  </data>
+  <data name="Vietnamese" xml:space="preserve">
+    <value>越南语</value>
+  </data>
+  <data name="ExcelExportOptions" xml:space="preserve">
+    <value>Excel 导出选项</value>
+  </data>
+  <data name="SearchIEPPH" xml:space="preserve">
+    <value>IE PPH管理</value>
+  </data>
+  <data name="Plant" xml:space="preserve">
+    <value>车间</value>
+  </data>
+  <data name="AddNewRowHint" xml:space="preserve">
+    <value>点击添加新行</value>
+  </data>
+  <data name="ScanDate" xml:space="preserve">
+    <value>扫描日期</value>
+  </data>
+  <data name="Factory" xml:space="preserve">
+    <value>工厂</value>
+  </data>
+  <data name="LineName" xml:space="preserve">
+    <value>生产线名称</value>
+  </data>
+  <data name="TotalWorker" xml:space="preserve">
+    <value>总工人</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>数量</value>
+  </data>
+  <data name="PPHRate" xml:space="preserve">
+    <value>PPH 速率</value>
+  </data>
+  <data name="TotalWorkingHours" xml:space="preserve">
+    <value>总工作时数</value>
+  </data>
+  <data name="ActutalPPH" xml:space="preserve">
+    <value>实际 PPH</value>
+  </data>
+  <data name="AutoCutting" xml:space="preserve">
+    <value>自动裁剪</value>
+  </data>
+  <data name="InvalidArticleName" xml:space="preserve">
+    <value>无效的款号</value>
+  </data>
+  <data name="Error_InsertArticleFailed" xml:space="preserve">
+    <value>错误：添加款号失败</value>
+  </data>
+  <data name="InsertArticleFailed" xml:space="preserve">
+    <value>添加款号失败</value>
+  </data>
+  <data name="ConfirmDeleteArticle" xml:space="preserve">
+    <value>确定要删除该款号吗？</value>
+  </data>
+  <data name="NewModelsAdded" xml:space="preserve">
+    <value>已添加新款式</value>
+  </data>
+  <data name="InvalidModelName" xml:space="preserve">
+    <value>无效的款式名称</value>
+  </data>
+  <data name="CIDocument" xml:space="preserve">
+    <value>CI 文件</value>
+  </data>
+  <data name="SelectFile" xml:space="preserve">
+    <value>选择文件</value>
+  </data>
+  <data name="FileReadError" xml:space="preserve">
+    <value>文件读取错误</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>文件未找到</value>
+  </data>
+  <data name="AccessDeniedToFile" xml:space="preserve">
+    <value>文件访问被拒绝</value>
+  </data>
+  <data name="ArticleList" xml:space="preserve">
+    <value>款号列表</value>
+  </data>
+  <data name="BonusFileList" xml:space="preserve">
+    <value>奖金文件列表</value>
+  </data>
+  <data name="FileList" xml:space="preserve">
+    <value>文件列表</value>
+  </data>
+  <data name="IETeam" xml:space="preserve">
+    <value>IE 团队</value>
+  </data>
+  <data name="CITeam" xml:space="preserve">
+    <value>CI 团队</value>
+  </data>
+  <data name="DocumentType" xml:space="preserve">
+    <value>文件类型</value>
+  </data>
+  <data name="FileExtension" xml:space="preserve">
+    <value>文件扩展名</value>
+  </data>
+  <data name="Exporting" xml:space="preserve">
+    <value>正在导出...</value>
+  </data>
+  <data name="ExcelExportSuccess" xml:space="preserve">
+    <value>Excel导出成功</value>
+  </data>
+  <data name="CannotOpenExportedFile" xml:space="preserve">
+    <value>无法打开已导出的文件</value>
+  </data>
+  <data name="DeletedSuccess" xml:space="preserve">
+    <value>删除成功</value>
+  </data>
+  <data name="AddNewRow" xml:space="preserve">
+    <value>添加新行</value>
+  </data>
+  <data name="DeleteRow" xml:space="preserve">
+    <value>删除行</value>
+  </data>
+  <data name="DeleteRowConfirm" xml:space="preserve">
+    <value>您确定要删除此行吗？</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="SaveSuccess" xml:space="preserve">
+    <value>保存成功</value>
+  </data>
+  <data name="SaveError" xml:space="preserve">
+    <value>保存错误</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="Browse" xml:space="preserve">
+    <value>选择文件</value>
+  </data>
+  <data name="ImportExcel" xml:space="preserve">
+    <value>导入Excel</value>
+  </data>
+  <data name="ImportError" xml:space="preserve">
+    <value>导入错误</value>
+  </data>
+  <data name="ChooseExcelFile" xml:space="preserve">
+    <value>选择Excel文件</value>
+  </data>
+  <data name="InvalidExcelFormat" xml:space="preserve">
+    <value>无效的Excel格式</value>
+  </data>
+  <data name="RequiredFieldMissing" xml:space="preserve">
+    <value>缺少必填字段</value>
+  </data>
+  <data name="DeletedError" xml:space="preserve">
+    <value>删除错误</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>显示更多</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>搜索</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>全选</value>
+  </data>
+  <data name="FromDate" xml:space="preserve">
+    <value>起始日期</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>选择</value>
+  </data>
+  <data name="SelectAll" xml:space="preserve">
+    <value>全选</value>
+  </data>
+  <data name="UnselectAll" xml:space="preserve">
+    <value>全部取消选择</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>文件</value>
+  </data>
+  <data name="OpenFile" xml:space="preserve">
+    <value>打开文件</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>下载</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>预览</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="LoadingData" xml:space="preserve">
+    <value>正在加载数据…</value>
+  </data>
+  <data name="NoData" xml:space="preserve">
+    <value>无数据</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>活动中</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>未激活</value>
+  </data>
+  <data name="LoginTitle" xml:space="preserve">
+    <value>登录系统</value>
+  </data>
+  <data name="LoginFailed" xml:space="preserve">
+    <value>登录失败</value>
+  </data>
+  <data name="LoginSuccess" xml:space="preserve">
+    <value>登录成功</value>
+  </data>
+  <data name="ChangePasswordSuccess" xml:space="preserve">
+    <value>更改密码成功</value>
+  </data>
+  <data name="ChangePasswordFailed" xml:space="preserve">
+    <value>更改密码失败</value>
+  </data>
+  <data name="PasswordNotMatch" xml:space="preserve">
+    <value>Mật khẩu không khớp</value>
+  </data>
+  <data name="PasswordTooShort" xml:space="preserve">
+    <value>Mật khẩu quá ngắn</value>
+  </data>
+  <data name="OldPasswordRequired" xml:space="preserve">
+    <value>需要旧密码</value>
+  </data>
+  <data name="NewPasswordRequired" xml:space="preserve">
+    <value>需要新密码</value>
+  </data>
+  <data name="ConfirmPasswordRequired" xml:space="preserve">
+    <value>确认密码必填</value>
+  </data>
+  <data name="PasswordsDoNotMatch" xml:space="preserve">
+    <value>Các mật khẩu không trùng nhau</value>
+  </data>
+  <data name="LanguageChanged" xml:space="preserve">
+    <value>语言已更改</value>
+  </data>
+  <data name="InvalidLogin" xml:space="preserve">
+    <value>用户名或密码错误</value>
+  </data>
+  <data name="ComputerStitching" xml:space="preserve">
+    <value>电脑拼接</value>
+  </data>
+  <data name="Packing" xml:space="preserve">
+    <value>包装</value>
+  </data>
+  <data name="ExportingDescription" xml:space="preserve">
+    <value>数据导出正在进行中，请稍候。</value>
+  </data>
+  <data name="ProcessingDescription" xml:space="preserve">
+    <value>请稍候，正在处理...</value>
+  </data>
+  <data name="ResetNotice" xml:space="preserve">
+    <value>您确定要重置吗？</value>
+  </data>
 </root>

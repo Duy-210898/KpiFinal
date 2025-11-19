@@ -32,6 +32,10 @@ namespace KpiApplication.Utils
         {
             XtraMessageBox.Show(message, Lang.Success, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+        public static void ShowInfo(string message, string captionOverride = null)
+        {
+            XtraMessageBox.Show(message, captionOverride ?? Lang.Success, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
 
         public static DialogResult ShowConfirm(string message, string caption = null)
         {

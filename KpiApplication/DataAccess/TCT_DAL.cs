@@ -6,8 +6,6 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Linq;
 using System.Diagnostics;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
-using System.ComponentModel;
 
 namespace KpiApplication.DataAccess
 {

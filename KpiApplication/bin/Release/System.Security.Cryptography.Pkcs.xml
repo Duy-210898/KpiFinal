@@ -7,15 +7,15 @@
     <member name="T:System.Security.Cryptography.CryptographicAttributeObject">
       <summary>Contains a type and a collection of values associated with that type.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.CryptographicAttributeObject.#ctor(System.Security.Cryptography.Oid)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.CryptographicAttributeObject" /> class using an attribute represented by the specified <see cref="T:System.Security.Cryptography.Oid" /> object.</summary>
-      <param name="oid">The attribute to store in this <see cref="T:System.Security.Cryptography.CryptographicAttributeObject" /> object.</param>
-    </member>
     <member name="M:System.Security.Cryptography.CryptographicAttributeObject.#ctor(System.Security.Cryptography.Oid,System.Security.Cryptography.AsnEncodedDataCollection)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.CryptographicAttributeObject" /> class using an attribute represented by the specified <see cref="T:System.Security.Cryptography.Oid" /> object and the set of values associated with that attribute represented by the specified <see cref="T:System.Security.Cryptography.AsnEncodedDataCollection" /> collection.</summary>
       <param name="oid">The attribute to store in this <see cref="T:System.Security.Cryptography.CryptographicAttributeObject" /> object.</param>
       <param name="values">The set of values associated with the attribute represented by the <paramref name="oid" /> parameter.</param>
       <exception cref="T:System.InvalidOperationException">The collection contains duplicate items.</exception>
+    </member>
+    <member name="M:System.Security.Cryptography.CryptographicAttributeObject.#ctor(System.Security.Cryptography.Oid)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.CryptographicAttributeObject" /> class using an attribute represented by the specified <see cref="T:System.Security.Cryptography.Oid" /> object.</summary>
+      <param name="oid">The attribute to store in this <see cref="T:System.Security.Cryptography.CryptographicAttributeObject" /> object.</param>
     </member>
     <member name="P:System.Security.Cryptography.CryptographicAttributeObject.Oid">
       <summary>Gets the <see cref="T:System.Security.Cryptography.Oid" /> object that specifies the object identifier for the attribute.</summary>
@@ -127,15 +127,15 @@
       <summary>The <see cref="M:System.Security.Cryptography.Pkcs.AlgorithmIdentifier.#ctor" /> constructor creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.AlgorithmIdentifier" /> class by using a set of default parameters.</summary>
       <exception cref="T:System.Security.Cryptography.CryptographicException">A cryptographic operation could not be completed.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.AlgorithmIdentifier.#ctor(System.Security.Cryptography.Oid)">
-      <summary>The <see cref="M:System.Security.Cryptography.Pkcs.AlgorithmIdentifier.#ctor(System.Security.Cryptography.Oid)" /> constructor creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.AlgorithmIdentifier" /> class with the specified algorithm identifier.</summary>
-      <param name="oid">An object identifier for the algorithm.</param>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">A cryptographic operation could not be completed.</exception>
-    </member>
     <member name="M:System.Security.Cryptography.Pkcs.AlgorithmIdentifier.#ctor(System.Security.Cryptography.Oid,System.Int32)">
       <summary>The <see cref="M:System.Security.Cryptography.Pkcs.AlgorithmIdentifier.#ctor(System.Security.Cryptography.Oid,System.Int32)" /> constructor creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.AlgorithmIdentifier" /> class with the specified algorithm identifier and key length.</summary>
       <param name="oid">An object identifier for the algorithm.</param>
       <param name="keyLength">The length, in bits, of the key.</param>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">A cryptographic operation could not be completed.</exception>
+    </member>
+    <member name="M:System.Security.Cryptography.Pkcs.AlgorithmIdentifier.#ctor(System.Security.Cryptography.Oid)">
+      <summary>The <see cref="M:System.Security.Cryptography.Pkcs.AlgorithmIdentifier.#ctor(System.Security.Cryptography.Oid)" /> constructor creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.AlgorithmIdentifier" /> class with the specified algorithm identifier.</summary>
+      <param name="oid">An object identifier for the algorithm.</param>
       <exception cref="T:System.Security.Cryptography.CryptographicException">A cryptographic operation could not be completed.</exception>
     </member>
     <member name="P:System.Security.Cryptography.Pkcs.AlgorithmIdentifier.KeyLength">
@@ -153,13 +153,6 @@
     <member name="T:System.Security.Cryptography.Pkcs.CmsRecipient">
       <summary>The <see cref="T:System.Security.Cryptography.Pkcs.CmsRecipient" /> class defines the recipient of a CMS/PKCS #7 message.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.CmsRecipient.#ctor(System.Security.Cryptography.Pkcs.SubjectIdentifierType,System.Security.Cryptography.X509Certificates.X509Certificate2)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.CmsRecipient" /> class with a specified certificate and recipient identifier type, using the default encryption mode for the public key algorithm.</summary>
-      <param name="recipientIdentifierType">The scheme to use for identifying which recipient certificate was used.</param>
-      <param name="certificate">The certificate to use when encrypting for this recipient.</param>
-      <exception cref="T:System.ArgumentNullException">The <paramref name="certificate" /> parameter is <see langword="null" />.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The <paramref name="recipientIdentifierType" /> value is not supported.</exception>
-    </member>
     <member name="M:System.Security.Cryptography.Pkcs.CmsRecipient.#ctor(System.Security.Cryptography.Pkcs.SubjectIdentifierType,System.Security.Cryptography.X509Certificates.X509Certificate2,System.Security.Cryptography.RSAEncryptionPadding)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.CmsRecipient" /> class with a specified RSA certificate, RSA encryption padding, and subject identifier.</summary>
       <param name="recipientIdentifierType">The scheme to use for identifying which recipient certificate was used.</param>
@@ -168,10 +161,12 @@
       <exception cref="T:System.ArgumentNullException">The <paramref name="certificate" /> or <paramref name="rsaEncryptionPadding" /> parameter is <see langword="null" />.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">The <paramref name="certificate" /> parameter public key is not recognized as an RSA public key.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.CmsRecipient.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate2)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.CmsRecipient" /> class with a specified certificate, using the default encryption mode for the public key algorithm and an <see cref="F:System.Security.Cryptography.Pkcs.SubjectIdentifierType.IssuerAndSerialNumber" /> subject identifier.</summary>
+    <member name="M:System.Security.Cryptography.Pkcs.CmsRecipient.#ctor(System.Security.Cryptography.Pkcs.SubjectIdentifierType,System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.CmsRecipient" /> class with a specified certificate and recipient identifier type, using the default encryption mode for the public key algorithm.</summary>
+      <param name="recipientIdentifierType">The scheme to use for identifying which recipient certificate was used.</param>
       <param name="certificate">The certificate to use when encrypting for this recipient.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="certificate" /> parameter is <see langword="null" />.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The <paramref name="recipientIdentifierType" /> value is not supported.</exception>
     </member>
     <member name="M:System.Security.Cryptography.Pkcs.CmsRecipient.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Security.Cryptography.RSAEncryptionPadding)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.CmsRecipient" /> class with a specified RSA certificate and RSA encryption padding, using an <see cref="F:System.Security.Cryptography.Pkcs.SubjectIdentifierType.IssuerAndSerialNumber" /> subject identifier.</summary>
@@ -183,6 +178,11 @@
 -or-
 
 The <paramref name="recipientIdentifierType" /> value is not supported.</exception>
+    </member>
+    <member name="M:System.Security.Cryptography.Pkcs.CmsRecipient.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.CmsRecipient" /> class with a specified certificate, using the default encryption mode for the public key algorithm and an <see cref="F:System.Security.Cryptography.Pkcs.SubjectIdentifierType.IssuerAndSerialNumber" /> subject identifier.</summary>
+      <param name="certificate">The certificate to use when encrypting for this recipient.</param>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="certificate" /> parameter is <see langword="null" />.</exception>
     </member>
     <member name="P:System.Security.Cryptography.Pkcs.CmsRecipient.Certificate">
       <summary>Gets the certificate to use when encrypting for this recipient.</summary>
@@ -312,15 +312,6 @@ The <paramref name="recipientIdentifierType" /> value is not supported.</excepti
       <param name="parameters">The CSP parameters to describe which signing key to use.</param>
       <exception cref="T:System.PlatformNotSupportedException">.NET Core and .NET 5+ only: In all cases.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.CmsSigner.#ctor(System.Security.Cryptography.Pkcs.SubjectIdentifierType)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.CmsSigner" /> class with a specified subject identifier type.</summary>
-      <param name="signerIdentifierType">The scheme to use for identifying which signing certificate was used.</param>
-    </member>
-    <member name="M:System.Security.Cryptography.Pkcs.CmsSigner.#ctor(System.Security.Cryptography.Pkcs.SubjectIdentifierType,System.Security.Cryptography.X509Certificates.X509Certificate2)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.CmsSigner" /> class with a specified signer certificate and subject identifier type.</summary>
-      <param name="signerIdentifierType">The scheme to use for identifying which signing certificate was used.</param>
-      <param name="certificate">The certificate whose private key will be used to sign a message.</param>
-    </member>
     <member name="M:System.Security.Cryptography.Pkcs.CmsSigner.#ctor(System.Security.Cryptography.Pkcs.SubjectIdentifierType,System.Security.Cryptography.X509Certificates.X509Certificate2,System.Security.Cryptography.AsymmetricAlgorithm)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.CmsSigner" /> class with a specified signer certificate, subject identifier type, and private key object.</summary>
       <param name="signerIdentifierType">One of the enumeration values that specifies the scheme to use for identifying which signing certificate was used.</param>
@@ -333,6 +324,15 @@ The <paramref name="recipientIdentifierType" /> value is not supported.</excepti
       <param name="certificate">The certificate whose private key will be used to sign a message.</param>
       <param name="privateKey">The private key object to use when signing the message.</param>
       <param name="signaturePadding">The RSA signature padding to use.</param>
+    </member>
+    <member name="M:System.Security.Cryptography.Pkcs.CmsSigner.#ctor(System.Security.Cryptography.Pkcs.SubjectIdentifierType,System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.CmsSigner" /> class with a specified signer certificate and subject identifier type.</summary>
+      <param name="signerIdentifierType">The scheme to use for identifying which signing certificate was used.</param>
+      <param name="certificate">The certificate whose private key will be used to sign a message.</param>
+    </member>
+    <member name="M:System.Security.Cryptography.Pkcs.CmsSigner.#ctor(System.Security.Cryptography.Pkcs.SubjectIdentifierType)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.CmsSigner" /> class with a specified subject identifier type.</summary>
+      <param name="signerIdentifierType">The scheme to use for identifying which signing certificate was used.</param>
     </member>
     <member name="M:System.Security.Cryptography.Pkcs.CmsSigner.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate2)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.CmsSigner" /> class with a specified signer certificate.</summary>
@@ -420,16 +420,16 @@ The <paramref name="recipientIdentifierType" /> value is not supported.</excepti
     <member name="M:System.Security.Cryptography.Pkcs.EnvelopedCms.#ctor">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.EnvelopedCms" /> class with default values.</summary>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.EnvelopedCms.#ctor(System.Security.Cryptography.Pkcs.ContentInfo)">
-      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.EnvelopedCms" /> class with specified content information.</summary>
-      <param name="contentInfo">The message content to encrypt.</param>
-      <exception cref="T:System.ArgumentNullException">The <paramref name="contentInfo" /> parameter is <see langword="null" />.</exception>
-    </member>
     <member name="M:System.Security.Cryptography.Pkcs.EnvelopedCms.#ctor(System.Security.Cryptography.Pkcs.ContentInfo,System.Security.Cryptography.Pkcs.AlgorithmIdentifier)">
       <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.EnvelopedCms" /> class with a specified symmetric encryption algorithm and content information.</summary>
       <param name="contentInfo">The message content to encrypt.</param>
       <param name="encryptionAlgorithm">The identifier for the symmetric encryption algorithm to use when encrypting the message content.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="contentInfo" /> or <paramref name="encryptionAlgorithm" /> parameter is <see langword="null" />.</exception>
+    </member>
+    <member name="M:System.Security.Cryptography.Pkcs.EnvelopedCms.#ctor(System.Security.Cryptography.Pkcs.ContentInfo)">
+      <summary>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Pkcs.EnvelopedCms" /> class with specified content information.</summary>
+      <param name="contentInfo">The message content to encrypt.</param>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="contentInfo" /> parameter is <see langword="null" />.</exception>
     </member>
     <member name="M:System.Security.Cryptography.Pkcs.EnvelopedCms.Decode(System.Byte[])">
       <summary>Decodes an array of bytes as a CMS/PKCS#7 EnvelopedData message.</summary>
@@ -447,13 +447,6 @@ The <paramref name="recipientIdentifierType" /> value is not supported.</excepti
       <exception cref="T:System.Security.Cryptography.CryptographicException">A cryptographic operation could not be completed.</exception>
       <exception cref="T:System.InvalidOperationException">A method call was invalid for the object's current state.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.EnvelopedCms.Decrypt(System.Security.Cryptography.Pkcs.RecipientInfo)">
-      <summary>Decrypts the contents of the decoded enveloped CMS/PKCS#7 message via a specified recipient info by searching certificate stores for a matching certificate and key.</summary>
-      <param name="recipientInfo">The recipient info to use for decryption.</param>
-      <exception cref="T:System.ArgumentNullException">The <paramref name="recipientInfo" /> parameter is <see langword="null" />.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">A cryptographic operation could not be completed.</exception>
-      <exception cref="T:System.InvalidOperationException">A method call was invalid for the object's current state.</exception>
-    </member>
     <member name="M:System.Security.Cryptography.Pkcs.EnvelopedCms.Decrypt(System.Security.Cryptography.Pkcs.RecipientInfo,System.Security.Cryptography.AsymmetricAlgorithm)">
       <summary>Decrypts the contents of the decoded enveloped CMS/PKCS#7 message via a specified recipient info with a specified private key.</summary>
       <param name="recipientInfo">The recipient info to use for decryption.</param>
@@ -467,6 +460,13 @@ The <paramref name="recipientIdentifierType" /> value is not supported.</excepti
       <param name="recipientInfo">The recipient info to use for decryption.</param>
       <param name="extraStore">A collection of certificates to use in addition to the certificate stores for finding a recipient certificate and private key.</param>
       <exception cref="T:System.ArgumentNullException">The <paramref name="recipientInfo" /> or <paramref name="extraStore" /> parameter is <see langword="null" />.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">A cryptographic operation could not be completed.</exception>
+      <exception cref="T:System.InvalidOperationException">A method call was invalid for the object's current state.</exception>
+    </member>
+    <member name="M:System.Security.Cryptography.Pkcs.EnvelopedCms.Decrypt(System.Security.Cryptography.Pkcs.RecipientInfo)">
+      <summary>Decrypts the contents of the decoded enveloped CMS/PKCS#7 message via a specified recipient info by searching certificate stores for a matching certificate and key.</summary>
+      <param name="recipientInfo">The recipient info to use for decryption.</param>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="recipientInfo" /> parameter is <see langword="null" />.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">A cryptographic operation could not be completed.</exception>
       <exception cref="T:System.InvalidOperationException">A method call was invalid for the object's current state.</exception>
     </member>
@@ -1620,25 +1620,14 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
       <summary>The <see cref="M:System.Security.Cryptography.Pkcs.SignedCms.#ctor" /> constructor creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> class.</summary>
       <exception cref="T:System.ArgumentNullException">A null reference was passed to a method that does not accept it as a valid argument.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.SignedCms.#ctor(System.Security.Cryptography.Pkcs.ContentInfo)">
-      <summary>The <see cref="M:System.Security.Cryptography.Pkcs.SignedCms.#ctor(System.Security.Cryptography.Pkcs.ContentInfo)" /> constructor creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> class by using the specified content information as the inner content.</summary>
-      <param name="contentInfo">A <see cref="T:System.Security.Cryptography.Pkcs.ContentInfo" /> object that specifies the content information as the inner content of the <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> message.</param>
-      <exception cref="T:System.ArgumentNullException">A null reference was passed to a method that does not accept it as a valid argument.</exception>
-    </member>
     <member name="M:System.Security.Cryptography.Pkcs.SignedCms.#ctor(System.Security.Cryptography.Pkcs.ContentInfo,System.Boolean)">
       <summary>The <see cref="M:System.Security.Cryptography.Pkcs.SignedCms.#ctor(System.Security.Cryptography.Pkcs.ContentInfo,System.Boolean)" /> constructor creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> class by using the specified content information as the inner content and by using the detached state.</summary>
       <param name="contentInfo">A <see cref="T:System.Security.Cryptography.Pkcs.ContentInfo" /> object that specifies the content information as the inner content of the <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> message.</param>
       <param name="detached">A <see cref="T:System.Boolean" /> value that specifies whether the <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> object is for a detached signature. If <paramref name="detached" /> is <see langword="true" />, the signature is detached. If <paramref name="detached" /> is <see langword="false" />, the signature is not detached.</param>
       <exception cref="T:System.ArgumentNullException">A null reference was passed to a method that does not accept it as a valid argument.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.SignedCms.#ctor(System.Security.Cryptography.Pkcs.SubjectIdentifierType)">
-      <summary>The <see cref="M:System.Security.Cryptography.Pkcs.SignedCms.#ctor(System.Security.Cryptography.Pkcs.SubjectIdentifierType)" /> constructor creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> class by using the specified subject identifier type as the default subject identifier type for signers.</summary>
-      <param name="signerIdentifierType">A <see cref="T:System.Security.Cryptography.Pkcs.SubjectIdentifierType" /> member that specifies the default subject identifier type for signers.</param>
-      <exception cref="T:System.ArgumentNullException">A null reference was passed to a method that does not accept it as a valid argument.</exception>
-    </member>
-    <member name="M:System.Security.Cryptography.Pkcs.SignedCms.#ctor(System.Security.Cryptography.Pkcs.SubjectIdentifierType,System.Security.Cryptography.Pkcs.ContentInfo)">
-      <summary>The <see cref="M:System.Security.Cryptography.Pkcs.SignedCms.#ctor(System.Security.Cryptography.Pkcs.SubjectIdentifierType,System.Security.Cryptography.Pkcs.ContentInfo)" /> constructor creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> class by using the specified subject identifier type as the default subject identifier type for signers and content information as the inner content.</summary>
-      <param name="signerIdentifierType">A <see cref="T:System.Security.Cryptography.Pkcs.SubjectIdentifierType" /> member that specifies the default subject identifier type for signers.</param>
+    <member name="M:System.Security.Cryptography.Pkcs.SignedCms.#ctor(System.Security.Cryptography.Pkcs.ContentInfo)">
+      <summary>The <see cref="M:System.Security.Cryptography.Pkcs.SignedCms.#ctor(System.Security.Cryptography.Pkcs.ContentInfo)" /> constructor creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> class by using the specified content information as the inner content.</summary>
       <param name="contentInfo">A <see cref="T:System.Security.Cryptography.Pkcs.ContentInfo" /> object that specifies the content information as the inner content of the <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> message.</param>
       <exception cref="T:System.ArgumentNullException">A null reference was passed to a method that does not accept it as a valid argument.</exception>
     </member>
@@ -1647,6 +1636,17 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
       <param name="signerIdentifierType">A <see cref="T:System.Security.Cryptography.Pkcs.SubjectIdentifierType" /> member that specifies the default subject identifier type for signers.</param>
       <param name="contentInfo">A <see cref="T:System.Security.Cryptography.Pkcs.ContentInfo" /> object that specifies the content information as the inner content of the <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> message.</param>
       <param name="detached">A <see cref="T:System.Boolean" /> value that specifies whether the <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> object is for a detached signature. If <paramref name="detached" /> is <see langword="true" />, the signature is detached. If detached is <see langword="false" />, the signature is not detached.</param>
+      <exception cref="T:System.ArgumentNullException">A null reference was passed to a method that does not accept it as a valid argument.</exception>
+    </member>
+    <member name="M:System.Security.Cryptography.Pkcs.SignedCms.#ctor(System.Security.Cryptography.Pkcs.SubjectIdentifierType,System.Security.Cryptography.Pkcs.ContentInfo)">
+      <summary>The <see cref="M:System.Security.Cryptography.Pkcs.SignedCms.#ctor(System.Security.Cryptography.Pkcs.SubjectIdentifierType,System.Security.Cryptography.Pkcs.ContentInfo)" /> constructor creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> class by using the specified subject identifier type as the default subject identifier type for signers and content information as the inner content.</summary>
+      <param name="signerIdentifierType">A <see cref="T:System.Security.Cryptography.Pkcs.SubjectIdentifierType" /> member that specifies the default subject identifier type for signers.</param>
+      <param name="contentInfo">A <see cref="T:System.Security.Cryptography.Pkcs.ContentInfo" /> object that specifies the content information as the inner content of the <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> message.</param>
+      <exception cref="T:System.ArgumentNullException">A null reference was passed to a method that does not accept it as a valid argument.</exception>
+    </member>
+    <member name="M:System.Security.Cryptography.Pkcs.SignedCms.#ctor(System.Security.Cryptography.Pkcs.SubjectIdentifierType)">
+      <summary>The <see cref="M:System.Security.Cryptography.Pkcs.SignedCms.#ctor(System.Security.Cryptography.Pkcs.SubjectIdentifierType)" /> constructor creates an instance of the <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> class by using the specified subject identifier type as the default subject identifier type for signers.</summary>
+      <param name="signerIdentifierType">A <see cref="T:System.Security.Cryptography.Pkcs.SubjectIdentifierType" /> member that specifies the default subject identifier type for signers.</param>
       <exception cref="T:System.ArgumentNullException">A null reference was passed to a method that does not accept it as a valid argument.</exception>
     </member>
     <member name="M:System.Security.Cryptography.Pkcs.SignedCms.AddCertificate(System.Security.Cryptography.X509Certificates.X509Certificate2)">
@@ -1660,8 +1660,8 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
     </member>
     <member name="M:System.Security.Cryptography.Pkcs.SignedCms.CheckSignature(System.Boolean)">
       <summary>The <see cref="M:System.Security.Cryptography.Pkcs.SignedCms.CheckSignature(System.Boolean)" /> method verifies the digital signatures on the signed CMS/PKCS #7 message and, optionally, validates the signers' certificates.</summary>
-      <param name="verifySignatureOnly">A <see cref="T:System.Boolean" /> value that specifies whether only the digital signatures are verified without the signers' certificates being validated.  
-  
+      <param name="verifySignatureOnly">A <see cref="T:System.Boolean" /> value that specifies whether only the digital signatures are verified without the signers' certificates being validated.
+
  If <paramref name="verifySignatureOnly" /> is <see langword="true" />, only the digital signatures are verified. If it is <see langword="false" />, the digital signatures are verified, the signers' certificates are validated, and the purposes of the certificates are validated. The purposes of a certificate are considered valid if the certificate has no key usage or if the key usage supports digital signatures or nonrepudiation.</param>
       <exception cref="T:System.ArgumentNullException">A null reference was passed to a method that does not accept it as a valid argument.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">A cryptographic operation could not be completed.</exception>
@@ -1670,8 +1670,8 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
     <member name="M:System.Security.Cryptography.Pkcs.SignedCms.CheckSignature(System.Security.Cryptography.X509Certificates.X509Certificate2Collection,System.Boolean)">
       <summary>The <see cref="M:System.Security.Cryptography.Pkcs.SignedCms.CheckSignature(System.Security.Cryptography.X509Certificates.X509Certificate2Collection,System.Boolean)" /> method verifies the digital signatures on the signed CMS/PKCS #7 message by using the specified collection of certificates and, optionally, validates the signers' certificates.</summary>
       <param name="extraStore">An <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2Collection" /> object that can be used to validate the certificate chain. If no additional certificates are to be used to validate the certificate chain, use <see cref="M:System.Security.Cryptography.Pkcs.SignedCms.CheckSignature(System.Boolean)" /> instead of <see cref="M:System.Security.Cryptography.Pkcs.SignedCms.CheckSignature(System.Security.Cryptography.X509Certificates.X509Certificate2Collection,System.Boolean)" />.</param>
-      <param name="verifySignatureOnly">A <see cref="T:System.Boolean" /> value that specifies whether only the digital signatures are verified without the signers' certificates being validated.  
-  
+      <param name="verifySignatureOnly">A <see cref="T:System.Boolean" /> value that specifies whether only the digital signatures are verified without the signers' certificates being validated.
+
  If <paramref name="verifySignatureOnly" /> is <see langword="true" />, only the digital signatures are verified. If it is <see langword="false" />, the digital signatures are verified, the signers' certificates are validated, and the purposes of the certificates are validated. The purposes of a certificate are considered valid if the certificate has no key usage or if the key usage supports digital signatures or nonrepudiation.</param>
       <exception cref="T:System.ArgumentNullException">A null reference was passed to a method that does not accept it as a valid argument.</exception>
       <exception cref="T:System.Security.Cryptography.CryptographicException">A cryptographic operation could not be completed.</exception>
@@ -1682,12 +1682,6 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
       <exception cref="T:System.InvalidOperationException">.NET Framework (all versions) and .NET Core 3.0 and later: The recipient certificate is not specified.</exception>
       <exception cref="T:System.PlatformNotSupportedException">.NET Core version 2.2 and earlier: No signer certificate was provided.</exception>
     </member>
-    <member name="M:System.Security.Cryptography.Pkcs.SignedCms.ComputeSignature(System.Security.Cryptography.Pkcs.CmsSigner)">
-      <summary>Creates a signature using the specified signer and adds the signature to the CMS/PKCS #7 message.</summary>
-      <param name="signer">A <see cref="T:System.Security.Cryptography.Pkcs.CmsSigner" /> object that represents the signer.</param>
-      <exception cref="T:System.ArgumentNullException">A null reference was passed to a method that does not accept it as a valid argument.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">A cryptographic operation could not be completed.</exception>
-    </member>
     <member name="M:System.Security.Cryptography.Pkcs.SignedCms.ComputeSignature(System.Security.Cryptography.Pkcs.CmsSigner,System.Boolean)">
       <summary>Creates a signature using the specified signer and adds the signature to the CMS/PKCS #7 message.</summary>
       <param name="signer">A <see cref="T:System.Security.Cryptography.Pkcs.CmsSigner" /> object that represents the signer.</param>
@@ -1697,6 +1691,12 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
       <exception cref="T:System.Security.Cryptography.CryptographicException">A cryptographic operation could not be completed.</exception>
       <exception cref="T:System.InvalidOperationException">.NET Framework only: A signing certificate is not specified.</exception>
       <exception cref="T:System.PlatformNotSupportedException">.NET Core and .NET 5+ only: A signing certificate is not specified.</exception>
+    </member>
+    <member name="M:System.Security.Cryptography.Pkcs.SignedCms.ComputeSignature(System.Security.Cryptography.Pkcs.CmsSigner)">
+      <summary>Creates a signature using the specified signer and adds the signature to the CMS/PKCS #7 message.</summary>
+      <param name="signer">A <see cref="T:System.Security.Cryptography.Pkcs.CmsSigner" /> object that represents the signer.</param>
+      <exception cref="T:System.ArgumentNullException">A null reference was passed to a method that does not accept it as a valid argument.</exception>
+      <exception cref="T:System.Security.Cryptography.CryptographicException">A cryptographic operation could not be completed.</exception>
     </member>
     <member name="M:System.Security.Cryptography.Pkcs.SignedCms.Decode(System.Byte[])">
       <summary>Decodes an encoded <see cref="T:System.Security.Cryptography.Pkcs.SignedCms" /> message.</summary>
@@ -1727,15 +1727,15 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
       <param name="index">The zero-based index of the signature to remove.</param>
       <exception cref="T:System.InvalidOperationException">A CMS/PKCS #7 message is not signed, and <paramref name="index" /> is invalid.</exception>
       <exception cref="T:System.ArgumentOutOfRangeException">
-        <paramref name="index" /> is less than zero.  
-  
- -or-  
-  
+        <paramref name="index" /> is less than zero.
+
+ -or-
+
  <paramref name="index" /> is greater than the signature count minus 1.</exception>
-      <exception cref="T:System.Security.Cryptography.CryptographicException">The signature could not be removed.  
-  
- -or-  
-  
+      <exception cref="T:System.Security.Cryptography.CryptographicException">The signature could not be removed.
+
+ -or-
+
  An internal cryptographic error occurred.</exception>
     </member>
     <member name="M:System.Security.Cryptography.Pkcs.SignedCms.RemoveSignature(System.Security.Cryptography.Pkcs.SignerInfo)">
@@ -1772,7 +1772,7 @@ The contents of <paramref name="source" /> do not represent an ASN.1-BER-encoded
       <summary>Adds the specified attribute to the current document.</summary>
       <param name="unsignedAttribute">The ASN.1 encoded attribute to add to the document.</param>
       <exception cref="T:System.Security.Cryptography.CryptographicException">Cannot find the original signer.
-        
+
  -or-
 
 ASN1 corrupted data.</exception>
@@ -1833,7 +1833,7 @@ ASN1 corrupted data.</exception>
 Attribute not found.
 
  -or-
- 
+
 ASN1 corrupted data.</exception>
     </member>
     <member name="P:System.Security.Cryptography.Pkcs.SignerInfo.Certificate">

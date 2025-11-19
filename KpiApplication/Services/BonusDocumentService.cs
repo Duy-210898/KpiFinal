@@ -33,9 +33,9 @@ namespace KpiApplication.Services
 
         public void ClearCache()
         {
-            _docListCache.Clear(); // Xóa cache danh sách
-            _docCache.Clear();     // Xóa cache file bytes
-            _imageCache.Clear();   // Xóa cache ảnh
+            _docListCache.Clear(); 
+            _docCache.Clear();     
+            _imageCache.Clear();   
         }
 
         public void RemoveDocumentFromCache(int docId, string modelName = null)

@@ -1,0 +1,524 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1373AE64-3FCE-4C10-8994-048BFFC721B0}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>KpiApplication</RootNamespace>
+    <AssemblyName>Kpi Application</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <PublishUrl>\\10.30.0.116\Sharedata\KpiApplication\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>http://10.30.0.116:8080/KpiApplication/</InstallUrl>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>publish.htm</WebPage>
+    <ApplicationRevision>55</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>B6C7C01EFCA226C9150690870F8BDFB3CE131D48</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>KpiApplication_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>kpi.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevExpress.BonusSkins.v24.2, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Charts.v24.2.Core, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Data.Desktop.v24.2, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Data.v24.2, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Drawing.v24.2, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Mvvm.v24.2, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Printing.v24.2.Core, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Utils.v24.2, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraBars.v24.2, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraCharts.v24.2, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraCharts.v24.2.UI, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraCharts.v24.2.Wizard, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraEditors.v24.2, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraGrid.v24.2, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraLayout.v24.2, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraPdfViewer.v24.2, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraPrinting.v24.2, Version=24.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="EPPlus, Version=4.5.3.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.5.3\lib\net40\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=8.0.0.1, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.8.0.1\lib\net462\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=8.0.0.2, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.8.0.2\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging, Version=8.0.0.1, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.8.0.1\lib\net462\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=8.0.0.2, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.8.0.2\lib\net462\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options, Version=8.0.0.2, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Options.8.0.2\lib\net462\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.8.0.0\lib\net462\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IO.RecyclableMemoryStream.3.0.1\lib\netstandard2.0\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.BarCodes, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.BarCodes.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Charting, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.Charting.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Cryptography, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Quality, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.Quality.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Shared, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Snippets, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.Snippets.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.System, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.System.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.WPFonts, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.WPFonts.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.5.0.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=8.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.8.0.1\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing.Common, Version=9.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Drawing.Common.9.0.1\lib\net462\System.Drawing.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Security.Cryptography.Pkcs, Version=8.0.0.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Pkcs.8.0.1\lib\net462\System.Security.Cryptography.Pkcs.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Xml, Version=8.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Xml.8.0.2\lib\net462\System.Security.Cryptography.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\Enum.cs" />
+    <Compile Include="Common\Global.cs" />
+    <Compile Include="Common\Lang.cs" />
+    <Compile Include="Controls\ucAccountManage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ucAccountManage.Designer.cs">
+      <DependentUpon>ucAccountManage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ucBonusDocument.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ucBonusDocument.Designer.cs">
+      <DependentUpon>ucBonusDocument.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ucCIDocument.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ucCIDocument.Designer.cs">
+      <DependentUpon>ucCIDocument.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ucViewBonusDocuments.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ucViewBonusDocuments.Designer.cs">
+      <DependentUpon>ucViewBonusDocuments.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ucViewPPHData.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ucViewPPHData.Designer.cs">
+      <DependentUpon>ucViewPPHData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ucTCTData.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ucTCTData.Designer.cs">
+      <DependentUpon>ucTCTData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ucViewData.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ucViewData.Designer.cs">
+      <DependentUpon>ucViewData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ucPPHData.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ucPPHData.Designer.cs">
+      <DependentUpon>ucPPHData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ucViewTCTData.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ucViewTCTData.Designer.cs">
+      <DependentUpon>ucViewTCTData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ucWeeklyPlan.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ucWeeklyPlan.Designer.cs">
+      <DependentUpon>ucWeeklyPlan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ucWorkingTime.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ucWorkingTime.Designer.cs">
+      <DependentUpon>ucWorkingTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\Account_DAL.cs" />
+    <Compile Include="DataAccess\Article_DAL.cs" />
+    <Compile Include="DataAccess\BonusDocument_DAL.cs" />
+    <Compile Include="DataAccess\IEPPHData_DAL.cs" />
+    <Compile Include="DataAccess\ProductionData_DAL.cs" />
+    <Compile Include="DataAccess\TCT_DAL.cs" />
+    <Compile Include="DataAccess\WeeklyPlan_DAL.cs" />
+    <Compile Include="Excel\ExcelExporter.cs" />
+    <Compile Include="Excel\ExcelImporter.cs" />
+    <Compile Include="Forms\CustomWaitForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CustomWaitForm.Designer.cs">
+      <DependentUpon>CustomWaitForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ExportDirectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ExportDirectionForm.Designer.cs">
+      <DependentUpon>ExportDirectionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmChangePassword.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmChangePassword.Designer.cs">
+      <DependentUpon>frmChangePassword.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Login.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Login.Designer.cs">
+      <DependentUpon>Login.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MainView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MainView.Designer.cs">
+      <DependentUpon>MainView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PreviewSaveForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PreviewSaveForm.Designer.cs">
+      <DependentUpon>PreviewSaveForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SheetSelectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SheetSelectionForm.Designer.cs">
+      <DependentUpon>SheetSelectionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Account_Model.cs" />
+    <Compile Include="Models\Article_Model.cs" />
+    <Compile Include="Models\BonusDocument_Model.cs" />
+    <Compile Include="Models\EmployeeInfo_Model.cs" />
+    <Compile Include="Models\ExcelRowData_Model.cs" />
+    <Compile Include="Models\IEPPHDataForUser_Model.cs" />
+    <Compile Include="Models\IETotal_Model.cs" />
+    <Compile Include="Models\ProductionDataService_Model.cs" />
+    <Compile Include="Models\ProductionData_Model.cs" />
+    <Compile Include="Models\Slides_Model.cs" />
+    <Compile Include="Models\TCTData_Model.cs" />
+    <Compile Include="Models\TCTImport_Model.cs" />
+    <Compile Include="Models\WeeklyPlanData_Model.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\BonusDocumentService.cs" />
+    <Compile Include="Services\ISupportLoadAsync.cs" />
+    <Compile Include="Services\ILoadingService.cs" />
+    <Compile Include="Services\IUserControlReloadable.cs" />
+    <Compile Include="Services\ProductionBackupService.cs" />
+    <Compile Include="Services\ProductionDataMapperService.cs" />
+    <Compile Include="Services\ProductionDataMergerService.cs" />
+    <Compile Include="Services\TCTService.cs" />
+    <Compile Include="Services\UserControlServices.cs" />
+    <Compile Include="Services\WeeklyPlanService.cs" />
+    <Compile Include="Utils\AsyncLoaderHelper.cs" />
+    <Compile Include="Utils\ControlExtensions.cs" />
+    <Compile Include="Utils\DocumentViewerHelper.cs" />
+    <Compile Include="Utils\EditFormLocalizer.cs" />
+    <Compile Include="Utils\GridViewHelper.cs" />
+    <Compile Include="Utils\HashHelper.cs" />
+    <Compile Include="Utils\IEPPHSelector.cs" />
+    <Compile Include="Utils\ImageRotationHelper.cs" />
+    <Compile Include="Utils\ImageToPdfConverter.cs" />
+    <Compile Include="Utils\LabelHoverHelper.cs" />
+    <Compile Include="Utils\LangHelper.cs" />
+    <Compile Include="Utils\LruCache.cs" />
+    <Compile Include="Utils\MessageBoxHelper.cs" />
+    <Compile Include="Utils\ModelExtensions.cs" />
+    <Compile Include="Utils\NormalizeHelper.cs" />
+    <Compile Include="Utils\OverlayHelper.cs" />
+    <Compile Include="Utils\PivoteHelper.cs" />
+    <Compile Include="Utils\TCTDataHelper.cs" />
+    <Compile Include="Utils\TCTGridHelper.cs" />
+    <Compile Include="Utils\UserLogHelper.cs" />
+    <Compile Include="Utils\ViewerResetHelper.cs" />
+    <EmbeddedResource Include="Controls\ucAccountManage.resx">
+      <DependentUpon>ucAccountManage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ucBonusDocument.resx">
+      <DependentUpon>ucBonusDocument.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ucCIDocument.resx">
+      <DependentUpon>ucCIDocument.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ucViewBonusDocuments.resx">
+      <DependentUpon>ucViewBonusDocuments.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ucViewPPHData.resx">
+      <DependentUpon>ucViewPPHData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ucTCTData.resx">
+      <DependentUpon>ucTCTData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ucViewData.resx">
+      <DependentUpon>ucViewData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ucPPHData.resx">
+      <DependentUpon>ucPPHData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ucViewTCTData.resx">
+      <DependentUpon>ucViewTCTData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ucWeeklyPlan.resx">
+      <DependentUpon>ucWeeklyPlan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ucWorkingTime.resx">
+      <DependentUpon>ucWorkingTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CustomWaitForm.resx">
+      <DependentUpon>CustomWaitForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ExportDirectionForm.resx">
+      <DependentUpon>ExportDirectionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmChangePassword.resx">
+      <DependentUpon>frmChangePassword.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Login.resx">
+      <DependentUpon>Login.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MainView.resx">
+      <DependentUpon>MainView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PreviewSaveForm.resx">
+      <DependentUpon>PreviewSaveForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SheetSelectionForm.resx">
+      <DependentUpon>SheetSelectionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Resources\Strings.en.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Strings.vi.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Strings.zh.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="KpiApplication_TemporaryKey.pfx" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Common\App.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\ui.png" />
+    <None Include="Resources\translate.png" />
+    <None Include="Resources\add-user.png" />
+    <Content Include="Resources\addfile_16x16.png" />
+    <Content Include="Resources\addfile_32x32.png" />
+    <Content Include="Resources\Background.jpg" />
+    <Content Include="Resources\cancel_16x16.png" />
+    <Content Include="Resources\converttorange_16x16.png" />
+    <Content Include="Resources\converttorange_16x161.png" />
+    <Content Include="Resources\converttorange_16x162.png" />
+    <Content Include="Resources\converttorange_32x32.png" />
+    <Content Include="Resources\converttorange_32x321.png" />
+    <Content Include="Resources\converttorange_32x322.png" />
+    <None Include="Resources\dot.png" />
+    <Content Include="Resources\download_16x16.png" />
+    <Content Include="Resources\download_16x161.png" />
+    <Content Include="Resources\download_32x32.png" />
+    <Content Include="Resources\download_32x321.png" />
+    <None Include="Resources\user %282%29.png" />
+    <None Include="Resources\user.png" />
+    <None Include="Resources\user1.png" />
+    <None Include="Resources\export1.png" />
+    <None Include="Resources\export.png" />
+    <None Include="Resources\excel.png" />
+    <None Include="Resources\excel %283%29.png" />
+    <None Include="Resources\editUser.png" />
+    <None Include="Resources\excel %281%29.png" />
+    <Content Include="Resources\exporttopdf_16x16.png" />
+    <Content Include="Resources\export_16x16.png" />
+    <Content Include="Resources\export_32x32.png" />
+    <None Include="Resources\icoLogout.png" />
+    <None Include="Resources\import1.png" />
+    <None Include="Resources\import11.png" />
+    <None Include="Resources\home.png" />
+    <Content Include="Resources\insert_16x16.png" />
+    <Content Include="Resources\insert_32x32.png" />
+    <None Include="Resources\kpi.ico" />
+    <Content Include="Resources\loadfrom_16x16.png" />
+    <Content Include="Resources\loadfrom_32x32.png" />
+    <None Include="Resources\logout.png" />
+    <Content Include="Resources\open2_16x16.png" />
+    <None Include="Resources\refresh.png" />
+    <None Include="Resources\refresh1.png" />
+    <None Include="Resources\refresh %282%29.png" />
+    <Content Include="Resources\refresh2_16x16.png" />
+    <Content Include="Resources\refresh2_32x32.png" />
+    <Content Include="Resources\refresh_16x16.png" />
+    <Content Include="Resources\refresh_16x161.png" />
+    <Content Include="Resources\refresh_16x162.png" />
+    <Content Include="Resources\refresh_32x32.png" />
+    <Content Include="Resources\refresh_32x321.png" />
+    <Content Include="Resources\refresh_32x322.png" />
+    <Content Include="Resources\reset2_16x16.png" />
+    <Content Include="Resources\reset2_32x32.png" />
+    <None Include="Resources\rotate.png" />
+    <None Include="Resources\rotate %281%29.png" />
+    <Content Include="Resources\Success.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="kpi.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

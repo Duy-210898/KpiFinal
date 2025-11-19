@@ -16,17 +16,17 @@
         </member>
         <member name="F:Microsoft.Extensions.Logging.ActivityTrackingOptions.SpanId">
             <summary>
-            Span Id will be included in the logging.
+            Span ID will be included in the logging.
             </summary>
         </member>
         <member name="F:Microsoft.Extensions.Logging.ActivityTrackingOptions.TraceId">
             <summary>
-            Trace Id will be included in the logging.
+            Trace ID will be included in the logging.
             </summary>
         </member>
         <member name="F:Microsoft.Extensions.Logging.ActivityTrackingOptions.ParentId">
             <summary>
-            Parent Id will be included in the logging.
+            Parent ID will be included in the logging.
             </summary>
         </member>
         <member name="F:Microsoft.Extensions.Logging.ActivityTrackingOptions.TraceState">
@@ -285,7 +285,7 @@
             <summary>
             Check if the factory has been disposed.
             </summary>
-            <returns>True when <see cref="M:Microsoft.Extensions.Logging.LoggerFactory.Dispose"/> as been called</returns>
+            <returns><see langword="true" /> when <see cref="M:Microsoft.Extensions.Logging.LoggerFactory.Dispose"/> as been called</returns>
         </member>
         <member name="M:Microsoft.Extensions.Logging.LoggerFactory.Dispose">
             <inheritdoc/>
@@ -322,8 +322,11 @@
         </member>
         <member name="P:Microsoft.Extensions.Logging.LoggerFilterOptions.CaptureScopes">
             <summary>
-            Gets or sets value indicating whether logging scopes are being captured. Defaults to <c>true</c>
+            Gets or sets a value indicating whether logging scopes are being captured.
             </summary>
+            <value>
+            The default value is <see langword="true" />
+            </value>
         </member>
         <member name="P:Microsoft.Extensions.Logging.LoggerFilterOptions.MinLevel">
             <summary>
@@ -404,8 +407,8 @@
             <summary>
             Configure the <paramref name="builder"/> with the <see cref="T:Microsoft.Extensions.Logging.LoggerFactoryOptions"/>.
             </summary>
-            <param name="builder">The <see cref="T:Microsoft.Extensions.Logging.ILoggingBuilder"/> to be configured with <see cref="T:Microsoft.Extensions.Logging.LoggerFactoryOptions"/></param>
-            <param name="action">The action used to configure the logger factory</param>
+            <param name="builder">The <see cref="T:Microsoft.Extensions.Logging.ILoggingBuilder"/> to be configured with <see cref="T:Microsoft.Extensions.Logging.LoggerFactoryOptions"/>.</param>
+            <param name="action">The action used to configure the logger factory.</param>
             <returns>The <see cref="T:Microsoft.Extensions.Logging.ILoggingBuilder"/> so that additional calls can be chained.</returns>
         </member>
         <member name="T:Microsoft.Extensions.Logging.ProviderAliasAttribute">
@@ -421,7 +424,7 @@
         </member>
         <member name="P:Microsoft.Extensions.Logging.ProviderAliasAttribute.Alias">
             <summary>
-            The alias of the provider.
+            Gets the alias of the provider.
             </summary>
         </member>
         <member name="T:Microsoft.Extensions.Logging.NullExternalScopeProvider">
@@ -540,7 +543,7 @@
         </member>
         <member name="F:System.Runtime.InteropServices.StringMarshalling.Custom">
             <summary>
-            Indicates the user is suppling a specific marshaller in <see cref="P:System.Runtime.InteropServices.LibraryImportAttribute.StringMarshallingCustomType"/>.
+            Indicates the user is supplying a specific marshaller in <see cref="P:System.Runtime.InteropServices.LibraryImportAttribute.StringMarshallingCustomType"/>.
             </summary>
         </member>
         <member name="F:System.Runtime.InteropServices.StringMarshalling.Utf8">
@@ -647,7 +650,7 @@
         <member name="M:System.Diagnostics.CodeAnalysis.MemberNotNullWhenAttribute.#ctor(System.Boolean,System.String)">
             <summary>Initializes the attribute with the specified return value condition and a field or property member.</summary>
             <param name="returnValue">
-            The return value condition. If the method returns this value, the associated parameter will not be null.
+            The return value condition. If the method returns this value, the associated field or property member will not be null.
             </param>
             <param name="member">
             The field or property member that is promised to be not-null.
@@ -656,7 +659,7 @@
         <member name="M:System.Diagnostics.CodeAnalysis.MemberNotNullWhenAttribute.#ctor(System.Boolean,System.String[])">
             <summary>Initializes the attribute with the specified return value condition and list of field and property members.</summary>
             <param name="returnValue">
-            The return value condition. If the method returns this value, the associated parameter will not be null.
+            The return value condition. If the method returns this value, the associated field and property members will not be null.
             </param>
             <param name="members">
             The list of field and property members that are promised to be not-null.

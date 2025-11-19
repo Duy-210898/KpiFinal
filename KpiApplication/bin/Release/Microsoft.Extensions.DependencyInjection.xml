@@ -4,17 +4,6 @@
         <name>Microsoft.Extensions.DependencyInjection</name>
     </assembly>
     <members>
-        <member name="M:Microsoft.Extensions.Internal.TypeNameHelper.GetTypeDisplayName(System.Type,System.Boolean,System.Boolean,System.Boolean,System.Char)">
-            <summary>
-            Pretty print a type name.
-            </summary>
-            <param name="type">The <see cref="T:System.Type"/>.</param>
-            <param name="fullName"><c>true</c> to print a fully qualified name.</param>
-            <param name="includeGenericParameterNames"><c>true</c> to include generic parameter names.</param>
-            <param name="includeGenericParameters"><c>true</c> to include generic parameters.</param>
-            <param name="nestedTypeDelimiter">Character to use as a delimiter in nested type names</param>
-            <returns>The pretty printed type name.</returns>
-        </member>
         <member name="T:Microsoft.Extensions.DependencyInjection.DefaultServiceProviderFactory">
             <summary>
             Default implementation of <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceProviderFactory`1"/>.
@@ -153,12 +142,12 @@
         </member>
         <member name="M:Microsoft.Extensions.DependencyInjection.ServiceProvider.GetRequiredKeyedService(System.Type,System.Object)">
             <summary>
-            Gets the service object of the specified type. Will throw if the service not found.
+            Gets the service object of the specified type.
             </summary>
             <param name="serviceType">The type of the service to get.</param>
             <param name="serviceKey">The key of the service to get.</param>
             <returns>The keyed service.</returns>
-            <exception cref="T:System.InvalidOperationException"></exception>
+            <exception cref="T:System.InvalidOperationException">The service wasn't found.</exception>
         </member>
         <member name="M:Microsoft.Extensions.DependencyInjection.ServiceProvider.Dispose">
             <inheritdoc />
@@ -173,14 +162,27 @@
         </member>
         <member name="P:Microsoft.Extensions.DependencyInjection.ServiceProviderOptions.ValidateScopes">
             <summary>
-            <c>true</c> to perform check verifying that scoped services never gets resolved from root provider; otherwise <c>false</c>. Defaults to <c>false</c>.
+            Gets or sets a value that indicates whether validation is performed to ensure that scoped services are never resolved from the root provider.
             </summary>
         </member>
         <member name="P:Microsoft.Extensions.DependencyInjection.ServiceProviderOptions.ValidateOnBuild">
             <summary>
-            <c>true</c> to perform check verifying that all services can be created during <c>BuildServiceProvider</c> call; otherwise <c>false</c>. Defaults to <c>false</c>.
-            NOTE: this check doesn't verify open generics services.
+            Gets or sets a value that indicates whether validation is performed to ensure all services can be created when <see cref="M:BuildServiceProvider(IServiceCollection,ServiceProviderOptions)" /> is called.
             </summary>
+            <remarks>
+            Open generics services aren't validated.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.Extensions.Internal.TypeNameHelper.GetTypeDisplayName(System.Type,System.Boolean,System.Boolean,System.Boolean,System.Char)">
+            <summary>
+            Pretty print a type name.
+            </summary>
+            <param name="type">The <see cref="T:System.Type"/>.</param>
+            <param name="fullName"><c>true</c> to print a fully qualified name.</param>
+            <param name="includeGenericParameterNames"><c>true</c> to include generic parameter names.</param>
+            <param name="includeGenericParameters"><c>true</c> to include generic parameters.</param>
+            <param name="nestedTypeDelimiter">Character to use as a delimiter in nested type names</param>
+            <returns>The pretty printed type name.</returns>
         </member>
         <member name="T:System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute">
              <summary>
@@ -307,6 +309,35 @@
             Specifies all members.
             </summary>
         </member>
+        <member name="T:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute">
+            <summary>
+            Indicates that the specified method requires the ability to generate new code at runtime,
+            for example through <see cref="N:System.Reflection"/>.
+            </summary>
+            <remarks>
+            This allows tools to understand which methods are unsafe to call when compiling ahead of time.
+            </remarks>
+        </member>
+        <member name="M:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute"/> class
+            with the specified message.
+            </summary>
+            <param name="message">
+            A message that contains information about the usage of dynamic code.
+            </param>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute.Message">
+            <summary>
+            Gets a message that contains information about the usage of dynamic code.
+            </summary>
+        </member>
+        <member name="P:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute.Url">
+            <summary>
+            Gets or sets an optional URL that contains more information about the method,
+            why it requires dynamic code, and what options a consumer has to deal with it.
+            </summary>
+        </member>
         <member name="T:System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessageAttribute">
             <summary>
             Suppresses reporting of a specific rule violation, allowing multiple suppressions on a
@@ -379,35 +410,6 @@
         <member name="P:System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessageAttribute.Justification">
             <summary>
             Gets or sets the justification for suppressing the code analysis message.
-            </summary>
-        </member>
-        <member name="T:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute">
-            <summary>
-            Indicates that the specified method requires the ability to generate new code at runtime,
-            for example through <see cref="N:System.Reflection"/>.
-            </summary>
-            <remarks>
-            This allows tools to understand which methods are unsafe to call when compiling ahead of time.
-            </remarks>
-        </member>
-        <member name="M:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute"/> class
-            with the specified message.
-            </summary>
-            <param name="message">
-            A message that contains information about the usage of dynamic code.
-            </param>
-        </member>
-        <member name="P:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute.Message">
-            <summary>
-            Gets a message that contains information about the usage of dynamic code.
-            </summary>
-        </member>
-        <member name="P:System.Diagnostics.CodeAnalysis.RequiresDynamicCodeAttribute.Url">
-            <summary>
-            Gets or sets an optional URL that contains more information about the method,
-            why it requires dynamic code, and what options a consumer has to deal with it.
             </summary>
         </member>
         <member name="T:System.Diagnostics.CodeAnalysis.AllowNullAttribute">
@@ -498,7 +500,7 @@
         <member name="M:System.Diagnostics.CodeAnalysis.MemberNotNullWhenAttribute.#ctor(System.Boolean,System.String)">
             <summary>Initializes the attribute with the specified return value condition and a field or property member.</summary>
             <param name="returnValue">
-            The return value condition. If the method returns this value, the associated parameter will not be null.
+            The return value condition. If the method returns this value, the associated field or property member will not be null.
             </param>
             <param name="member">
             The field or property member that is promised to be not-null.
@@ -507,7 +509,7 @@
         <member name="M:System.Diagnostics.CodeAnalysis.MemberNotNullWhenAttribute.#ctor(System.Boolean,System.String[])">
             <summary>Initializes the attribute with the specified return value condition and list of field and property members.</summary>
             <param name="returnValue">
-            The return value condition. If the method returns this value, the associated parameter will not be null.
+            The return value condition. If the method returns this value, the associated field and property members will not be null.
             </param>
             <param name="members">
             The list of field and property members that are promised to be not-null.
@@ -649,7 +651,7 @@
         </member>
         <member name="F:System.Runtime.InteropServices.StringMarshalling.Custom">
             <summary>
-            Indicates the user is suppling a specific marshaller in <see cref="P:System.Runtime.InteropServices.LibraryImportAttribute.StringMarshallingCustomType"/>.
+            Indicates the user is supplying a specific marshaller in <see cref="P:System.Runtime.InteropServices.LibraryImportAttribute.StringMarshallingCustomType"/>.
             </summary>
         </member>
         <member name="F:System.Runtime.InteropServices.StringMarshalling.Utf8">
